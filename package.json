@@ -1,0 +1,29 @@
+{
+  "name": "cborg",
+  "version": "1.0.0",
+  "description": "Minimal CBOR encoder & decoder",
+  "main": "cborg.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "bundle-tests": "webpack --config test/browser/webpack.config.js --profile --json > test/browser/webpack-stats.json",
+    "test": "mocha test/test-*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https+git://github.com/rvagg/cborg"
+  },
+  "keywords": [
+    "cbor"
+  ],
+  "author": "Rod <rod@vagg.org> (http://r.va.gg/)",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "mocha": "~6.2.2",
+    "mocha-loader": "~3.0.0",
+    "puppeteer": "~2.0.0",
+    "webpack": "~4.41.2",
+    "webpack-cli": "~3.3.10"
+  }
+}
