@@ -1,4 +1,5 @@
 .DS_Store
-node_modules
+build/
+node_modules/
 test/browser/*bundle.js*
 test/browser/webpack-stats.json

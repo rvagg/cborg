@@ -7,8 +7,10 @@
     "test": "test"
   },
   "scripts": {
-    "bundle-tests": "webpack --config test/browser/webpack.config.js --profile --json > test/browser/webpack-stats.json",
-    "test": "mocha test/test-*"
+    "test:lint": "standard",
+    "test:browser": "polendina --page --worker --serviceworker --cleanup test/**/test-*.js",
+    "test:node": "mocha test/**/test-*.js",
+    "test": "npm run test:lint && npm run test:node && npm run test:browser"
   },
   "repository": {
     "type": "git",
@@ -21,9 +23,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "mocha": "~6.2.2",
-    "mocha-loader": "~3.0.0",
-    "puppeteer": "~2.0.0",
-    "webpack": "~4.41.2",
-    "webpack-cli": "~3.3.10"
-  }
+    "polendina": "^1.0.0"
+  },
+  "dependencies": {}
 }

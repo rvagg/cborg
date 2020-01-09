@@ -1,72 +1,22 @@
 const decoders = []
-const errPrefix = 'CBOR decode error:'
+const bl = require('./lib/bl')
+const { decodeErrPrefix } = require('./lib/common')
+const uint = require('./lib/0uint')
+const negint = require('./lib/1negint')
+const bytes = require('./lib/2bytes')
+const string = require('./lib/3string')
 
-const uintMinorPrefixBytes = []
-uintMinorPrefixBytes[23] = 1
-uintMinorPrefixBytes[24] = 2
-uintMinorPrefixBytes[25] = 3
-uintMinorPrefixBytes[26] = 5
-uintMinorPrefixBytes[27] = 9
+decoders[uint.MAJOR] = uint.decode
+decoders[negint.MAJOR] = negint.decode
+decoders[bytes.MAJOR] = bytes.decode
+decoders[string.MAJOR] = string.decode
 
-decoders[0] = function decodeUint (data, pos, minor) {
-  if (minor <= 23) {
-    return minor
-  }
-
-  if (minor === 24) { // uint8
-    assertEnoughData(data, pos, uintMinorPrefixBytes[24])
-    return data[pos + 1]
-  }
-
-  if (minor === 25) { // uint16
-    assertEnoughData(data, pos, uintMinorPrefixBytes[25])
-    return (data[pos + 1] * 2 ** 8) + data[pos + 2]
-  }
-
-  if (minor === 26) { // uint32
-    assertEnoughData(data, pos, uintMinorPrefixBytes[26])
-    return (data[pos + 1] * 2 ** 24) + (data[pos + 2] * 2 ** 16) + (data[pos + 3] * 2 ** 8) + data[pos + 4]
-  }
-
-  if (minor === 27) { // uint64
-    assertEnoughData(data, pos, uintMinorPrefixBytes[27])
-    return (data[pos + 1] * 2 ** 56) +
-      (data[pos + 2] * 2 ** 48) +
-      (data[pos + 3] * 2 ** 40) +
-      (data[pos + 4] * 2 ** 32) +
-      (data[pos + 5] * 2 ** 24) +
-      (data[pos + 6] * 2 ** 16) +
-      (data[pos + 7] * 2 ** 8) +
-      data[pos + 8]
-  }
-
-  throw new Error(`${errPrefix} unknown minor for this type (${minor})`)
+const defaultDecodeOptions = {
+  strict: false
 }
 
-decoders[1] = function decodeNegint (data, pos, minor) {
-  const uint = decoders[0](data, pos, minor) // decode uint
-  return -1 - uint
-}
-
-decoders[2] = function decodeBytes (data, pos, minor) {
-  const length = decoders[0](data, pos, minor) // decode uint
-  const pfxBytes = uintMinorPrefixBytes[minor <= 23 ? 23 : minor]
-  assertEnoughData(data, pos, pfxBytes + length)
-  return data.slice(pos + pfxBytes, pos + pfxBytes + length)
-}
-
-decoders[3] = function decodeString (data, pos, minor) {
-  // utf8Slice from https://github.com/feross/buffer/blob/master/index.js for browser
-  throw new Error('unimplemented')
-}
-
-function assertEnoughData (data, pos, need) {
-  if (data.length - pos < need) {
-    throw new Error(`${errPrefix} not enough data for type`)
-  }
-}
-
-function decode (data) {
+function decode (data, options) {
+  options = Object.assign({}, defaultDecodeOptions, options)
   const pos = 0
 
   const major = data[0] >>> 5
@@ -74,10 +24,31 @@ function decode (data) {
 
   const decoder = decoders[major]
   if (!decoder) {
-    throw new Error(`${errPrefix} no decoder for major type ${major}`)
+    throw new Error(`${decodeErrPrefix} no decoder for major type ${major}`)
   }
 
-  return decoder(data, pos, minor)
+  return decoder(data, pos, minor, options)
+}
+
+function encode (data) {
+  const buf = bl(1024)
+  let type
+  if (typeof data === 'number') {
+    if (data >= 0) {
+      type = uint
+    } else {
+      type = negint
+    }
+  } else if (Buffer.isBuffer(data) || data instanceof Uint8Array) { // TODO other array buffers?
+    type = bytes
+  } else {
+    throw new Error('unsupported')
+  }
+
+  const length = type.encode(buf, data)
+  buf.inc(length, true) // noGrow for final call
+  return buf.toBuffer()
 }
 
 module.exports.decode = decode
+module.exports.encode = encode
