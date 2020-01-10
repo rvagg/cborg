@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 const { decode, encode } = require('../cborg')
-const assert = require('assert')
+const { assert } = require('chai')
 const { hexToUint8Array } = require('./common')
 
 // some from https://github.com/PJK/libcbor
@@ -31,7 +31,7 @@ describe('negint', () => {
       it(`should decode ${fixture.type}=${fixture.expected}`, () => {
         assert.strictEqual(decode(data), fixture.expected, `decode ${fixture.type}`)
         if (fixture.strict === false) {
-          assert.throws(() => decode(data, { strict: true }), { name: 'Error', message: 'CBOR decode error: integer encoded in more bytes than necessary (strict decode)' })
+          assert.throws(() => decode(data, { strict: true }), Error, 'CBOR decode error: integer encoded in more bytes than necessary (strict decode)')
         } else {
           assert.strictEqual(decode(data, { strict: true }), fixture.expected, `decode ${fixture.type}`)
         }
@@ -43,7 +43,7 @@ describe('negint', () => {
     for (const fixture of fixtures) {
       it(`should encode ${fixture.type}=${fixture.expected}`, () => {
         if (fixture.unsafe) {
-          assert.throws(() => encode(fixture.expected), { name: 'Error', message: /^CBOR encode error: number too large to encode \(-\d+\)$/ })
+          assert.throws(() => encode(fixture.expected), Error, /^CBOR encode error: number too large to encode \(-\d+\)$/)
         } else if (fixture.strict === false) {
           assert.notStrictEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type} !strict`)
         } else {
