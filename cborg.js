@@ -41,6 +41,8 @@ function encode (data) {
     }
   } else if (Buffer.isBuffer(data) || data instanceof Uint8Array) { // TODO other array buffers?
     type = bytes
+  } else if (typeof data === 'string') {
+    type = string
   } else {
     throw new Error('unsupported')
   }
