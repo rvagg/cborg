@@ -49,31 +49,38 @@ const fixtures = [
   }
 ]
 
-/*
-// fill up byte arrays we can validate in strict mode, the minimal size for each
-// excluding 64-bit because 4G is just too big
+// fill up byte arrays converted to strings so we can validate in strict mode,
+// the minimal size for each excluding 64-bit because 4G is just too big
 ;(() => {
   function rnd (length) {
-    return Buffer.from(Array.from({ length }, () => Math.floor(Math.random() * 255)))
+    const sa = []
+    let l = 0
+    while (l < length) {
+      // some unicode character, unless we're near the end and want to fill up exactly so
+      // we need to pad with ascii
+      const s = String.fromCharCode(Math.floor(Math.random() * l - length < 3 ? 255 : 0x10ffff))
+      l += Buffer.byteLength(s)
+      sa.push(s)
+    }
+    return sa.join('')
   }
 
   const expected16 = rnd(256)
   fixtures.push({
-    data: Buffer.concat([Buffer.from('590100', 'hex'), expected16]),
+    data: Buffer.concat([Buffer.from('790100', 'hex'), Buffer.from(expected16)]),
     expected: expected16,
-    type: 'bytes',
-    label: 'long bytes, 16-bit length strict-compat'
+    type: 'string',
+    label: 'long string, 16-bit length strict-compat'
   })
 
   const expected32 = rnd(65536)
   fixtures.push({
-    data: Buffer.concat([Buffer.from('5a00010000', 'hex'), expected32]),
+    data: Buffer.concat([Buffer.from('7a00010000', 'hex'), Buffer.from(expected32)]),
     expected: expected32,
-    type: 'bytes',
-    label: 'long bytes, 32-bit length strict-compat'
+    type: 'string',
+    label: 'long string, 32-bit length strict-compat'
   })
 })()
-*/
 
 describe('string', () => {
   describe('decode', () => {
