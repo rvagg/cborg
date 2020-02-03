@@ -9,7 +9,6 @@ const { hexToUint8Array } = require('./common')
 const fixtures = [
   { data: '00', expected: 0, type: 'uint8' },
   { data: '02', expected: 2, type: 'uint8' },
-  { data: '02', expected: 2, type: 'uint8' },
   { data: '18ff', expected: 255, type: 'uint8' },
   { data: '1901f4', expected: 500, type: 'uint16' },
   { data: '1900ff', expected: 255, type: 'uint16', strict: false },
