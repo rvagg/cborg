@@ -9,7 +9,7 @@
   "scripts": {
     "test:lint": "standard",
     "test:browser": "polendina --page --worker --serviceworker --cleanup test/**/test-*.js",
-    "test:node": "mocha test/**/test-*.js",
+    "test:node": "nyc --check-coverage mocha test/**/test-*.js",
     "test": "npm run test:lint && npm run test:node && npm run test:browser"
   },
   "repository": {
@@ -24,6 +24,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "~6.2.2",
+    "nyc": "^15.0.0",
     "polendina": "^1.0.0"
   },
   "dependencies": {
