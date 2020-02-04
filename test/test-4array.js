@@ -4,10 +4,8 @@ const { decode, encode } = require('../cborg')
 const { assert } = require('chai')
 const { hexToUint8Array } = require('./common')
 
-// some from https://github.com/PJK/libcbor
-
 const fixtures = [
-  { data: '80', expected: [], type: 'array 1 compact uint' },
+  { data: '80', expected: [], type: 'array empty' },
   { data: '8102', expected: [2], type: 'array 1 compact uint' },
   { data: '8118ff', expected: [255], type: 'array 1 uint8' },
   { data: '811901f4', expected: [500], type: 'array 1 uint16' },
@@ -19,7 +17,8 @@ const fixtures = [
   {
     data: '8c1b0016db6db6db6db71a000100001901f40200202238ff3aa5f702b33b0016db6db6db6db74261316fc48c6175657320c39f76c49b746521',
     expected: [Number.MAX_SAFE_INTEGER / 1.4, 65536, 500, 2, 0, -1, -3, -256, -2784428724, Number.MIN_SAFE_INTEGER / 1.4 - 1, Buffer.from('a1'), 'Čaues ßvěte!'],
-    type: 'array mixed terminals'
+    type: 'array mixed terminals',
+    label: '[]'
   },
   {
     data: '8265617272617982626f66820582666e657374656482666172726179736121',

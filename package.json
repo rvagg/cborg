@@ -26,5 +26,7 @@
     "mocha": "~6.2.2",
     "polendina": "^1.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@sindresorhus/is": "^2.0.0"
+  }
 }

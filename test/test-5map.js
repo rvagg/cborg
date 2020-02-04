@@ -1,0 +1,222 @@
+/* eslint-env mocha */
+
+const { decode, encode } = require('../cborg')
+const { assert } = require('chai')
+const { hexToUint8Array } = require('./common')
+
+const fixtures = [
+  { data: 'a0', expected: {}, type: 'map empty' },
+  { data: 'a1616101', expected: { a: 1 }, type: 'map 1 pair' },
+  { data: 'a161316161', expected: { 1: 'a' }, type: 'map 1 pair (rev)' },
+  { data: 'a1016161', expected: { 1: 'a' }, type: 'map 1 pair (int key)', roundtrip: false },
+  {
+    data: 'a1016161',
+    expected: { 1: 'a' },
+    encode: toMap([[1, 'a']]),
+    type: 'map 1 pair (int key as Map)'
+  },
+  {
+    data: 'a1016161',
+    expected: toMap([[1, 'a']]),
+    type: 'map 1 pair (int key as Map w/ useMaps)',
+    useMaps: true
+  },
+  {
+    data: 'a1666f626a656374a16477697468a26134666e6573746564676f626a65637473a161216121',
+    expected: { object: { with: { 4: 'nested', objects: { '!': '!' } } } },
+    type: 'map nested'
+  },
+  { // same as previous but as a Map and an int key
+    data: 'a1666f626a656374a16477697468a204666e6573746564676f626a65637473a161216121',
+    expected: toMap([['object', toMap([['with', toMap([[4, 'nested'], ['objects', toMap([['!', '!']])]])]])]]),
+    type: 'map nested w/ useMaps',
+    useMaps: true
+  },
+  {
+    data: 'ae636f6e651b0016db6db6db6db763736978206374656e3b0016db6db6db6db76374776f1a0001000064666976650064666f757202646e696e653aa5f702b365656967687438ff65736576656e226574687265651901f466656c6576656e426131667477656c76656fc48c6175657320c39f76c49b74652168666f75727465656ea4616664666f7572616f016174026274680368746869727465656e840203046466697665',
+    encode: {
+      one: Number.MAX_SAFE_INTEGER / 1.4,
+      two: 65536,
+      three: 500,
+      four: 2,
+      five: 0,
+      six: -1,
+      seven: -3,
+      eight: -256,
+      nine: -2784428724,
+      ten: Number.MIN_SAFE_INTEGER / 1.4 - 1,
+      eleven: Buffer.from('a1'),
+      twelve: 'Čaues ßvěte!',
+      thirteen: [2, 3, 4, 'five'],
+      fourteen: { o: 1, t: 2, th: 3, f: 'four' }
+    },
+    expected: {
+      one: Number.MAX_SAFE_INTEGER / 1.4,
+      six: -1,
+      ten: Number.MIN_SAFE_INTEGER / 1.4 - 1,
+      two: 65536,
+      five: 0,
+      four: 2,
+      nine: -2784428724,
+      eight: -256,
+      seven: -3,
+      three: 500,
+      eleven: Buffer.from('a1'),
+      twelve: 'Čaues ßvěte!',
+      fourteen: { f: 'four', o: 1, t: 2, th: 3 },
+      thirteen: [2, 3, 4, 'five']
+    },
+    type: 'map with complex entries',
+    label: '{}'
+  },
+  {
+    data: 'ad01636f6e65026374776f1901f46c666976652068756e647265641902586b7369782068756e647265641a00010000636269671b0016db6db6db6db76662696767657220696d696e7573206f6e6521696d696e75732074776f38ff781f6d696e75732074776f2068756e6472656420616e64206669667479207369783901f4781a6d696e757820666976652068756e6472656420616e64206f6e653901f5781a6d696e757820666976652068756e6472656420616e642074776f3aa5f702b367626967206e65673b0016db6db6db6db76a626967676572206e6567',
+    encode: toMap([
+      [2, 'two'],
+      [1, 'one'],
+      [-2, 'minus two'],
+      [-1, 'minus one'],
+      [600, 'six hundred'],
+      [500, 'five hundred'],
+      [-256, 'minus two hundred and fifty six'],
+      [-502, 'minux five hundred and two'],
+      [-501, 'minux five hundred and one'],
+      [65536, 'big'],
+      [-2784428724, 'big neg'],
+      [6433713753386423, 'bigger'],
+      [-6433713753386424, 'bigger neg']
+    ]),
+    expected: toMap([
+      [1, 'one'],
+      [2, 'two'],
+      [500, 'five hundred'],
+      [600, 'six hundred'],
+      [65536, 'big'],
+      [6433713753386423, 'bigger'],
+      [-1, 'minus one'],
+      [-2, 'minus two'],
+      [-256, 'minus two hundred and fifty six'],
+      [-501, 'minux five hundred and one'],
+      [-502, 'minux five hundred and two'],
+      [-2784428724, 'big neg'],
+      [-6433713753386424, 'bigger neg']
+    ]),
+    type: 'map with ints and negints',
+    useMaps: true
+  }
+]
+
+/*
+// return console.log(require('borc').encode(fixtures[fixtures.length - 1].expected).toString('hex'))
+console.log(decode(Buffer.from(fixtures[fixtures.length - 1].data, 'hex')))
+console.log(require('borc').decode(Buffer.from(fixtures[fixtures.length - 1].data, 'hex')))
+console.log(require('borc').decode(encode(fixtures[fixtures.length - 1].expected)))
+return
+*/
+
+/*
+Number.MAX_SAFE_INTEGER / 1.4
+65536
+500
+2
+0
+-1
+-3
+-256
+-2784428724
+Number.MIN_SAFE_INTEGER / 1.4 - 1
+Buffer.from('a1')
+'Čaues ßvěte!'
+*/
+
+function toMap (arr) {
+  const m = new Map()
+  for (const [key, value] of arr) {
+    m.set(key, value)
+  }
+  return m
+}
+
+function entries (map) {
+  function nest (a) {
+    for (const e of a) {
+      e[0] = entries(e[0])
+      e[1] = entries(e[1])
+    }
+    return a
+  }
+
+  if (Object.getPrototypeOf(map) === Map.prototype) {
+    return nest([...map.entries()])
+  }
+  if (typeof map === 'object') {
+    return nest([...Object.entries(map)])
+  }
+  return map
+}
+
+describe('map', () => {
+  describe('decode', () => {
+    for (const fixture of fixtures) {
+      const data = hexToUint8Array(fixture.data)
+      it(`should decode ${fixture.type}=${fixture.label || JSON.stringify(fixture.expected)}`, () => {
+        let options = fixture.useMaps ? { useMaps: true } : undefined
+        const decoded = decode(data, options)
+
+        if (fixture.useMaps) {
+          assert.strictEqual(Object.getPrototypeOf(decoded), Map.prototype, 'is Map')
+        } else {
+          assert.isObject(decoded, 'is object')
+        }
+
+        assert.deepStrictEqual(entries(decoded), entries(fixture.expected), `decode ${fixture.type}`)
+
+        options = Object.assign({ strict: true }, options)
+        if (fixture.strict === false) {
+          assert.throws(() => decode(data, options), Error, 'CBOR decode error: integer encoded in more bytes than necessary (strict decode)')
+        } else {
+          assert.deepStrictEqual(
+            entries(decode(data, options)),
+            entries(fixture.expected),
+            `decode ${fixture.type}`)
+        }
+      })
+    }
+  })
+
+  describe('encode', () => {
+    for (const fixture of fixtures) {
+      it(`should encode ${fixture.type}=${fixture.label || JSON.stringify(fixture.expected)}`, () => {
+        const toEncode = fixture.encode || fixture.expected
+        if (fixture.unsafe) {
+          assert.throws(encode.bind(null, toEncode), Error, /^CBOR encode error: number too large to encode \(\d+\)$/)
+        } else if (fixture.strict === false || fixture.roundtrip === false) {
+          assert.notDeepEqual(encode(toEncode).toString('hex'), fixture.data, `encode ${fixture.type} !strict`)
+        } else {
+          assert.strictEqual(encode(toEncode).toString('hex'), fixture.data, `encode ${fixture.type}`)
+        }
+      })
+    }
+  })
+
+  // mostly unnecessary, but feels good
+  describe('roundtrip', () => {
+    for (const fixture of fixtures) {
+      if (!fixture.unsafe && fixture.strict !== false && fixture.roundtrip !== false) {
+        it(`should roundtrip ${fixture.type}=${fixture.label || JSON.stringify(fixture.expected)}`, () => {
+          const toEncode = fixture.encode || fixture.expected
+          const options = fixture.useMaps ? { useMaps: true } : undefined
+          const rt = decode(encode(toEncode), options)
+
+          if (fixture.useMaps) {
+            assert.strictEqual(Object.getPrototypeOf(rt), Map.prototype, 'is Map')
+          } else {
+            assert.isObject(rt, 'is object')
+          }
+
+          assert.deepStrictEqual(entries(rt), entries(fixture.expected), `roundtrip ${fixture.type}`)
+        })
+      }
+    }
+  })
+})
