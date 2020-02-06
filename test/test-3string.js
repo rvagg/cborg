@@ -58,7 +58,11 @@ const fixtures = [
     while (l < length) {
       // some unicode character, unless we're near the end and want to fill up exactly so
       // we need to pad with ascii
-      const s = String.fromCharCode(Math.floor(Math.random() * l - length < 3 ? 255 : 0x10ffff))
+      const ascii = (length - l) < 3
+      const base = ascii ? 32 : 0x1f000
+      const max = ascii ? 126 : 0x1ff00
+      const cc = Math.floor(Math.random() * (max - base)) + base
+      const s = String.fromCharCode(cc)
       l += Buffer.byteLength(s)
       sa.push(s)
     }
