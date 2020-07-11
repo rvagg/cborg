@@ -1,8 +1,11 @@
 /* eslint-env mocha */
 
-const { decode, encode } = require('../cborg')
-const { assert } = require('chai')
-const { hexToUint8Array } = require('./common')
+import chai from 'chai'
+
+import { decode, encode } from '../cborg.js'
+import { hexToUint8Array } from './common.js'
+
+const { assert } = chai
 
 const fixtures = [
   { data: '80', expected: [], type: 'array empty' },

@@ -3,14 +3,13 @@
   "version": "1.0.0",
   "description": "Minimal CBOR encoder & decoder",
   "main": "cborg.js",
-  "directories": {
-    "test": "test"
-  },
+  "type": "module",
   "scripts": {
-    "test:lint": "standard",
+    "lint": "standard",
     "test:browser": "polendina --page --worker --serviceworker --cleanup test/**/test-*.js",
-    "test:node": "nyc --check-coverage mocha test/**/test-*.js",
-    "test": "npm run test:lint && npm run test:node && npm run test:browser"
+    "test:node": "c8 --check-coverage --reporter=text mocha test/**/test-*.js",
+    "test": "npm run lint && npm run test:node && npm run test:browser",
+    "coverage": "c8 --reporter=html --reporter=text mocha test/**/test-*.js && npx st -d coverage -p 8888"
   },
   "repository": {
     "type": "git",
@@ -22,12 +21,13 @@
   "author": "Rod <rod@vagg.org> (http://r.va.gg/)",
   "license": "Apache-2.0",
   "devDependencies": {
+    "c8": "^7.2.0",
     "chai": "^4.2.0",
-    "mocha": "~6.2.2",
-    "nyc": "^15.0.0",
-    "polendina": "^1.0.0"
+    "mocha": "^8.0.1",
+    "polendina": "^1.0.0",
+    "standard": "^14.3.4"
   },
   "dependencies": {
-    "@sindresorhus/is": "^2.0.0"
+    "@sindresorhus/is": "^3.0.0"
   }
 }

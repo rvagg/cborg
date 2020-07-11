@@ -3,4 +3,4 @@ build/
 node_modules/
 test/browser/*bundle.js*
 test/browser/webpack-stats.json
-.nyc_output/
+coverage/

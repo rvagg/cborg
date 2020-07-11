@@ -1,8 +1,11 @@
 /* eslint-env mocha */
 
-const { assert } = require('chai')
-const { decode, encode } = require('../cborg')
-const { hexToUint8Array, uint8ArrayToHex } = require('./common')
+import chai from 'chai'
+
+import { decode, encode } from '../cborg.js'
+import { hexToUint8Array, uint8ArrayToHex } from './common.js'
+
+const { assert } = chai
 
 // some from https://github.com/PJK/libcbor
 

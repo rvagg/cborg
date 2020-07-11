@@ -1,5 +1,4 @@
-const { encode } = require('./lib/encode')
-const { decode } = require('./lib/decode')
+import { encode } from './lib/encode.js'
+import { decode } from './lib/decode.js'
 
-module.exports.decode = decode
-module.exports.encode = encode
+export { decode, encode }

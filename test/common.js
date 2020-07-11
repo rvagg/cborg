@@ -1,4 +1,4 @@
-module.exports.hexToUint8Array = function hexToUint8Array (hex) {
+export function hexToUint8Array (hex) {
   if (hex instanceof Uint8Array) {
     return hex
   }
@@ -8,7 +8,7 @@ module.exports.hexToUint8Array = function hexToUint8Array (hex) {
     .map((e) => parseInt(e, 16)))
 }
 
-module.exports.uint8ArrayToHex = function uint8ArrayToHex (buf) {
+export function uint8ArrayToHex (buf) {
   if (typeof buf === 'string') {
     return buf
   }
