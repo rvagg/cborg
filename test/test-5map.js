@@ -25,6 +25,12 @@ const fixtures = [
     useMaps: true
   },
   {
+    data: 'a243010203633132334302030463323334',
+    expected: toMap([[Uint8Array.from([1, 2, 3]), '123'], [Uint8Array.from([2, 3, 4]), '234']]),
+    type: 'map 2 pair (bytes keys Map w/ useMaps)',
+    useMaps: true
+  },
+  {
     data: 'a1666f626a656374a16477697468a26134666e6573746564676f626a65637473a161216121',
     expected: { object: { with: { 4: 'nested', objects: { '!': '!' } } } },
     type: 'map nested'

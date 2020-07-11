@@ -42,6 +42,12 @@ describe('uint', () => {
     }
   })
 
+  it('should throw error', () => {
+    // minor number 28, too high for uint
+    assert.throws(() => decode(hexToUint8Array('1ca5f702b3a5f702b3')), Error, 'CBOR decode error: unknown minor for this type (28)')
+    assert.throws(() => decode(hexToUint8Array('1ba5f702b3a5f702')), Error, 'CBOR decode error: not enough data for type')
+  })
+
   describe('encode', () => {
     for (const fixture of fixtures) {
       it(`should encode ${fixture.type}=${fixture.expected}`, () => {
