@@ -23,8 +23,8 @@ const fixtures = [
   { data: '1b00000000000000ff', expected: 255, type: 'uint64', strict: false },
   { data: '1b0016db6db6db6db7', expected: Number.MAX_SAFE_INTEGER / 1.4, type: 'uint64' },
   { data: '1b001fffffffffffff', expected: Number.MAX_SAFE_INTEGER, type: 'uint64' },
-  // kind of hard to assert on this (TODO: improve bignum handling)
-  { data: '1ba5f702b3a5f702b3', expected: 11959030306112471731, type: 'uint64', unsafe: true }
+  { data: '1ba5f702b3a5f702b3', expected: 11959030306112471731n, type: 'uint64' },
+  { data: '1bffffffffffffffff', expected: 18446744073709551615n, type: 'uint64' }
 ]
 
 describe('uint', () => {
@@ -32,11 +32,11 @@ describe('uint', () => {
     for (const fixture of fixtures) {
       const data = hexToUint8Array(fixture.data)
       it(`should decode ${fixture.type}=${fixture.expected}`, () => {
-        assert.strictEqual(decode(data), fixture.expected, `decode ${fixture.type}`)
+        assert.ok(decode(data) === fixture.expected, `decode ${fixture.type}`)
         if (fixture.strict === false) {
           assert.throws(() => decode(data, { strict: true }), Error, 'CBOR decode error: integer encoded in more bytes than necessary (strict decode)')
         } else {
-          assert.strictEqual(decode(data, { strict: true }), fixture.expected, `decode ${fixture.type}`)
+          assert.ok(decode(data, { strict: true }) === fixture.expected, `decode ${fixture.type}`)
         }
       })
     }
@@ -51,9 +51,7 @@ describe('uint', () => {
   describe('encode', () => {
     for (const fixture of fixtures) {
       it(`should encode ${fixture.type}=${fixture.expected}`, () => {
-        if (fixture.unsafe) {
-          assert.throws(encode.bind(null, fixture.expected), Error, /^CBOR encode error: number too large to encode \(\d+\)$/)
-        } else if (fixture.strict === false) {
+        if (fixture.strict === false) {
           assert.notStrictEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type} !strict`)
         } else {
           assert.strictEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type}`)
@@ -65,9 +63,9 @@ describe('uint', () => {
   // mostly unnecessary, but feels good
   describe('roundtrip', () => {
     for (const fixture of fixtures) {
-      if (!fixture.unsafe && fixture.strict !== false) {
+      if (fixture.strict !== false) {
         it(`should roundtrip ${fixture.type}=${fixture.expected}`, () => {
-          assert.strictEqual(decode(encode(fixture.expected)), fixture.expected, `roundtrip ${fixture.type}`)
+          assert.ok(decode(encode(fixture.expected)) === fixture.expected, `roundtrip ${fixture.type}`)
         })
       }
     }

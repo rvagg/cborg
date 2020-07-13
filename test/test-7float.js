@@ -16,6 +16,10 @@ const fixtures = [
   { data: 'fb3ff199999999999a', expected: 1.1, type: 'float64' },
   { data: 'fbbff199999999999a', expected: -1.1, type: 'float64' },
   { data: 'fb3ff1c71c71c71c72', expected: 1.11111111111111111111111111111, type: 'float64' },
+  { data: 'fb0000000000000002', expected: 1e-323, type: 'float64' },
+  { data: 'fb8000000000000002', expected: -1e-323, type: 'float64' },
+  { data: 'fb3fefffffffffffff', expected: 0.9999999999999999, type: 'float64' },
+  { data: 'fbbfefffffffffffff', expected: -0.9999999999999999, type: 'float64' },
   { data: 'f97c00', expected: Infinity, type: 'Infinity' },
   { data: 'f9fc00', expected: -Infinity, type: '-Infinity' },
   { data: 'f97e00', expected: NaN, type: 'NaN' }
