@@ -8,7 +8,17 @@ import { hexToUint8Array } from './common.js'
 const { assert } = chai
 
 const fixtures = [
-  { data: '8601f5f4f6f720', expected: [1, true, false, null, undefined, -1], type: 'array of float specials' }
+  { data: '8601f5f4f6f720', expected: [1, true, false, null, undefined, -1], type: 'array of float specials' },
+  { data: 'f93800', expected: 0.5, type: 'float16' },
+  { data: 'f9b800', expected: -0.5, type: 'float16' },
+  { data: 'fa33c00000', expected: 8.940696716308594e-08, type: 'float32' },
+  { data: 'fab3c00000', expected: -8.940696716308594e-08, type: 'float32' },
+  { data: 'fb3ff199999999999a', expected: 1.1, type: 'float64' },
+  { data: 'fbbff199999999999a', expected: -1.1, type: 'float64' },
+  { data: 'fb3ff1c71c71c71c72', expected: 1.11111111111111111111111111111, type: 'float64' },
+  { data: 'f97c00', expected: Infinity, type: 'Infinity' },
+  { data: 'f9fc00', expected: -Infinity, type: '-Infinity' },
+  { data: 'f97e00', expected: NaN, type: 'NaN' }
 ]
 
 describe('float', () => {
@@ -22,6 +32,11 @@ describe('float', () => {
     }
   })
 
+  it('should throw error', () => {
+    // minor number 28, too high for uint
+    assert.throws(() => decode(hexToUint8Array('f80000')), Error, 'unknown minor for major 7 (24)')
+  })
+
   describe('encode', () => {
     for (const fixture of fixtures) {
       it(`should encode ${fixture.type}=${fixture.expected}`, () => {
@@ -30,7 +45,6 @@ describe('float', () => {
     }
   })
 
-  // mostly unnecessary, but feels good
   describe('roundtrip', () => {
     for (const fixture of fixtures) {
       if (!fixture.unsafe && fixture.strict !== false) {

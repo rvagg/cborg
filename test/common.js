@@ -12,5 +12,5 @@ export function uint8ArrayToHex (buf) {
   if (typeof buf === 'string') {
     return buf
   }
-  return Array.prototype.map.call(buf, (e) => e.toString(16).padStart(2, '0')).join('')
+  return Array.prototype.reduce.call(buf, (p, c) => `${p}${c.toString(16).padStart(2, '0')}`, '')
 }
