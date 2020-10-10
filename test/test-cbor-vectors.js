@@ -4,15 +4,11 @@ import chai from 'chai'
 import { inspect } from 'util'
 
 import { decode } from '../cborg.js'
-import { hexToUint8Array } from './common.js'
+import { toHex, fromHex } from '../lib/common.js'
 // fixtures from https://github.com/cbor/test-vectors
 import { fixtures } from './appendix_a.js'
 
 const { assert } = chai
-
-function toHex (byts) {
-  return byts.reduce((hex, byte) => hex + byte.toString(16).padStart(2, '0'), '')
-}
 
 const tags = []
 
@@ -53,19 +49,14 @@ tags[32] = function (obj) { // url
 describe('cbor/test-vectors', () => {
   let i = 0
   for (const fixture of fixtures) {
-    const u8a = hexToUint8Array(fixture.hex)
+    const u8a = fromHex(fixture.hex)
     let expected = fixture.decoded !== undefined ? fixture.decoded : fixture.diagnostic
 
     if (typeof expected === 'string' && expected.startsWith('h\'')) {
-      expected = expected.replace(/(^h)'|('$)/g, '')
-      if (!expected) {
-        expected = new Uint8Array(0)
-      } else {
-        expected = new Uint8Array(expected.match(/../g).map(b => parseInt(b, 16)))
-      }
+      return fromHex(expected.replace(/(^h)'|('$)/g, ''))
     }
 
-    it(`test vector #${i} decode: ${inspect(expected)}`, () => {
+    it(`test vector #${i} decode: ${inspect(expected).replace(/\n\s*/g, '')}`, () => {
       if (fixture.error) {
         assert.throws(() => decode(u8a), fixture.error)
       } else {

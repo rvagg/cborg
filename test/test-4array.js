@@ -3,7 +3,7 @@
 import chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
-import { hexToUint8Array } from './common.js'
+import { fromHex, toHex } from '../lib/common.js'
 
 const { assert } = chai
 
@@ -19,7 +19,7 @@ const fixtures = [
   { data: '8403040506', expected: [3, 4, 5, 6], type: 'array 4 ints' },
   {
     data: '8c1b0016db6db6db6db71a000100001901f40200202238ff3aa5f702b33b0016db6db6db6db74261316fc48c6175657320c39f76c49b746521',
-    expected: [Number.MAX_SAFE_INTEGER / 1.4, 65536, 500, 2, 0, -1, -3, -256, -2784428724, Number.MIN_SAFE_INTEGER / 1.4 - 1, Buffer.from('a1'), 'Čaues ßvěte!'],
+    expected: [Number.MAX_SAFE_INTEGER / 1.4, 65536, 500, 2, 0, -1, -3, -256, -2784428724, Number.MIN_SAFE_INTEGER / 1.4 - 1, new TextEncoder().encode('a1'), 'Čaues ßvěte!'],
     type: 'array mixed terminals',
     label: '[]'
   },
@@ -33,7 +33,7 @@ const fixtures = [
 describe('array', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
-      const data = hexToUint8Array(fixture.data)
+      const data = fromHex(fixture.data)
       it(`should decode ${fixture.type}=${fixture.label || fixture.expected}`, () => {
         assert.deepStrictEqual(decode(data), fixture.expected, `decode ${fixture.type}`)
         if (fixture.strict === false) {
@@ -51,9 +51,9 @@ describe('array', () => {
         if (fixture.unsafe) {
           assert.throws(encode.bind(null, fixture.expected), Error, /^CBOR encode error: number too large to encode \(\d+\)$/)
         } else if (fixture.strict === false) {
-          assert.notDeepEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type} !strict`)
+          assert.notDeepEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type} !strict`)
         } else {
-          assert.strictEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type}`)
         }
       })
     }

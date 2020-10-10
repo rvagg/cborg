@@ -3,7 +3,7 @@
 import chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
-import { hexToUint8Array } from './common.js'
+import { fromHex, toHex } from '../lib/common.js'
 
 const { assert } = chai
 
@@ -30,7 +30,7 @@ const fixtures = [
 describe('negint', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
-      const data = hexToUint8Array(fixture.data)
+      const data = fromHex(fixture.data)
       it(`should decode ${fixture.type}=${fixture.expected}`, () => {
         assert.ok(decode(data) === fixture.expected, `decode ${fixture.type}`)
         if (fixture.strict === false) {
@@ -46,9 +46,9 @@ describe('negint', () => {
     for (const fixture of fixtures) {
       it(`should encode ${fixture.type}=${fixture.expected}`, () => {
         if (fixture.strict === false) {
-          assert.notStrictEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type} !strict`)
+          assert.notStrictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type} !strict`)
         } else {
-          assert.strictEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type}`)
         }
       })
     }

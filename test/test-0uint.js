@@ -3,7 +3,7 @@
 import chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
-import { hexToUint8Array } from './common.js'
+import { fromHex, toHex } from '../lib/common.js'
 
 const { assert } = chai
 
@@ -30,7 +30,7 @@ const fixtures = [
 describe('uint', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
-      const data = hexToUint8Array(fixture.data)
+      const data = fromHex(fixture.data)
       it(`should decode ${fixture.type}=${fixture.expected}`, () => {
         assert.ok(decode(data) === fixture.expected, `decode ${fixture.type}`)
         if (fixture.strict === false) {
@@ -44,17 +44,17 @@ describe('uint', () => {
 
   it('should throw error', () => {
     // minor number 28, too high for uint
-    assert.throws(() => decode(hexToUint8Array('1ca5f702b3a5f702b3')), Error, 'CBOR decode error: unknown minor for this type (28)')
-    assert.throws(() => decode(hexToUint8Array('1ba5f702b3a5f702')), Error, 'CBOR decode error: not enough data for type')
+    assert.throws(() => decode(fromHex('1ca5f702b3a5f702b3')), Error, 'CBOR decode error: unknown minor for this type (28)')
+    assert.throws(() => decode(fromHex('1ba5f702b3a5f702')), Error, 'CBOR decode error: not enough data for type')
   })
 
   describe('encode', () => {
     for (const fixture of fixtures) {
       it(`should encode ${fixture.type}=${fixture.expected}`, () => {
         if (fixture.strict === false) {
-          assert.notStrictEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type} !strict`)
+          assert.notStrictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type} !strict`)
         } else {
-          assert.strictEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type}`)
         }
       })
     }

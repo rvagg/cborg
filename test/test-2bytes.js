@@ -3,7 +3,7 @@
 import chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
-import { hexToUint8Array, uint8ArrayToHex } from './common.js'
+import { fromHex, toHex } from '../lib/common.js'
 
 const { assert } = chai
 
@@ -46,12 +46,12 @@ const fixtures = [
 // excluding 64-bit because 4G is just too big
 ;(() => {
   function rnd (length) {
-    return Buffer.from(Array.from({ length }, () => Math.floor(Math.random() * 255)))
+    return new Uint8Array(Array.from({ length }, () => Math.floor(Math.random() * 255)))
   }
 
   const expected16 = rnd(256)
   fixtures.push({
-    data: Buffer.concat([Buffer.from('590100', 'hex'), expected16]),
+    data: new Uint8Array([...fromHex('590100'), ...expected16]),
     expected: expected16,
     type: 'bytes',
     label: 'long bytes, 16-bit length strict-compat'
@@ -59,7 +59,7 @@ const fixtures = [
 
   const expected32 = rnd(65536)
   fixtures.push({
-    data: Buffer.concat([Buffer.from('5a00010000', 'hex'), expected32]),
+    data: new Uint8Array([...fromHex('5a00010000'), ...expected32]),
     expected: expected32,
     type: 'bytes',
     label: 'long bytes, 32-bit length strict-compat'
@@ -69,12 +69,12 @@ const fixtures = [
 describe('bytes', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
-      const data = hexToUint8Array(fixture.data)
+      const data = fromHex(fixture.data)
       it(`should decode ${fixture.type}=${fixture.label || fixture.expected}`, () => {
         let actual = decode(data)
         assert.strictEqual(
-          uint8ArrayToHex(actual),
-          uint8ArrayToHex(hexToUint8Array(fixture.expected)),
+          toHex(actual),
+          toHex(fromHex(fixture.expected)),
           `decode ${fixture.type}`)
 
         if (fixture.strict === false) {
@@ -82,8 +82,8 @@ describe('bytes', () => {
         } else {
           actual = decode(data, { strict: true })
           assert.strictEqual(
-            uint8ArrayToHex(actual),
-            uint8ArrayToHex(hexToUint8Array(fixture.expected)),
+            toHex(actual),
+            toHex(fromHex(fixture.expected)),
             `decode ${fixture.type} strict`)
         }
       })
@@ -97,16 +97,16 @@ describe('bytes', () => {
         continue
       }
 
-      const data = hexToUint8Array(fixture.expected)
-      const expectedHex = uint8ArrayToHex(fixture.data)
+      const data = fromHex(fixture.expected)
+      const expectedHex = toHex(fixture.data)
 
       it(`should encode ${fixture.type}=${fixture.label || fixture.expected}`, () => {
         if (fixture.unsafe) {
           assert.throws(() => encode(data), Error, /^CBOR encode error: number too large to encode \(-\d+\)$/)
         } else if (fixture.strict === false) {
-          assert.notStrictEqual(encode(data).toString('hex'), expectedHex, `encode ${fixture.type} !strict`)
+          assert.notStrictEqual(toHex(encode(data)), expectedHex, `encode ${fixture.type} !strict`)
         } else {
-          assert.strictEqual(encode(data).toString('hex'), expectedHex, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encode(data)), expectedHex, `encode ${fixture.type}`)
         }
       })
     }

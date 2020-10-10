@@ -3,7 +3,7 @@
 import chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
-import { hexToUint8Array } from './common.js'
+import { fromHex, toHex } from '../lib/common.js'
 
 const { assert } = chai
 
@@ -47,7 +47,7 @@ const fixtures = [
       eight: -256,
       nine: -2784428724,
       ten: Number.MIN_SAFE_INTEGER / 1.4 - 1,
-      eleven: Buffer.from('a1'),
+      eleven: new TextEncoder().encode('a1'),
       twelve: 'Čaues ßvěte!',
       thirteen: [2, 3, 4, 'five'],
       fourteen: { o: 1, t: 2, th: 3, f: 'four' }
@@ -63,7 +63,7 @@ const fixtures = [
       eight: -256,
       seven: -3,
       three: 500,
-      eleven: Buffer.from('a1'),
+      eleven: new TextEncoder().encode('a1'),
       twelve: 'Čaues ßvěte!',
       fourteen: { f: 'four', o: 1, t: 2, th: 3 },
       thirteen: [2, 3, 4, 'five']
@@ -137,7 +137,7 @@ function entries (map) {
 describe('map', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
-      const data = hexToUint8Array(fixture.data)
+      const data = fromHex(fixture.data)
       it(`should decode ${fixture.type}=${fixture.label || JSON.stringify(fixture.expected)}`, () => {
         let options = fixture.useMaps ? { useMaps: true } : undefined
         const decoded = decode(data, options)
@@ -163,7 +163,7 @@ describe('map', () => {
     }
 
     it('errors', () => {
-      assert.throws(() => decode(hexToUint8Array('a1016161')), /non-string keys not supported \(got number\)/)
+      assert.throws(() => decode(fromHex('a1016161')), /non-string keys not supported \(got number\)/)
     })
   })
 
@@ -174,9 +174,9 @@ describe('map', () => {
         if (fixture.unsafe) {
           assert.throws(encode.bind(null, toEncode), Error, /^CBOR encode error: number too large to encode \(\d+\)$/)
         } else if (fixture.strict === false || fixture.roundtrip === false) {
-          assert.notDeepEqual(encode(toEncode).toString('hex'), fixture.data, `encode ${fixture.type} !strict`)
+          assert.notDeepEqual(toHex(encode(toEncode)), fixture.data, `encode ${fixture.type} !strict`)
         } else {
-          assert.strictEqual(encode(toEncode).toString('hex'), fixture.data, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encode(toEncode)), fixture.data, `encode ${fixture.type}`)
         }
       })
     }

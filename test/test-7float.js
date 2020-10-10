@@ -3,7 +3,7 @@
 import chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
-import { hexToUint8Array } from './common.js'
+import { fromHex, toHex } from '../lib/common.js'
 
 const { assert } = chai
 
@@ -28,7 +28,7 @@ const fixtures = [
 describe('float', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
-      const data = hexToUint8Array(fixture.data)
+      const data = fromHex(fixture.data)
       it(`should decode ${fixture.type}=${fixture.expected}`, () => {
         assert.deepStrictEqual(decode(data), fixture.expected, `decode ${fixture.type}`)
         assert.deepStrictEqual(decode(data, { strict: true }), fixture.expected, `decode ${fixture.type}`)
@@ -38,13 +38,13 @@ describe('float', () => {
 
   it('should throw error', () => {
     // minor number 28, too high for uint
-    assert.throws(() => decode(hexToUint8Array('f80000')), Error, 'unassigned simple values are not supported (24)')
+    assert.throws(() => decode(fromHex('f80000')), Error, 'unassigned simple values are not supported (24)')
   })
 
   describe('encode', () => {
     for (const fixture of fixtures) {
       it(`should encode ${fixture.type}=${fixture.expected}`, () => {
-        assert.strictEqual(encode(fixture.expected).toString('hex'), fixture.data, `encode ${fixture.type}`)
+        assert.strictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type}`)
       })
     }
   })
