@@ -38,7 +38,7 @@ describe('float', () => {
 
   it('should throw error', () => {
     // minor number 28, too high for uint
-    assert.throws(() => decode(hexToUint8Array('f80000')), Error, 'unknown minor for major 7 (24)')
+    assert.throws(() => decode(hexToUint8Array('f80000')), Error, 'unassigned simple values are not supported (24)')
   })
 
   describe('encode', () => {

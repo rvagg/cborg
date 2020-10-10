@@ -11,13 +11,6 @@ const fixtures = [
   { data: 'a0', expected: {}, type: 'map empty' },
   { data: 'a1616101', expected: { a: 1 }, type: 'map 1 pair' },
   { data: 'a161316161', expected: { 1: 'a' }, type: 'map 1 pair (rev)' },
-  { data: 'a1016161', expected: { 1: 'a' }, type: 'map 1 pair (int key)', roundtrip: false },
-  {
-    data: 'a1016161',
-    expected: { 1: 'a' },
-    encode: toMap([[1, 'a']]),
-    type: 'map 1 pair (int key as Map)'
-  },
   {
     data: 'a1016161',
     expected: toMap([[1, 'a']]),
@@ -115,29 +108,6 @@ const fixtures = [
   }
 ]
 
-/*
-// return console.log(require('borc').encode(fixtures[fixtures.length - 1].expected).toString('hex'))
-console.log(decode(Buffer.from(fixtures[fixtures.length - 1].data, 'hex')))
-console.log(require('borc').decode(Buffer.from(fixtures[fixtures.length - 1].data, 'hex')))
-console.log(require('borc').decode(encode(fixtures[fixtures.length - 1].expected)))
-return
-*/
-
-/*
-Number.MAX_SAFE_INTEGER / 1.4
-65536
-500
-2
-0
--1
--3
--256
--2784428724
-Number.MIN_SAFE_INTEGER / 1.4 - 1
-Buffer.from('a1')
-'Čaues ßvěte!'
-*/
-
 function toMap (arr) {
   const m = new Map()
   for (const [key, value] of arr) {
@@ -191,6 +161,10 @@ describe('map', () => {
         }
       })
     }
+
+    it('errors', () => {
+      assert.throws(() => decode(hexToUint8Array('a1016161')), /non-string keys not supported \(got number\)/)
+    })
   })
 
   describe('encode', () => {
