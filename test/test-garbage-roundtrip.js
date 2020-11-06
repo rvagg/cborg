@@ -15,4 +15,18 @@ describe('Garbage round-trip', () => {
       assert.deepEqual(decoded, obj)
     }
   })
+
+  it('circular references error', () => {
+    let obj = {}
+    obj.obj = obj
+    assert.throws(() => encode(obj), /circular references/)
+
+    obj = { blip: [1, 2, { blop: {} }] }
+    obj.blip[2].blop = obj
+    assert.throws(() => encode(obj), /circular references/)
+
+    obj = { blip: [1, 2, { blop: {} }] }
+    obj.blip[2].blop = obj.blip
+    assert.throws(() => encode(obj), /circular references/)
+  })
 })
