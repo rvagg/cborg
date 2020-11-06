@@ -3,7 +3,7 @@
 import chai from 'chai'
 import { inspect } from 'util'
 
-import { decode } from '../cborg.js'
+import { decode, encode } from '../cborg.js'
 import { toHex, fromHex } from '../lib/common.js'
 // fixtures from https://github.com/cbor/test-vectors
 import { fixtures } from './appendix_a.js'
@@ -53,7 +53,7 @@ describe('cbor/test-vectors', () => {
     let expected = fixture.decoded !== undefined ? fixture.decoded : fixture.diagnostic
 
     if (typeof expected === 'string' && expected.startsWith('h\'')) {
-      return fromHex(expected.replace(/(^h)'|('$)/g, ''))
+      expected = fromHex(expected.replace(/(^h)'|('$)/g, ''))
     }
 
     it(`test vector #${i} decode: ${inspect(expected).replace(/\n\s*/g, '')}`, () => {
@@ -68,8 +68,16 @@ describe('cbor/test-vectors', () => {
           expected = inspect(expected)
         }
         assert.deepEqual(actual, expected)
+
+        if (fixture.roundtrip) {
+          const reencoded = encode(decode(u8a, { tags }), { tags })
+          assert.equal(toHex(reencoded), fixture.hex)
+        }
       }
     })
     i++
   }
+
+  it.skip('encode tags', () => {
+  })
 })

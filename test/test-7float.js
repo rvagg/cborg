@@ -15,7 +15,7 @@ const fixtures = [
   { data: 'fab3c00000', expected: -8.940696716308594e-08, type: 'float32' },
   { data: 'fb3ff199999999999a', expected: 1.1, type: 'float64' },
   { data: 'fbbff199999999999a', expected: -1.1, type: 'float64' },
-  { data: 'fb3ff1c71c71c71c72', expected: 1.11111111111111111111111111111, type: 'float64' },
+  { data: 'fb3ff1c71c71c71c72', expected: 1.11111111111111111111111111111, type: 'float64' }, // eslint-disable-line
   { data: 'fb0000000000000002', expected: 1e-323, type: 'float64' },
   { data: 'fb8000000000000002', expected: -1e-323, type: 'float64' },
   { data: 'fb3fefffffffffffff', expected: 0.9999999999999999, type: 'float64' },
@@ -36,9 +36,13 @@ describe('float', () => {
     }
   })
 
-  it('should throw error', () => {
+  it('error', () => {
     // minor number 28, too high for uint
-    assert.throws(() => decode(fromHex('f80000')), Error, 'unassigned simple values are not supported (24)')
+    assert.throws(() => decode(fromHex('f80000')), Error, 'simple values are not supported (24)')
+
+    assert.throws(() => decode(fromHex('f900')), Error, 'not enough data for float16')
+    assert.throws(() => decode(fromHex('fa0000')), Error, 'not enough data for float32')
+    assert.throws(() => decode(fromHex('fb00000000')), Error, 'not enough data for float64')
   })
 
   describe('encode', () => {

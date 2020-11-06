@@ -112,19 +112,19 @@ const fixtures = [
   {
     cbor: '+QAA',
     hex: 'f90000',
-    roundtrip: true,
+    roundtrip: false, // indistinguishable float
     decoded: 0.0
   },
   {
     cbor: '+YAA',
     hex: 'f98000',
-    roundtrip: true,
+    roundtrip: false, // indistinguishable float
     decoded: -0.0
   },
   {
     cbor: '+TwA',
     hex: 'f93c00',
-    roundtrip: true,
+    roundtrip: false, // indistinguishable float
     decoded: 1.0
   },
   {
@@ -142,13 +142,13 @@ const fixtures = [
   {
     cbor: '+Xv/',
     hex: 'f97bff',
-    roundtrip: true,
+    roundtrip: false, // indistinguishable float
     decoded: 65504.0
   },
   {
     cbor: '+kfDUAA=',
     hex: 'fa47c35000',
-    roundtrip: true,
+    roundtrip: false, // indistinguishable float
     decoded: 100000.0
   },
   {
@@ -178,7 +178,7 @@ const fixtures = [
   {
     cbor: '+cQA',
     hex: 'f9c400',
-    roundtrip: true,
+    roundtrip: false, // indistinguishable float
     decoded: -4.0
   },
   {
@@ -270,56 +270,56 @@ const fixtures = [
     hex: 'f0',
     roundtrip: true,
     diagnostic: 'simple(16)',
-    error: /unassigned simple values are not supported/
+    error: /simple values are not supported/
   },
   {
     cbor: '+Bg=',
     hex: 'f818',
     roundtrip: true,
     diagnostic: 'simple(24)',
-    error: /unassigned simple values are not supported/
+    error: /simple values are not supported/
   },
   {
     cbor: '+P8=',
     hex: 'f8ff',
     roundtrip: true,
     diagnostic: 'simple(255)',
-    error: /unassigned simple values are not supported/
+    error: /simple values are not supported/
   },
   {
     cbor: 'wHQyMDEzLTAzLTIxVDIwOjA0OjAwWg==',
     hex: 'c074323031332d30332d32315432303a30343a30305a',
-    roundtrip: true,
+    roundtrip: false, // tags
     diagnostic: '0("2013-03-21T20:04:00Z")'
   },
   {
     cbor: 'wRpRS2ew',
     hex: 'c11a514b67b0',
-    roundtrip: true,
+    roundtrip: false, // tags
     diagnostic: '1(1363896240)'
   },
   {
     cbor: 'wftB1FLZ7CAAAA==',
     hex: 'c1fb41d452d9ec200000',
-    roundtrip: true,
+    roundtrip: false, // tags
     diagnostic: '1(1363896240.5)'
   },
   {
     cbor: '10QBAgME',
     hex: 'd74401020304',
-    roundtrip: true,
+    roundtrip: false, // tags
     diagnostic: "23(h'01020304')"
   },
   {
     cbor: '2BhFZElFVEY=',
     hex: 'd818456449455446',
-    roundtrip: true,
+    roundtrip: false, // tags
     diagnostic: "24(h'6449455446')"
   },
   {
     cbor: '2CB2aHR0cDovL3d3dy5leGFtcGxlLmNvbQ==',
     hex: 'd82076687474703a2f2f7777772e6578616d706c652e636f6d',
-    roundtrip: true,
+    roundtrip: false, // tags
     diagnostic: '32("http://www.example.com")'
   },
   {
