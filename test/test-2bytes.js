@@ -111,4 +111,70 @@ describe('bytes', () => {
       })
     }
   })
+
+  describe('typedarrays', () => {
+    const cases = [
+      {
+        obj: Uint8Array.from([1, 2, 3]),
+        hex: '43010203'
+      },
+      {
+        obj: Uint8ClampedArray.from([1, 2, 3]),
+        hex: '43010203'
+      },
+      {
+        obj: Uint16Array.from([1, 2, 3]),
+        hex: '46010002000300'
+      },
+      {
+        obj: Uint32Array.from([1, 2, 3]),
+        hex: '4c010000000200000003000000'
+      },
+      {
+        obj: Int8Array.from([1, 2, -3]),
+        hex: '430102fd'
+      },
+      {
+        obj: Int16Array.from([1, 2, -3]),
+        hex: '4601000200fdff'
+      },
+      {
+        obj: Int32Array.from([1, 2, -3]),
+        hex: '4c0100000002000000fdffffff'
+      },
+      {
+        obj: Float32Array.from([1, 2, -3]),
+        hex: '4c0000803f00000040000040c0'
+      },
+      {
+        obj: Float64Array.from([1, 2, -3]),
+        hex: '5818000000000000f03f000000000000004000000000000008c0'
+      },
+      {
+        obj: BigUint64Array.from([1n, 2n, 3n]),
+        hex: '5818010000000000000002000000000000000300000000000000'
+      },
+      {
+        obj: BigInt64Array.from([1n, 2n, -3n]),
+        hex: '581801000000000000000200000000000000fdffffffffffffff'
+      },
+      {
+        obj: new DataView(Uint8Array.from([1, 2, 3]).buffer),
+        hex: '43010203'
+      },
+      {
+        obj: Uint8Array.from([1, 2, 3]).buffer,
+        hex: '43010203'
+      }
+    ]
+
+    for (const testCase of cases) {
+      it(testCase.obj.constructor.name, () => {
+        assert.equal(toHex(encode(testCase.obj)), testCase.hex)
+        const decoded = decode(fromHex(testCase.hex))
+        assert.instanceOf(decoded, Uint8Array)
+        assert.equal(toHex(decoded), toHex(testCase.obj))
+      })
+    }
+  })
 })

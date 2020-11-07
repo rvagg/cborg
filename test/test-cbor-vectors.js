@@ -14,7 +14,7 @@ const tags = []
 
 tags[0] = function (obj) {
   if (typeof obj !== 'string') {
-    throw new Error('expected number for tag 1')
+    throw new Error('expected string for tag 1')
   }
   return `0("${new Date(obj).toISOString().replace(/\.000Z$/, 'Z')}")`
 }
