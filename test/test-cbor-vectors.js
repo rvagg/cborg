@@ -56,9 +56,9 @@ describe('cbor/test-vectors', () => {
       expected = fromHex(expected.replace(/(^h)'|('$)/g, ''))
     }
 
-    it(`test vector #${i} decode: ${inspect(expected).replace(/\n\s*/g, '')}`, () => {
+    it(`test vector #${i}: ${inspect(expected).replace(/\n\s*/g, '')}`, () => {
       if (fixture.error) {
-        assert.throws(() => decode(u8a), fixture.error)
+        assert.throws(() => decode(u8a, { tags }), fixture.error)
       } else {
         let actual = decode(u8a, { tags })
         if (typeof actual === 'bigint') {

@@ -7,6 +7,8 @@ import { fromHex, toHex } from '../lib/common.js'
 
 const { assert } = chai
 
+// TODO: reject duplicate keys from encoded form
+
 const fixtures = [
   { data: 'a0', expected: {}, type: 'map empty' },
   { data: 'a1616101', expected: { a: 1 }, type: 'map 1 pair' },
