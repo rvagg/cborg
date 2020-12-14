@@ -3,7 +3,7 @@
 import chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
-import { fromHex, toHex } from '../lib/common.js'
+import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
 
@@ -40,7 +40,6 @@ describe('float', () => {
   it('error', () => {
     // minor number 28, too high for uint
     assert.throws(() => decode(fromHex('f80000')), Error, 'simple values are not supported (24)')
-
     assert.throws(() => decode(fromHex('f900')), Error, 'not enough data for float16')
     assert.throws(() => decode(fromHex('fa0000')), Error, 'not enough data for float32')
     assert.throws(() => decode(fromHex('fb00000000')), Error, 'not enough data for float64')

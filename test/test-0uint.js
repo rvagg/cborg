@@ -3,7 +3,7 @@
 import chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
-import { fromHex, toHex } from '../lib/common.js'
+import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
 
@@ -23,8 +23,8 @@ const fixtures = [
   { data: '1b00000000000000ff', expected: 255, type: 'uint64', strict: false },
   { data: '1b0016db6db6db6db7', expected: Number.MAX_SAFE_INTEGER / 1.4, type: 'uint64' },
   { data: '1b001fffffffffffff', expected: Number.MAX_SAFE_INTEGER, type: 'uint64' },
-  { data: '1ba5f702b3a5f702b3', expected: 11959030306112471731n, type: 'uint64' },
-  { data: '1bffffffffffffffff', expected: 18446744073709551615n, type: 'uint64' }
+  { data: '1ba5f702b3a5f702b3', expected: BigInt('11959030306112471731'), type: 'uint64' },
+  { data: '1bffffffffffffffff', expected: BigInt('18446744073709551615'), type: 'uint64' }
 ]
 
 describe('uint', () => {

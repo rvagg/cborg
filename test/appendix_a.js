@@ -63,26 +63,26 @@ const fixtures = [
     cbor: 'G///////////',
     hex: '1bffffffffffffffff',
     roundtrip: true,
-    decoded: 18446744073709551615n
+    decoded: BigInt('18446744073709551615')
   },
   {
     cbor: 'wkkBAAAAAAAAAAA=',
     hex: 'c249010000000000000000',
     roundtrip: true,
-    decoded: 18446744073709551616n,
+    decoded: BigInt('18446744073709551616'),
     error: /tag not supported \(2\)/
   },
   {
     cbor: 'O///////////',
     hex: '3bffffffffffffffff',
     roundtrip: true,
-    decoded: -18446744073709551616n
+    decoded: BigInt('-18446744073709551616')
   },
   {
     cbor: 'w0kBAAAAAAAAAAA=',
     hex: 'c349010000000000000000',
     roundtrip: true,
-    decoded: -18446744073709551617n,
+    decoded: BigInt('-18446744073709551617'),
     error: /tag not supported \(3\)/
   },
   {

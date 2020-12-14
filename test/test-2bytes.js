@@ -3,7 +3,7 @@
 import chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
-import { fromHex, toHex } from '../lib/common.js'
+import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
 
@@ -151,11 +151,11 @@ describe('bytes', () => {
         hex: '5818000000000000f03f000000000000004000000000000008c0'
       },
       {
-        obj: BigUint64Array.from([1n, 2n, 3n]),
+        obj: BigUint64Array.from([BigInt(1), BigInt(2), BigInt(3)]),
         hex: '5818010000000000000002000000000000000300000000000000'
       },
       {
-        obj: BigInt64Array.from([1n, 2n, -3n]),
+        obj: BigInt64Array.from([BigInt(1), BigInt(2), BigInt(-3)]),
         hex: '581801000000000000000200000000000000fdffffffffffffff'
       },
       {

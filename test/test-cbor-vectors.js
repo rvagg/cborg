@@ -4,7 +4,7 @@ import chai from 'chai'
 import { inspect } from 'util'
 
 import { decode, encode } from '../cborg.js'
-import { toHex, fromHex } from '../lib/common.js'
+import { fromHex, toHex } from '../lib/byte-utils.js'
 // fixtures from https://github.com/cbor/test-vectors
 import { fixtures } from './appendix_a.js'
 

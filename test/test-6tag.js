@@ -4,7 +4,7 @@ import chai from 'chai'
 
 import { Token, Type } from '../lib/token.js'
 import { decode, encode } from '../cborg.js'
-import { fromHex, toHex } from '../lib/common.js'
+import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
 
@@ -15,12 +15,14 @@ function dateDecoder (obj) {
   return new Date(obj)
 }
 
-function * dateEncoder (obj) {
+function dateEncoder (obj) {
   if (!(obj instanceof Date)) {
     throw new Error('expected Date for "Date" encoder')
   }
-  yield new Token(Type.tag, 0)
-  yield new Token(Type.string, obj.toISOString().replace(/\.000Z$/, 'Z'))
+  return [
+    new Token(Type.tag, 0),
+    new Token(Type.string, obj.toISOString().replace(/\.000Z$/, 'Z'))
+  ]
 }
 
 function Uint16ArrayDecoder (obj) {
@@ -28,15 +30,17 @@ function Uint16ArrayDecoder (obj) {
     throw new Error('expected string for tag 23')
   }
   const u8a = fromHex(obj)
-  return new Uint16Array(u8a.buffer)
+  return new Uint16Array(u8a.buffer, u8a.byteOffset, u8a.length / 2)
 }
 
-function * Uint16ArrayEncoder (obj) {
+function Uint16ArrayEncoder (obj) {
   if (!(obj instanceof Uint16Array)) {
     throw new Error('expected Uint16Array for "Uint16Array" encoder')
   }
-  yield new Token(Type.tag, 23)
-  yield new Token(Type.string, toHex(obj))
+  return [
+    new Token(Type.tag, 23),
+    new Token(Type.string, toHex(obj))
+  ]
 }
 
 describe('tag', () => {
