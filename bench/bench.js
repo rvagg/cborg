@@ -3,14 +3,16 @@ import garbage from '../test/ipld-garbage.js'
 import { decode, encode } from '../cborg.js'
 import borc from 'borc'
 
-
-runWith(`rnd-100 x ${(100_000).toLocaleString()}`, 100_000, 100)
+runWith(`rnd-100 x ${(50_000).toLocaleString()}`, 50_000, 100)
+runWith(`rnd-300 x ${(10_000).toLocaleString()}`, 10_000, 300)
+runWith(`rnd-fil x ${(50_000).toLocaleString()}`, 50_000, 100, { weights: { float: 0, map: 0 } })
 
 function runWith (description, count, size, options) {
   const fixtures = []
 
+  console.log(description)
   for (let i = 0; i < count; i++) {
-    const obj = garbage(size, options) // , { weights: { float: 0 } })
+    const obj = garbage(size, options)
     const cbyts = encode(obj)
     const bbyts = borc.encode(obj)
     if (Buffer.compare(Buffer.from(cbyts), bbyts) !== 0) {
@@ -21,51 +23,40 @@ function runWith (description, count, size, options) {
     fixtures.push([obj, cbyts])
   }
 
-  let start = Date.now()
-  for (const [obj, byts] of fixtures) {
-    const cbyts = encode(obj)
-    if (byts.length !== cbyts.length) {
-      throw new Error('bork')
+  const enc = (encoder) => {
+    const start = Date.now()
+    for (const [obj, byts] of fixtures) {
+      const ebyts = encoder(obj)
+      if (byts.length !== ebyts.length) {
+        throw new Error('bork')
+      }
     }
+    return Date.now() - start
   }
-  let cborgTime = Date.now() - start
-  console.log(`cborg encoded ${fixtures.length.toLocaleString()} objects in ${cborgTime.toLocaleString()} ms`)
 
-  start = Date.now()
-  for (const [obj, byts] of fixtures) {
-    const bbyts = borc.encode(obj)
-    if (byts.length !== bbyts.length) {
-      throw new Error('bork')
+  const dec = (decoder) => {
+    const start = Date.now()
+    for (const [obj, byts] of fixtures) {
+      const cobj = decoder(byts)
+      if (obj != null) {
+        assert.deepStrictEqual(Object.keys(cobj).length, Object.keys(obj).length)
+      } else {
+        assert(cobj === null)
+      }
+      // assert.deepStrictEqual(obj, cobj)
     }
+    return Date.now() - start
   }
-  let borcTime = Date.now() - start
-  console.log(` borc encoded ${fixtures.length.toLocaleString()} objects in ${borcTime.toLocaleString()} ms`)
-  console.log(`\tdiff: ${Math.round((borcTime / cborgTime) * 1000) / 10} %`)
 
-  start = Date.now()
-  for (const [obj, byts] of fixtures) {
-    const cobj = decode(byts)
-    if (obj != null) {
-      assert.deepStrictEqual(Object.keys(cobj).length, Object.keys(obj).length)
-    } else {
-      assert(cobj === null)
-    }
-    // assert.deepStrictEqual(obj, cobj)
+  const cmp = (desc, cbfn, bofn) => {
+    process.stdout.write(`\t${desc}:`)
+    const borcTime = bofn()
+    process.stdout.write(` borc @ ${borcTime.toLocaleString()} ms`)
+    const cborgTime = cbfn()
+    process.stdout.write(` / cborg @ ${cborgTime.toLocaleString()} ms`)
+    process.stdout.write(` = ${Math.round((borcTime / cborgTime) * 1000) / 10} %\n`)
   }
-  cborgTime = Date.now() - start
-  console.log(`cborg decoded ${fixtures.length.toLocaleString()} objects in ${cborgTime.toLocaleString()} ms`)
 
-  start = Date.now()
-  for (const [obj, byts] of fixtures) {
-    const bobj = borc.decode(byts)
-    if (obj != null) {
-      assert.deepStrictEqual(Object.keys(bobj).length, Object.keys(obj).length)
-    } else {
-      assert(bobj === null)
-    }
-    // assert.deepStrictEqual(obj, bobj)
-  }
-  borcTime = Date.now() - start
-  console.log(` borc decoded ${fixtures.length.toLocaleString()} objects in ${borcTime.toLocaleString()} ms`)
-  console.log(`\tdiff: ${Math.round((borcTime / cborgTime) * 1000) / 10} %`)
+  cmp('encode', () => enc(encode), () => enc(borc.encode))
+  cmp('decode', () => dec(decode), () => dec(borc.decode))
 }
