@@ -22,8 +22,8 @@ const fixtures = [
   { data: 'fbbfefffffffffffff', expected: -0.9999999999999999, type: 'float64' },
   { data: 'f97c00', expected: Infinity, type: 'Infinity' },
   { data: 'f9fc00', expected: -Infinity, type: '-Infinity' },
-  { data: 'f97e00', expected: NaN, type: 'NaN' }
-  // TODO: { data: 'fb40f4241a31a5a515', expected: 82497.63712086187, type: 'float64' }
+  { data: 'f97e00', expected: NaN, type: 'NaN' },
+  { data: 'fb40f4241a31a5a515', expected: 82497.63712086187, type: 'float64' }
 ]
 
 describe('float', () => {

@@ -78,6 +78,6 @@ describe('cbor/test-vectors', () => {
     i++
   }
 
-  it.skip('encode tags', () => {
+  it.skip('encode w/ tags', () => {
   })
 })

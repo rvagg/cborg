@@ -6,10 +6,10 @@ import chai from 'chai'
 
 const { assert } = chai
 
-describe('Garbage round-trip', () => {
+describe('Fuzz round-trip', () => {
   it('random objects', () => {
     for (let i = 0; i < 1000; i++) {
-      const obj = garbage(300, { weights: { float: 0 } })
+      const obj = garbage(300)
       const byts = encode(obj)
       const decoded = decode(byts)
       assert.deepEqual(decoded, obj)
