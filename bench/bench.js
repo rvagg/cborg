@@ -1,11 +1,21 @@
+// can be run in a browser with `polendina --runner=bare-sync --timeout 6000 --cleanup bench.js`
+// with additional dependencies for cborg installed here
+
 import assert from 'assert'
 import garbage from '../test/ipld-garbage.js'
 import { decode, encode } from '../cborg.js'
 import borc from 'borc'
 
-runWith(`rnd-100 x ${(50_000).toLocaleString()}`, 50_000, 100)
-runWith(`rnd-300 x ${(10_000).toLocaleString()}`, 10_000, 300)
-runWith(`rnd-fil x ${(50_000).toLocaleString()}`, 50_000, 100, { weights: { float: 0, map: 0 } })
+let writebuf = ''
+const write = process.stdout
+  ? process.stdout.write.bind(process.stdout)
+  : (str) => {
+      writebuf += str
+      if (str.endsWith('\n')) {
+        console.log(writebuf.replace(/\n$/, ''))
+        writebuf = ''
+      }
+    }
 
 function runWith (description, count, size, options) {
   const fixtures = []
@@ -49,14 +59,18 @@ function runWith (description, count, size, options) {
   }
 
   const cmp = (desc, cbfn, bofn) => {
-    process.stdout.write(`\t${desc}:`)
+    write(`\t${desc}:`)
     const borcTime = bofn()
-    process.stdout.write(` borc @ ${borcTime.toLocaleString()} ms`)
+    write(` borc @ ${borcTime.toLocaleString()} ms`)
     const cborgTime = cbfn()
-    process.stdout.write(` / cborg @ ${cborgTime.toLocaleString()} ms`)
-    process.stdout.write(` = ${Math.round((borcTime / cborgTime) * 1000) / 10} %\n`)
+    write(` / cborg @ ${cborgTime.toLocaleString()} ms`)
+    write(` = ${(Math.round((borcTime / cborgTime) * 1000) / 10).toLocaleString()} %\n`)
   }
 
   cmp('encode', () => enc(encode), () => enc(borc.encode))
   cmp('decode', () => dec(decode), () => dec(borc.decode))
 }
+
+runWith(`rnd-100 x ${(5000).toLocaleString()}`, 5000, 100)
+runWith(`rnd-300 x ${(1000).toLocaleString()}`, 1000, 300)
+runWith(`rnd-fil x ${(5000).toLocaleString()}`, 5000, 100, { weights: { float: 0, map: 0 } })
