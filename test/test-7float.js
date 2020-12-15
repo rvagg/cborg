@@ -53,6 +53,19 @@ describe('float', () => {
     }
   })
 
+  describe('encode float64', () => {
+    for (const fixture of fixtures) {
+      if (fixture.type.startsWith('float')) {
+        it(`should encode ${fixture.type}=${fixture.expected}`, () => {
+          const encoded = encode(fixture.expected, { float64: true })
+          assert.strictEqual(encoded.length, 9) // always encode as 9 bytes, regardless of size
+          assert.strictEqual(encoded[0], 0xfb)
+          assert.strictEqual(decode(encoded), fixture.expected, `encode float64 ${fixture.type}`)
+        })
+      }
+    }
+  })
+
   describe('roundtrip', () => {
     for (const fixture of fixtures) {
       if (!fixture.unsafe && fixture.strict !== false) {
