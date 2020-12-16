@@ -69,4 +69,14 @@ describe('array', () => {
       }
     }
   })
+
+  describe('specials', () => {
+    it('can decode indefinite length items', () => {
+      assert.deepStrictEqual(decode(fromHex('9f616f6174ff')), ['o', 't'])
+    })
+
+    it('can switch off indefinite length support', () => {
+      assert.throws(() => decode(fromHex('9f616f6174ff'), { allowIndefinite: false }), /indefinite/)
+    })
+  })
 })

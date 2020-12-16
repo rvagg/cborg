@@ -204,4 +204,14 @@ describe('map', () => {
       }
     }
   })
+
+  describe('specials', () => {
+    it('can decode indefinite length items', () => {
+      assert.deepStrictEqual(decode(fromHex('bf616f01617402ff')), { o: 1, t: 2 })
+    })
+
+    it('can switch off indefinite length support', () => {
+      assert.throws(() => decode(fromHex('bf616f01617402ff'), { allowIndefinite: false }), /indefinite/)
+    })
+  })
 })

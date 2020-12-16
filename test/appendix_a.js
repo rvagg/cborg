@@ -495,14 +495,14 @@ const fixtures = [
     hex: '5f42010243030405ff',
     roundtrip: false,
     diagnostic: "(_ h'0102', h'030405')",
-    error: /indefinite length bytes not supported/
+    error: /indefinite length bytes\/strings are not supported/
   },
   {
     cbor: 'f2VzdHJlYWRtaW5n/w==',
     hex: '7f657374726561646d696e67ff',
     roundtrip: false,
     decoded: 'streaming',
-    error: /indefinite length bytes not supported/
+    error: /indefinite length bytes\/strings are not supported/
   },
   {
     cbor: 'n/8=',

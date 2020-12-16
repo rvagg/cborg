@@ -75,4 +75,20 @@ describe('float', () => {
       }
     }
   })
+
+  describe('specials', () => {
+    // This is a bit of a hack, the CBOR is invalid because it's a standard fixed-length array
+    // followed by a BREAK, which should normally error ("too many terminals"), but we want to
+    // exercise the allowIndefinite switch in the major-7 decode and it should error before it
+    // even gets to looking at terminals and whether the tokens make sense.
+    it('indefinite length switch fails on BREAK', () => {
+      assert.throws(() => decode(fromHex('82616f6174ff')), /too many terminals/) // sanity check
+      assert.throws(() => decode(fromHex('82616f6174ff'), { allowIndefinite: false }), /indefinite/)
+    })
+
+    it('can switch off undefined support', () => {
+      assert.deepStrictEqual(decode(fromHex('830102f7')), [1, 2, undefined])
+      assert.throws(() => decode(fromHex('830102f7'), { allowUndefined: false }), /undefined/)
+    })
+  })
 })
