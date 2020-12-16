@@ -67,4 +67,11 @@ describe('tag', () => {
     assert.instanceOf(decoded, Uint16Array)
     assert.equal(toHex(decoded), toHex(Uint16Array.from([1, 2, 3])))
   })
+  /*
+  describe('taglib', () => {
+    it('bigint', () => {
+      const v = BigInt(2) ** BigInt(80)
+    })
+  })
+  */
 })

@@ -70,4 +70,10 @@ describe('uint', () => {
       }
     }
   })
+
+  describe('toobig', () => {
+    // boundary condition is right on 64-bit int
+    assert.doesNotThrow(() => encode(BigInt(2) ** BigInt(64) - BigInt(1)))
+    assert.throws(() => encode(BigInt(2) ** BigInt(64)), /BigInt larger than allowable range/)
+  })
 })

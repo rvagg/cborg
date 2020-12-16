@@ -62,4 +62,10 @@ describe('negint', () => {
       })
     }
   })
+
+  describe('toobig', () => {
+    // boundary condition is right below 64-bit negint
+    assert.doesNotThrow(() => encode(BigInt(-1) * BigInt(2) ** BigInt(64)))
+    assert.throws(() => encode(BigInt(-1) * BigInt(2) ** BigInt(64) - BigInt(1)), /BigInt larger than allowable range/)
+  })
 })

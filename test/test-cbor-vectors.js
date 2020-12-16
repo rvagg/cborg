@@ -4,6 +4,7 @@ import chai from 'chai'
 import { inspect } from 'util'
 
 import { decode, encode } from '../cborg.js'
+import * as taglib from '../taglib.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
 // fixtures from https://github.com/cbor/test-vectors
 import { fixtures } from './appendix_a.js'
@@ -11,6 +12,7 @@ import { fixtures } from './appendix_a.js'
 const { assert } = chai
 
 const tags = []
+const typeEncoders = {}
 
 tags[0] = function (obj) {
   if (typeof obj !== 'string') {
@@ -25,6 +27,10 @@ tags[1] = function (obj) {
   }
   return `1(${obj})`
 }
+
+tags[2] = taglib.bigIntDecoder
+typeEncoders.bigint = taglib.bigIntEncoder
+tags[3] = taglib.bigNegIntDecoder
 
 tags[23] = function (obj) {
 // expected conversion to base16
@@ -60,6 +66,9 @@ describe('cbor/test-vectors', () => {
       if (fixture.error) {
         assert.throws(() => decode(u8a, { tags }), fixture.error)
       } else {
+        if (fixture.noTagDecodeError) {
+          assert.throws(() => decode(u8a), fixture.noTagDecodeError)
+        }
         let actual = decode(u8a, { tags })
         if (typeof actual === 'bigint') {
           actual = inspect(actual)
@@ -70,7 +79,10 @@ describe('cbor/test-vectors', () => {
         assert.deepEqual(actual, expected)
 
         if (fixture.roundtrip) {
-          const reencoded = encode(decode(u8a, { tags }), { tags })
+          if (fixture.noTagEncodeError) {
+            assert.throws(() => encode(decode(u8a, { tags })), fixture.noTagEncodeError)
+          }
+          const reencoded = encode(decode(u8a, { tags }), { typeEncoders })
           assert.equal(toHex(reencoded), fixture.hex)
         }
       }

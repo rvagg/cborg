@@ -41,7 +41,7 @@ describe('decode errors', () => {
     assert.throws(() => decode(fromHex('82ff')), /unexpected break to lengthed array/)
   })
 
-  it('break in lengthed array', () => {
+  it('no such decoder', () => {
     // last value missing
     assert.throws(() => decode(fromHex('82ff')), /unexpected break to lengthed array/)
   })

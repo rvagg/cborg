@@ -70,7 +70,8 @@ const fixtures = [
     hex: 'c249010000000000000000',
     roundtrip: true,
     decoded: BigInt('18446744073709551616'),
-    error: /tag not supported \(2\)/
+    noTagDecodeError: /tag not supported \(2\)/,
+    noTagEncodeError: /BigInt larger than allowable range/
   },
   {
     cbor: 'O///////////',
@@ -83,7 +84,8 @@ const fixtures = [
     hex: 'c349010000000000000000',
     roundtrip: true,
     decoded: BigInt('-18446744073709551617'),
-    error: /tag not supported \(3\)/
+    noTagDecodeError: /tag not supported \(3\)/,
+    noTagEncodeError: /BigInt larger than allowable range/
   },
   {
     cbor: 'IA==',

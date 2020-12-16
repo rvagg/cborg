@@ -35,8 +35,6 @@
     "@sindresorhus/is": "^4.0.0"
   },
   "exports": {
-    ".": {
-      "import": "./cborg.js"
-    }
+    "import": "./cborg.js"
   }
 }
