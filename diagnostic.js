@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { tokensToDiagnostic } from './lib/diagnostic.js'
-import { fromHex } from './lib/common.js'
+import { fromHex } from './lib/byte-utils.js'
 
 const bin = fromHex(process.argv[2])
 
