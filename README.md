@@ -5,14 +5,11 @@ import { encode, decode } from 'cborg'
 
 const decoded = decode(Buffer.from('a16474686973a26269736543424f522163796179f5', 'hex'))
 console.log('decoded:', decoded)
-
 console.log('encoded:', encode(decoded))
 ```
 
 ```
-decoded: [Object: null prototype] {
-  this: [Object: null prototype] { is: 'CBOR!', yay: true }
-}
+decoded: { this: { is: 'CBOR!', yay: true } }
 encoded: Uint8Array(21) [
   161, 100, 116, 104, 105, 115,
   162,  98, 105, 115, 101,  67,
