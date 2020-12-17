@@ -35,7 +35,7 @@ describe('Bin', () => {
 `Usage: cborg <command> <args>
 Valid commands:
 \thex2diag <hex input>
-\thex2json <hex input>
+\thex2json [--pretty] <hex input>
 \tjson2hex '<json input>'
 `)
     }
@@ -48,13 +48,27 @@ Valid commands:
 `Usage: cborg <command> <args>
 Valid commands:
 \thex2diag <hex input>
-\thex2json <hex input>
+\thex2json [--pretty] <hex input>
 \tjson2hex '<json input>'
 `)
   })
 
   it('hex2json', async () => {
     const { stdout, stderr } = await execBin('hex2json a3616101616282020365736d696c6564f09f9880')
+    assert.strictEqual(stderr, '')
+    assert.strictEqual(stdout, '{"a":1,"b":[2,3],"smile":"😀"}\n')
+
+    try {
+      await execBin('hex2json')
+      assert.fail('should have errored')
+    } catch (e) {
+      assert.strictEqual(e.stdout, '')
+      assert.isTrue(e.stderr.startsWith('hex2json requires a hexadecimal input string\nUsage: '))
+    }
+  })
+
+  it('hex2json pretty', async () => {
+    const { stdout, stderr } = await execBin('hex2json --pretty a3616101616282020365736d696c6564f09f9880')
     assert.strictEqual(stderr, '')
     assert.strictEqual(stdout,
 `{
@@ -66,14 +80,6 @@ Valid commands:
   "smile": "😀"
 }
 `)
-
-    try {
-      await execBin('hex2json')
-      assert.fail('should have errored')
-    } catch (e) {
-      assert.strictEqual(e.stdout, '')
-      assert.isTrue(e.stderr.startsWith('hex2json requires a hexadecimal input string\nUsage: '))
-    }
   })
 
   it('hex2diag', async () => {
