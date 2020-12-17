@@ -72,8 +72,21 @@ describe('uint', () => {
   })
 
   describe('toobig', () => {
-    // boundary condition is right on 64-bit int
-    assert.doesNotThrow(() => encode(BigInt(2) ** BigInt(64) - BigInt(1)))
-    assert.throws(() => encode(BigInt(2) ** BigInt(64)), /BigInt larger than allowable range/)
+    it('bigger than 64-bit', () => {
+      // boundary condition is right on 64-bit int
+      assert.doesNotThrow(() => encode(BigInt(2) ** BigInt(64) - BigInt(1)))
+      assert.throws(() => encode(BigInt(2) ** BigInt(64)), /BigInt larger than allowable range/)
+    })
+
+    it('disallow BigInt', () => {
+      for (const fixture of fixtures) {
+        const data = fromHex(fixture.data)
+        if (!Number.isSafeInteger(fixture.expected)) {
+          assert.throws(() => decode(data, { allowBigInt: false }), /safe integer range/)
+        } else {
+          assert.ok(decode(data, { allowBigInt: false }) === fixture.expected, `decode ${fixture.type}`)
+        }
+      }
+    })
   })
 })
