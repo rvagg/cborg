@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import garbage from './ipld-garbage.js'
+import garbage from 'ipld-garbage'
 import { decode, encode } from '../cborg.js'
 import chai from 'chai'
 
@@ -9,7 +9,7 @@ const { assert } = chai
 describe('Fuzz round-trip', () => {
   it('random objects', () => {
     for (let i = 0; i < 1000; i++) {
-      const obj = garbage(300)
+      const obj = garbage(300, { weights: { CID: 0 } })
       const byts = encode(obj)
       const decoded = decode(byts)
       assert.deepEqual(decoded, obj)

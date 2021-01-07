@@ -32,7 +32,7 @@ describe('negint', () => {
     for (const fixture of fixtures) {
       const data = fromHex(fixture.data)
       it(`should decode ${fixture.type}=${fixture.expected}`, () => {
-        assert.ok(decode(data) === fixture.expected, `decode ${fixture.type}`)
+        assert.ok(decode(data) === fixture.expected, `decode ${fixture.type} (${decode(data)} != ${fixture.expected})`)
         if (fixture.strict === false) {
           assert.throws(() => decode(data, { strict: true }), Error, 'CBOR decode error: integer encoded in more bytes than necessary (strict decode)')
         } else {

@@ -32,7 +32,7 @@ describe('uint', () => {
     for (const fixture of fixtures) {
       const data = fromHex(fixture.data)
       it(`should decode ${fixture.type}=${fixture.expected}`, () => {
-        assert.ok(decode(data) === fixture.expected, `decode ${fixture.type}`)
+        assert.ok(decode(data) === fixture.expected, `decode ${fixture.type} ${decode(data)} != ${fixture.expected}`)
         if (fixture.strict === false) {
           assert.throws(() => decode(data, { strict: true }), Error, 'CBOR decode error: integer encoded in more bytes than necessary (strict decode)')
         } else {
@@ -44,7 +44,7 @@ describe('uint', () => {
 
   it('should throw error', () => {
     // minor number 28, too high for uint
-    assert.throws(() => decode(fromHex('1ca5f702b3a5f702b3')), Error, 'CBOR decode error: unknown minor for this type (28)')
+    assert.throws(() => decode(fromHex('1ca5f702b3a5f702b3')), Error, 'CBOR decode error: encountered invalid minor (28) for major 0')
     assert.throws(() => decode(fromHex('1ba5f702b3a5f702')), Error, 'CBOR decode error: not enough data for type')
   })
 

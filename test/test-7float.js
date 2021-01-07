@@ -39,7 +39,7 @@ describe('float', () => {
 
   it('error', () => {
     // minor number 28, too high for uint
-    assert.throws(() => decode(fromHex('f80000')), Error, 'simple values are not supported (24)')
+    assert.throws(() => decode(fromHex('f80000')), Error, 'simple values are not supported')
     assert.throws(() => decode(fromHex('f900')), Error, 'not enough data for float16')
     assert.throws(() => decode(fromHex('fa0000')), Error, 'not enough data for float32')
     assert.throws(() => decode(fromHex('fb00000000')), Error, 'not enough data for float64')
@@ -82,8 +82,10 @@ describe('float', () => {
     // exercise the allowIndefinite switch in the major-7 decode and it should error before it
     // even gets to looking at terminals and whether the tokens make sense.
     it('indefinite length switch fails on BREAK', () => {
-      assert.throws(() => decode(fromHex('82616f6174ff')), /too many terminals/) // sanity check
-      assert.throws(() => decode(fromHex('82616f6174ff'), { allowIndefinite: false }), /indefinite/)
+      // sanity check, BREAK doesn't belong there
+      assert.throws(() => decode(Uint8Array.from([131, 1, 2, 0xff])), /unexpected break to lengthed array/)
+      // throw earlier because we're disallowing BREAK entirely
+      assert.throws(() => decode(Uint8Array.from([131, 1, 2, 0xff]), { allowIndefinite: false }), /indefinite/)
     })
 
     it('can switch off undefined support', () => {

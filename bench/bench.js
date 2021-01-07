@@ -2,7 +2,7 @@
 // with additional dependencies for cborg installed here
 
 import assert from 'assert'
-import garbage from '../test/ipld-garbage.js'
+import garbage from 'ipld-garbage'
 import { decode, encode } from '../cborg.js'
 import borc from 'borc'
 
@@ -18,20 +18,34 @@ const write = process.stdout
     }
 
 function runWith (description, count, size, options) {
+  let borcDecoder = null
+  const borcDecode = (bytes) => {
+    if (!borcDecoder) {
+      // account for initial allocation & setup time in benchmark
+      borcDecoder = new borc.Decoder({ size: 10 * 1024 * 1024 })
+    }
+    return borcDecoder.decodeAll(bytes)[0]
+  }
+
   const fixtures = []
 
   console.log(description)
   for (let i = 0; i < count; i++) {
     const obj = garbage(size, options)
     const cbyts = encode(obj)
+    /*
     const bbyts = borc.encode(obj)
     if (Buffer.compare(Buffer.from(cbyts), bbyts) !== 0) {
       console.log(`mismatch for obj: ${JSON.stringify(obj)}`)
       console.log('\t', Buffer.from(cbyts).toString('hex'))
       console.log('\t', Buffer.from(bbyts).toString('hex'))
     }
-    fixtures.push([obj, cbyts])
+    */
+    if (cbyts.length <= size * 2) {
+      fixtures.push([obj, cbyts])
+    }
   }
+  const avgSize = Math.round(fixtures.reduce((p, c) => p + c[1].length, 0) / fixtures.length)
 
   const enc = (encoder) => {
     const start = Date.now()
@@ -59,7 +73,7 @@ function runWith (description, count, size, options) {
   }
 
   const cmp = (desc, cbfn, bofn) => {
-    write(`\t${desc}:`)
+    write(`\t${desc} (avg ${avgSize.toLocaleString()}B):`)
     const borcTime = bofn()
     write(` borc @ ${borcTime.toLocaleString()} ms`)
     const cborgTime = cbfn()
@@ -68,9 +82,15 @@ function runWith (description, count, size, options) {
   }
 
   cmp('encode', () => enc(encode), () => enc(borc.encode))
-  cmp('decode', () => dec(decode), () => dec(borc.decode))
+  cmp('decode', () => dec(decode), () => dec(borcDecode))
 }
 
-runWith(`rnd-100 x ${(5000).toLocaleString()}`, 5000, 100)
-runWith(`rnd-300 x ${(1000).toLocaleString()}`, 1000, 300)
-runWith(`rnd-fil x ${(5000).toLocaleString()}`, 5000, 100, { weights: { float: 0, map: 0 } })
+runWith(`rnd-100 x ${(50000).toLocaleString()}`, 50000, 100, { weights: { CID: 0 } })
+runWith(`rnd-300 x ${(50000).toLocaleString()}`, 50000, 300, { weights: { CID: 0 } })
+runWith(`rnd-1000 x ${(20000).toLocaleString()}`, 20000, 1000, { weights: { CID: 0 } })
+runWith(`rnd-fil-100 x ${(100000).toLocaleString()}`, 100000, 100, { weights: { float: 0, map: 0, CID: 0 } })
+runWith(`rnd-fil-300 x ${(100000).toLocaleString()}`, 100000, 300, { weights: { float: 0, map: 0, CID: 0 } })
+runWith(`rnd-fil-500 x ${(50000).toLocaleString()}`, 50000, 500, { weights: { float: 0, map: 0, CID: 0 } })
+runWith(`rnd-fil-1000 x ${(20000).toLocaleString()}`, 20000, 1000, { weights: { float: 0, map: 0, CID: 0 } })
+runWith(`rnd-fil-2000 x ${(10000).toLocaleString()}`, 50000, 2000, { weights: { float: 0, map: 0, CID: 0 } })
+runWith(`rnd-nostr-300 x ${(50000).toLocaleString()}`, 50000, 300, { weights: { CID: 0, string: 0 } })
