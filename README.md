@@ -89,7 +89,7 @@ Encode a JavaScript object and return a `Uint8Array` with the CBOR byte represen
 
 * Objects containing circular references will be rejected.
 * JavaScript objects that don't have standard CBOR type representations (without tags) may be rejected or encoded in surprising ways. If you need to encode a `Date` or a `RegExp` or another exotic type, you should either form them into intermediate forms before encoding or enable a tag encoder (see [Type encoders](#type-encoders)).
-  * Supported types are: `null`, `undefined`, `number`, `bigint`, `string`, `boolean`, `Array`, `Object`, `Map`, `Buffer`, `ArrayBuffer`, `DataView`, `Uint8Array` and all other `TypedArray`s (their underlying byte array is encoded, so they will all round-trip as a `Uint8Array` since the type information is lost).
+  * Supported types are: `null`, `undefined`, `number`, `bigint`, `string`, `boolean`, `Array`, `Object`, `Map`, `Buffer`, `ArrayBuffer`, `DataView`, `Uint8Array` and all other `TypedArray`s (the underlying byte array of TypedArrays is encoded, so they will all round-trip as a `Uint8Array` since the type information is lost).
 * `Number`s will be encoded as integers if they don't have a fractional part (`1` and `1.0` are both considered integers, they are identical in JavaScript). Otherwise they will be encoded as floats.
 * Integers will be encoded to their smallest possible representations: compacted (into the type byte), 8-bit, 16-bit, 32-bit or 64-bit.
 * Integers larger than `Number.MAX_SAFE_INTEGER` or less than `Number.MIN_SAFE_INTEGER` will be encoded as floats. There is no way to safely determine whether a number has a fractional part outside of this range.
@@ -122,18 +122,20 @@ Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScrip
 #### Options
 
 * `allowIndefinite` (boolean, default `true`): when the indefinite length additional information (31) is encountered for any type (arrays, maps, strings, bytes) _or_ a "break" is encountered, an error will be thrown.
-* `allowUndefined` (boolean, default `true`): when major 7, minor 23 (`undefined`) is encountered, an error will be thrown.
-* `allowBigInt` (boolean, default `true`): when an integer outside of the safe integer range is encountered, an error will be thrown.
+* `allowUndefined` (boolean, default `true`): when major 7, minor 23 (`undefined`) is encountered, an error will be thrown. To disallow `undefined` on encode, a custom [type encoder](#type-encoders) for `'undefined'` will need to be supplied.
+* `allowInfinity` (boolean, default `true`): when an IEEE 754 `Infinity` or `-Infinity` value is encountered when decoding a major 7, an error will be thrown. To disallow `Infinity` and `-Infinity` on encode, a custom [type encoder](#type-encoders) for `'number'` will need to be supplied.
+* `allowNaN` (boolean, default `true`): when an IEEE 754 `NaN` value is encountered when decoding a major 7, an error will be thrown. To disallow `NaN` on encode, a custom [type encoder](#type-encoders) for `'number'` will need to be supplied.
+* `allowBigInt` (boolean, default `true`): when an integer outside of the safe integer range is encountered, an error will be thrown. To disallow `BigInt`s on encode, a custom [type encoder](#type-encoders) for `'bigint'` will need to be supplied.
 * `strict` (boolean, default `false`): when decoding integers, including for lengths (arrays, maps, strings, bytes), values will be checked to see whether they were encoded in their smallest possible form. If not, an error will be thrown.
   * Currently, this form of deterministic strictness cannot be enforced for float representations, or map key ordering (pull requests welcome!).
-* `useMaps` (boolean, default `false`): when decoding major 5 (map) entries, use a `Map` rather than a plain `Object`. This will nest for any encountered map.
+* `useMaps` (boolean, default `false`): when decoding major 5 (map) entries, use a `Map` rather than a plain `Object`. This will nest for any encountered map. During encode, a `Map` will be interpreted as an `Object` and will round-trip as such unless `useMaps` is supplied, in which case, all `Map`s and `Object`s will round-trip as `Map`s. There is no way to retain the distinction during round-trip without using a custom tag.
 * `tags` (array): a mapping of tag number to tag decoder function. By default no tags are supported. See [Tag decoders](#tag-decoders).
 
 ### Type encoders
 
 The `typeEncoders` property to the `options` argument to `encode()` allows you to add additional functionality to cborg, or override existing functionality.
 
-When converting JavaScript objects, types are differentiated using [@sindresorhus/is](https://github.com/sindresorhus/is) and an internal set of type encoders are used to convert objects to their appropriate CBOR form. Supported types are: `null`, `undefined`, `number`, `bigint`, `string`, `boolean`, `Array`, `Object`, `Map`, `Buffer`, `ArrayBuffer`, `DataView`, `Uint8Array` and all other `TypedArray`s (their underlying byte array is encoded, so they will all round-trip as a `Uint8Array` since the type information is lost). Any object that doesn't match a type in this list will cause an error to be thrown during decode. e.g. `encode(new Date())` will throw an error because there is no internal `Date` type encoder.
+When converting JavaScript objects, types are differentiated using the same differentiation as [@sindresorhus/is](https://github.com/sindresorhus/is) _(a custom implementation is used internally for performance reasons)_ and an internal set of type encoders are used to convert objects to their appropriate CBOR form. Supported types are: `null`, `undefined`, `number`, `bigint`, `string`, `boolean`, `Array`, `Object`, `Map`, `Buffer`, `ArrayBuffer`, `DataView`, `Uint8Array` and all other `TypedArray`s (their underlying byte array is encoded, so they will all round-trip as a `Uint8Array` since the type information is lost). Any object that doesn't match a type in this list will cause an error to be thrown during decode. e.g. `encode(new Date())` will throw an error because there is no internal `Date` type encoder.
 
 The `typeEncoders` option is an object whose property names match to @sindresorhus/is type names. When this option is provided and a property exists for any given object's type, the function provided as the value to that property is called with the object as an argument.
 
@@ -248,6 +250,13 @@ Currently, there are two areas that cbor cannot impose strictness requirements (
 
 * Smallest-possible floats, or always-float64 cannot be enforced on decode.
 * Map ordering cannot be enforced on decode.
+
+### Round-trip consistency
+
+There are a number of forms where an object will not round-trip precisely, if this matters for an application, care should be taken, or certain types should be disallowed entirely during encode.
+
+* All `TypedArray`s will decode as `Uint8Array`s, unless a custom tag is used.
+* Both `Map` and `Object` will be encoded as a CBOR `map`, as will any other object that inherits from `Object` that can't be differentiated by the [@sindresorhus/is](https://github.com/sindresorhus/is) algorithm. They will all decode as `Object` by default, or `Map` if `useMaps` is set to `true`. e.g. `{ foo: new Map() }` will round-trip to `{ foo: {} }` by default.
 
 ## License and Copyright
 
