@@ -92,5 +92,17 @@ describe('float', () => {
       assert.deepStrictEqual(decode(fromHex('830102f7')), [1, 2, undefined])
       assert.throws(() => decode(fromHex('830102f7'), { allowUndefined: false }), /undefined/)
     })
+
+    it('can switch off Infinity support', () => {
+      assert.deepStrictEqual(decode(fromHex('830102f97c00')), [1, 2, Infinity])
+      assert.deepStrictEqual(decode(fromHex('830102f9fc00')), [1, 2, -Infinity])
+      assert.throws(() => decode(fromHex('830102f97c00'), { allowInfinity: false }), /Infinity/)
+      assert.throws(() => decode(fromHex('830102f9fc00'), { allowInfinity: false }), /Infinity/)
+    })
+
+    it('can switch off NaN support', () => {
+      assert.deepStrictEqual(decode(fromHex('830102f97e00')), [1, 2, NaN])
+      assert.throws(() => decode(fromHex('830102f97e00'), { allowNaN: false }), /NaN/)
+    })
   })
 })

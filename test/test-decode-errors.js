@@ -45,4 +45,9 @@ describe('decode errors', () => {
     // last value missing
     assert.throws(() => decode(fromHex('82ff')), /unexpected break to lengthed array/)
   })
+
+  it('too many terminals', () => {
+    // two '1's
+    assert.throws(() => decode(fromHex('0101')), /too many terminals/)
+  })
 })

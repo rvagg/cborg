@@ -11,6 +11,7 @@ const { assert } = chai
 
 const fixtures = [
   { data: 'a0', expected: {}, type: 'map empty' },
+  { data: 'a0', expected: new Map(), type: 'map empty (useMaps)', useMaps: true },
   { data: 'a1616101', expected: { a: 1 }, type: 'map 1 pair' },
   { data: 'a161316161', expected: { 1: 'a' }, type: 'map 1 pair (rev)' },
   {
@@ -107,7 +108,29 @@ const fixtures = [
     ]),
     type: 'map with ints and negints',
     useMaps: true
-  }
+  },
+  {
+    data: 'a44104636f6e65430102026374776f430102036574687265654301020464666f7572',
+    encode: toMap([
+      [Uint8Array.from([1, 2, 3]), 'three'],
+      [Uint8Array.from([4]), 'one'],
+      [Uint8Array.from([1, 2, 4]), 'four'],
+      [Uint8Array.from([1, 2, 2]), 'two']
+    ]),
+    expected: toMap([
+      [Uint8Array.from([4]), 'one'],
+      [Uint8Array.from([1, 2, 2]), 'two'],
+      [Uint8Array.from([1, 2, 3]), 'three'],
+      [Uint8Array.from([1, 2, 4]), 'four']
+    ]),
+    type: 'map with bytes keys',
+    useMaps: true
+  },
+  // testing lengths encoded as too-large ints
+  { data: 'b801616101', expected: { a: 1 }, type: 'map 1 pair, length8', strict: false },
+  { data: 'b90001616101', expected: { a: 1 }, type: 'map 1 pair, length16', strict: false },
+  { data: 'ba00000001616101', expected: { a: 1 }, type: 'map 1 pair, length32', strict: false },
+  { data: 'bb0000000000000001616101', expected: { a: 1 }, type: 'map 1 pair, length64', strict: false }
 ]
 
 function toMap (arr) {

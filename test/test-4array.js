@@ -27,7 +27,12 @@ const fixtures = [
     data: '8265617272617982626f66820582666e657374656482666172726179736121',
     expected: ['array', ['of', [5, ['nested', ['arrays', '!']]]]],
     type: 'array nested'
-  }
+  },
+  // testing lengths encoded as too-large ints
+  { data: '980403040506', expected: [3, 4, 5, 6], type: 'array 4 ints, length8', strict: false },
+  { data: '99000403040506', expected: [3, 4, 5, 6], type: 'array 4 ints, length16', strict: false },
+  { data: '9a0000000403040506', expected: [3, 4, 5, 6], type: 'array 4 ints, length32', strict: false },
+  { data: '9b000000000000000403040506', expected: [3, 4, 5, 6], type: 'array 4 ints, length64', strict: false }
 ]
 
 describe('array', () => {

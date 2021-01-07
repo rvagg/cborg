@@ -7,7 +7,8 @@ import chai from 'chai'
 const { assert } = chai
 
 describe('Fuzz round-trip', () => {
-  it('random objects', () => {
+  it('random objects', function () {
+    this.timeout(5000)
     for (let i = 0; i < 1000; i++) {
       const obj = garbage(300, { weights: { CID: 0 } })
       const byts = encode(obj)

@@ -32,11 +32,9 @@
     "ipld-garbage": "^1.0.2",
     "mocha": "^8.2.1",
     "polendina": "^1.1.0",
-    "standard": "^16.0.1"
+    "standard": "^16.0.3"
   },
-  "dependencies": {
-    "@sindresorhus/is": "^4.0.0"
-  },
+  "dependencies": {},
   "exports": {
     ".": {
       "import": "./cborg.js"

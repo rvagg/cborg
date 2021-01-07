@@ -67,6 +67,30 @@ describe('tag', () => {
     assert.instanceOf(decoded, Uint16Array)
     assert.equal(toHex(decoded), toHex(Uint16Array.from([1, 2, 3])))
   })
+
+  it('tag int too large', () => {
+    const verify = (hex, strict) => {
+      if (!strict) {
+        assert.throws(
+          () => decode(fromHex(hex), { tags: { 8: dateDecoder }, strict: true }),
+          /integer encoded in more bytes than necessary/)
+      }
+      const decodedDate = decode(fromHex(hex), { tags: { 8: dateDecoder }, strict })
+      assert.instanceOf(decodedDate, Date)
+      assert.equal(decodedDate.toISOString(), new Date('2013-03-21T20:04:00Z').toISOString())
+    }
+    // compact
+    verify('c874323031332d30332d32315432303a30343a30305a', true)
+    // int8
+    verify('d80874323031332d30332d32315432303a30343a30305a', false)
+    // int16
+    verify('d9000874323031332d30332d32315432303a30343a30305a', false)
+    // int32
+    verify('da0000000874323031332d30332d32315432303a30343a30305a', false)
+    // int64
+    verify('db000000000000000874323031332d30332d32315432303a30343a30305a', false)
+  })
+
   /*
   describe('taglib', () => {
     it('bigint', () => {
