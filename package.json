@@ -26,15 +26,14 @@
   "author": "Rod <rod@vagg.org> (http://r.va.gg/)",
   "license": "Apache-2.0",
   "devDependencies": {
-    "c8": "^7.3.5",
+    "c8": "^7.4.0",
     "chai": "^4.2.0",
     "hundreds": "^0.0.9",
-    "ipld-garbage": "^1.0.2",
+    "ipld-garbage": "^1.0.3",
     "mocha": "^8.2.1",
     "polendina": "^1.1.0",
     "standard": "^16.0.3"
   },
-  "dependencies": {},
   "exports": {
     ".": {
       "import": "./cborg.js"
