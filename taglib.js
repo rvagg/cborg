@@ -20,6 +20,7 @@ const twob = BigInt(2)
 const eightb = BigInt(8)
 
 export function bigIntDecoder (bytes) {
+  // TODO: assert that `bytes` is a `Uint8Array`
   let bi = zerob
   for (let ii = 0; ii < bytes.length; ii++) {
     bi = (bi << eightb) + BigInt(bytes[ii])

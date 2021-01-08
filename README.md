@@ -1,10 +1,10 @@
 # cborg - fast CBOR with a focus on strictness
 
-[CBOR](https://cbor.io/) is "Concise Binary Object Representation", defined by [RFC 8949](https://tools.ietf.org/html/rfc8949).
+[CBOR](https://cbor.io/) is "Concise Binary Object Representation", defined by [RFC 8949](https://tools.ietf.org/html/rfc8949). Like JSON, but binary, more compact, and supporting a much broader range of data types.
 
 **cborg** focuses on strictness and deterministic data representations. CBORs flexibility leads to problems where determinism matters, such as in content-addressed data where your data encoding should converge on same-bytes for same-data. **cborg** helps aleviate these challenges.
 
-**cborg** is also fast, and is suitable for the browser and Node.js.
+**cborg** is also fast, and is suitable for the browser (is `Uint8Array` native) and Node.js.
 
 **cborg** supports CBOR tags, but does not ship with them enabled by default. If you want tags, you need to plug them in to the encoder and decoder.
 
@@ -89,20 +89,20 @@ Encode a JavaScript object and return a `Uint8Array` with the CBOR byte represen
 
 * Objects containing circular references will be rejected.
 * JavaScript objects that don't have standard CBOR type representations (without tags) may be rejected or encoded in surprising ways. If you need to encode a `Date` or a `RegExp` or another exotic type, you should either form them into intermediate forms before encoding or enable a tag encoder (see [Type encoders](#type-encoders)).
-  * Supported types are: `null`, `undefined`, `number`, `bigint`, `string`, `boolean`, `Array`, `Object`, `Map`, `Buffer`, `ArrayBuffer`, `DataView`, `Uint8Array` and all other `TypedArray`s (the underlying byte array of TypedArrays is encoded, so they will all round-trip as a `Uint8Array` since the type information is lost).
+  * Natively supported types are: `null`, `undefined`, `number`, `bigint`, `string`, `boolean`, `Array`, `Object`, `Map`, `Buffer`, `ArrayBuffer`, `DataView`, `Uint8Array` and all other `TypedArray`s (the underlying byte array of TypedArrays is encoded, so they will all round-trip as a `Uint8Array` since the type information is lost).
 * `Number`s will be encoded as integers if they don't have a fractional part (`1` and `1.0` are both considered integers, they are identical in JavaScript). Otherwise they will be encoded as floats.
 * Integers will be encoded to their smallest possible representations: compacted (into the type byte), 8-bit, 16-bit, 32-bit or 64-bit.
 * Integers larger than `Number.MAX_SAFE_INTEGER` or less than `Number.MIN_SAFE_INTEGER` will be encoded as floats. There is no way to safely determine whether a number has a fractional part outside of this range.
 * `BigInt`s are supported by default within the 64-bit unsigned range but will be also be encoded to their smallest possible representation (so will not round-trip as a `BigInt` if they are smaller than `Number.MAX_SAFE_INTEGER`). Larger `BigInt`s require a tag (officially tags 2 and 3).
-* Floats will be encoded in their smallest possible representations: 16-bit, 32-bit or 64-bit.
-* Object properties are sorted according to the original [RFC 7049](https://tools.ietf.org/html/rfc7049) canonical representation recommended method: length-first and then bytewise. Note that this recommendation has changed in [RFC 8949](https://tools.ietf.org/html/rfc8949) to be a plain bytewise (this is not currently supported but pull requests are welcome).
-* The only CBOR major 7 "simple values" supported are `true`, `false`, `undefined` and `null`. "Simple values" outside of this range are intentionally not supported.
+* Floats will be encoded in their smallest possible representations: 16-bit, 32-bit or 64-bit. Unless the `float64` option is supplied.
+* Object properties are sorted according to the original [RFC 7049](https://tools.ietf.org/html/rfc7049) canonical representation recommended method: length-first and then bytewise. Note that this recommendation has changed in [RFC 8949](https://tools.ietf.org/html/rfc8949) to be plain bytewise (this is not currently supported but pull requests are welcome to add it as an option).
+* The only CBOR major 7 "simple values" supported are `true`, `false`, `undefined` and `null`. "Simple values" outside of this range are intentionally not supported (pull requests welcome to enable them with an option).
 * Objects, arrays, strings and bytes are encoded as fixed-length, encoding as indefinite length is intentionally not supported.
 
 #### Options
 
 * `float64` (boolean, default `false`): do not attempt to store floats as their smallest possible form, store all floats as 64-bit
-* `typeEncoders` (object): a mapping of type name to function that can encode that type into cborg tokens. See the [Type encoders](#type-encoders) section below for more information.
+* `typeEncoders` (object): a mapping of type name to function that can encode that type into cborg tokens. This may also be used to reject or transform types as objects are dissected for encoding. See the [Type encoders](#type-encoders) section below for more information.
 
 ### `decode(data[, options])`
 
@@ -117,17 +117,18 @@ const { decode } = require('cborg')
 Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScript object.
 
 * Integers (major 0 and 1) that are outside of the safe integer range will be converted to a `BigInt`.
-* The only CBOR major 7 "simple values" supported are `true`, `false`, `undefined` and `null`. "Simple values" outside of this range are intentionally not supported.
+* The only CBOR major 7 "simple values" supported are `true`, `false`, `undefined` and `null`. "Simple values" outside of this range are intentionally not supported (pull requests welcome to enable them with an option).
+* Indefinite length strings and byte arrays are intentionally not supported (pull requests welcome to enable them with an option). Although indefinite length arrays and maps are supported by default.
 
 #### Options
 
-* `allowIndefinite` (boolean, default `true`): when the indefinite length additional information (31) is encountered for any type (arrays, maps, strings, bytes) _or_ a "break" is encountered, an error will be thrown.
+* `allowIndefinite` (boolean, default `true`): when the indefinite length additional information (`31`) is encountered for any type (arrays, maps, strings, bytes) _or_ a "break" is encountered, an error will be thrown.
 * `allowUndefined` (boolean, default `true`): when major 7, minor 23 (`undefined`) is encountered, an error will be thrown. To disallow `undefined` on encode, a custom [type encoder](#type-encoders) for `'undefined'` will need to be supplied.
 * `allowInfinity` (boolean, default `true`): when an IEEE 754 `Infinity` or `-Infinity` value is encountered when decoding a major 7, an error will be thrown. To disallow `Infinity` and `-Infinity` on encode, a custom [type encoder](#type-encoders) for `'number'` will need to be supplied.
 * `allowNaN` (boolean, default `true`): when an IEEE 754 `NaN` value is encountered when decoding a major 7, an error will be thrown. To disallow `NaN` on encode, a custom [type encoder](#type-encoders) for `'number'` will need to be supplied.
 * `allowBigInt` (boolean, default `true`): when an integer outside of the safe integer range is encountered, an error will be thrown. To disallow `BigInt`s on encode, a custom [type encoder](#type-encoders) for `'bigint'` will need to be supplied.
 * `strict` (boolean, default `false`): when decoding integers, including for lengths (arrays, maps, strings, bytes), values will be checked to see whether they were encoded in their smallest possible form. If not, an error will be thrown.
-  * Currently, this form of deterministic strictness cannot be enforced for float representations, or map key ordering (pull requests welcome!).
+  * Currently, this form of deterministic strictness cannot be enforced for float representations, or map key ordering (pull requests _very_ welcome).
 * `useMaps` (boolean, default `false`): when decoding major 5 (map) entries, use a `Map` rather than a plain `Object`. This will nest for any encountered map. During encode, a `Map` will be interpreted as an `Object` and will round-trip as such unless `useMaps` is supplied, in which case, all `Map`s and `Object`s will round-trip as `Map`s. There is no way to retain the distinction during round-trip without using a custom tag.
 * `tags` (array): a mapping of tag number to tag decoder function. By default no tags are supported. See [Tag decoders](#tag-decoders).
 
@@ -135,7 +136,7 @@ Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScrip
 
 The `typeEncoders` property to the `options` argument to `encode()` allows you to add additional functionality to cborg, or override existing functionality.
 
-When converting JavaScript objects, types are differentiated using the same differentiation as [@sindresorhus/is](https://github.com/sindresorhus/is) _(a custom implementation is used internally for performance reasons)_ and an internal set of type encoders are used to convert objects to their appropriate CBOR form. Supported types are: `null`, `undefined`, `number`, `bigint`, `string`, `boolean`, `Array`, `Object`, `Map`, `Buffer`, `ArrayBuffer`, `DataView`, `Uint8Array` and all other `TypedArray`s (their underlying byte array is encoded, so they will all round-trip as a `Uint8Array` since the type information is lost). Any object that doesn't match a type in this list will cause an error to be thrown during decode. e.g. `encode(new Date())` will throw an error because there is no internal `Date` type encoder.
+When converting JavaScript objects, types are differentiated using the method and naming used by [@sindresorhus/is](https://github.com/sindresorhus/is) _(a custom implementation is used internally for performance reasons)_ and an internal set of type encoders are used to convert objects to their appropriate CBOR form. Supported types are: `null`, `undefined`, `number`, `bigint`, `string`, `boolean`, `Array`, `Object`, `Map`, `Buffer`, `ArrayBuffer`, `DataView`, `Uint8Array` and all other `TypedArray`s (their underlying byte array is encoded, so they will all round-trip as a `Uint8Array` since the type information is lost). Any object that doesn't match a type in this list will cause an error to be thrown during decode. e.g. `encode(new Date())` will throw an error because there is no internal `Date` type encoder.
 
 The `typeEncoders` option is an object whose property names match to @sindresorhus/is type names. When this option is provided and a property exists for any given object's type, the function provided as the value to that property is called with the object as an argument.
 
@@ -194,7 +195,7 @@ Using type encoders we can:
 
 ### Tag decoders
 
-By default cborg does not support decoding of any tags. Where a tag is encountered during decode, an error will be thrown. If tag support is needed, they will need to be supplied as options to the `decode()` function. The `tags` property should contain an array where the indexes correspond to the tags that are encountered during decode, and the values are functions that are able to turn the corresponding section of bytes to a JavaScript object. Each tag token in CBOR is followed by a byte array of arbitrary length. This byte array is supplied to the tag decoder function.
+By default cborg does not support decoding of any tags. Where a tag is encountered during decode, an error will be thrown. If tag support is needed, they will need to be supplied as options to the `decode()` function. The `tags` property should contain an array where the indexes correspond to the tag numbers that are encountered during decode, and the values are functions that are able to turn the following token(s) into a JavaScript object. Each tag token in CBOR is followed by a data item, often a byte array of arbitrary length, but can be a more complex series of tokens that form a nested data item. This token is supplied to the tag decoder function.
 
 This example is available from the cborg taglib as `bigIntDecoder` and `bigNegIntDecoder` (`import { bigIntDecoder, bigNegIntDecoder } as taglib from 'cborg/taglib'`) and implements CBOR tags 2 and 3 (bigint and negative bigint). This function would be registered using an options parameter:
 
@@ -227,7 +228,7 @@ function bigNegIntDecoder (bytes) {
 cborg is designed with deterministic encoding forms as a primary feature. It is suitable for use with content addressed systems or other systems where convergence of binary forms is important. The ideal is to have strictly _one way_ of mapping a set of data into a binary form. Unfortunately CBOR has many opportunities for flexibility, including:
 
 * Varying number sizes and no strict requirement for their encoding - e.g. a `1` may be encoded as `0x01`, `0x1801`, `0x190001`, `1a00000001` or `1b0000000000000001`.
-* Varying int sizes used as lengths for lengthed objects (maps, arrays, strings, bytes) - e.g. a single entry array could specify its length using any of the above forms for `1`.
+* Varying int sizes used as lengths for lengthed objects (maps, arrays, strings, bytes) - e.g. a single entry array could specify its length using any of the above forms for `1`. Tags can also vary in size and still represent the same number.
 * Indefinite length items where the length is omitted from the additional item of the entity token and a "break" is inserted to indicate the end of of the object. This provides two ways to encode the same object.
 * Tags that can allow alternative representations of objects - e.g. using the bigint or negative bigint tags to represent standard size integers.
 * Map ordering is flexible by default, so a single map can be represented in many different forms by shuffling the keys.
@@ -236,7 +237,7 @@ cborg is designed with deterministic encoding forms as a primary feature. It is 
 By default, cborg will always **encode** objects to the same bytes by applying some strictness rules:
 
 * Using smallest-possible representations for ints, negative ints, floats and lengthed object lengths.
-* Always sorting maps using the original recommended [RFC 7049](https://tools.ietf.org/html/rfc7049) map key ordering rules.
+* Always sorting maps using the _original_ recommended [RFC 7049](https://tools.ietf.org/html/rfc7049) map key ordering rules.
 * Omitting support for tags (therefore omitting support for exotic object types).
 * Applying deterministic rules to `number` differentiation - if a fractional part is missing and it's within the safe integer boundary, it's encoded as an integer, otherwise it's encoded as a float.
 
@@ -245,8 +246,9 @@ By default, cborg allows for some flexibility on **decode** of objects, which wi
 * `strict: true` to impose strict sizing rules for int, negative ints and lengths of lengthed objects
 * `allowIndefinite: false` to disallow indefinite lengthed objects and the "break" tag
 * Not providing any tag decoders, or ensuring that tag decoders are strict about their forms (e.g. a bigint decoder could reject bigints that could have fit into a standard major 0 64-bit integer).
+* Overriding type decoders where they may introduce undesired flexibility.
 
-Currently, there are two areas that cbor cannot impose strictness requirements (pull requests welcome!):
+Currently, there are two areas that cborg cannot impose strictness requirements (pull requests welcome!):
 
 * Smallest-possible floats, or always-float64 cannot be enforced on decode.
 * Map ordering cannot be enforced on decode.
