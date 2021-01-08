@@ -17,7 +17,7 @@ const write = process.stdout
       }
     }
 
-function runWith (description, count, size, options) {
+function runWith (description, count, targetTime, size, options) {
   let borcDecoder = null
   const borcDecode = (bytes) => {
     if (!borcDecoder) {
@@ -29,7 +29,7 @@ function runWith (description, count, size, options) {
 
   const fixtures = []
 
-  console.log(description)
+  console.log(`${description} @ ${count.toLocaleString()}`)
   for (let i = 0; i < count; i++) {
     const obj = garbage(size, options)
     const cbyts = encode(obj)
@@ -48,49 +48,68 @@ function runWith (description, count, size, options) {
   const avgSize = Math.round(fixtures.reduce((p, c) => p + c[1].length, 0) / fixtures.length)
 
   const enc = (encoder) => {
-    const start = Date.now()
     for (const [obj, byts] of fixtures) {
       const ebyts = encoder(obj)
       if (byts.length !== ebyts.length) {
         throw new Error('bork')
       }
     }
-    return Date.now() - start
+    return fixtures.length
+  }
+
+  const bench = (bfn) => {
+    const start = Date.now()
+    let opcount = 0
+    do {
+      opcount += bfn()
+    } while (Date.now() - start < targetTime)
+    const ops = Math.round(opcount / ((Date.now() - start) / 1000))
+    return ops
   }
 
   const dec = (decoder) => {
-    const start = Date.now()
     for (const [obj, byts] of fixtures) {
       const cobj = decoder(byts)
-      if (obj != null) {
+      if (obj != null && typeof obj === 'object') {
         assert.deepStrictEqual(Object.keys(cobj).length, Object.keys(obj).length)
       } else {
-        assert(cobj === null)
+        assert.deepStrictEqual(obj, cobj)
       }
-      // assert.deepStrictEqual(obj, cobj)
     }
-    return Date.now() - start
+    return fixtures.length
   }
 
   const cmp = (desc, cbfn, bofn) => {
-    write(`\t${desc} (avg ${avgSize.toLocaleString()}B):`)
-    const borcTime = bofn()
-    write(` borc @ ${borcTime.toLocaleString()} ms`)
-    const cborgTime = cbfn()
-    write(` / cborg @ ${cborgTime.toLocaleString()} ms`)
-    write(` = ${(Math.round((borcTime / cborgTime) * 1000) / 10).toLocaleString()} %\n`)
+    write(`\t${desc} (avg ${avgSize.toLocaleString()} b):`)
+    const cborgOps = bench(cbfn)
+    write(` cborg @ ${cborgOps.toLocaleString()} op/s`)
+    const borcOps = bench(bofn)
+    write(` / borc @ ${borcOps.toLocaleString()} op/s`)
+    const percent = Math.round((cborgOps / borcOps) * 1000) / 10
+    write(` = ${(percent).toLocaleString()} %\n`)
+    return percent
   }
 
-  cmp('encode', () => enc(encode), () => enc(borc.encode))
-  cmp('decode', () => dec(decode), () => dec(borcDecode))
+  return [
+    cmp('encode', () => enc(encode), () => enc(borc.encode)),
+    cmp('decode', () => dec(decode), () => dec(borcDecode))
+  ]
 }
 
-runWith(`rnd-100 x ${(50000).toLocaleString()}`, 50000, 100, { weights: { CID: 0 } })
-runWith(`rnd-300 x ${(50000).toLocaleString()}`, 50000, 300, { weights: { CID: 0 } })
-runWith(`rnd-1000 x ${(20000).toLocaleString()}`, 20000, 1000, { weights: { CID: 0 } })
-runWith(`rnd-fil-100 x ${(100000).toLocaleString()}`, 100000, 100, { weights: { float: 0, map: 0, CID: 0 } })
-runWith(`rnd-fil-300 x ${(100000).toLocaleString()}`, 100000, 300, { weights: { float: 0, map: 0, CID: 0 } })
-runWith(`rnd-fil-500 x ${(50000).toLocaleString()}`, 50000, 500, { weights: { float: 0, map: 0, CID: 0 } })
-runWith(`rnd-fil-1000 x ${(20000).toLocaleString()}`, 20000, 1000, { weights: { float: 0, map: 0, CID: 0 } })
-runWith(`rnd-fil-2000 x ${(10000).toLocaleString()}`, 50000, 2000, { weights: { float: 0, map: 0, CID: 0 } })
-runWith(`rnd-nostr-300 x ${(50000).toLocaleString()}`, 50000, 300, { weights: { CID: 0, string: 0 } })
+const targetTime = 1000
+const accum = []
+accum.push(runWith('rnd-100', 1000, targetTime, 100, { weights: { CID: 0 } }))
+accum.push(runWith('rnd-300', 1000, targetTime, 300, { weights: { CID: 0 } }))
+accum.push(runWith('rnd-nomap-300', 1000, targetTime, 300, { weights: { CID: 0, map: 0 } }))
+accum.push(runWith('rnd-nofloat-300', 1000, targetTime, 300, { weights: { CID: 0, float: 0 } }))
+accum.push(runWith('rnd-nostr-300', 1000, targetTime, 300, { weights: { CID: 0, string: 0, bytes: 0 } }))
+accum.push(runWith('rnd-nostrbyts-300', 1000, targetTime, 300, { weights: { CID: 0, string: 0 } }))
+accum.push(runWith('rnd-1000', 1000, targetTime, 1000, { weights: { CID: 0 } }))
+accum.push(runWith('rnd-2000', 1000, targetTime, 2000, { weights: { CID: 0 } }))
+accum.push(runWith('rnd-fil-100', 1000, targetTime, 100, { weights: { float: 0, map: 0, CID: 0 } }))
+accum.push(runWith('rnd-fil-300', 1000, targetTime, 300, { weights: { float: 0, map: 0, CID: 0 } }))
+accum.push(runWith('rnd-fil-500', 1000, targetTime, 500, { weights: { float: 0, map: 0, CID: 0 } }))
+accum.push(runWith('rnd-fil-1000', 1000, targetTime, 1000, { weights: { float: 0, map: 0, CID: 0 } }))
+accum.push(runWith('rnd-fil-2000', 1000, targetTime, 2000, { weights: { float: 0, map: 0, CID: 0 } }))
+console.log(`Avg encode: ${Math.round(accum.reduce((p, c) => p + c[0], 0) / accum.length).toLocaleString()} %`)
+console.log(`Avg decode: ${Math.round(accum.reduce((p, c) => p + c[1], 0) / accum.length).toLocaleString()} %`)
