@@ -4,12 +4,13 @@ import chai from 'chai'
 import { exec } from 'child_process'
 import process from 'process'
 import path from 'path'
+import { fileURLToPath } from 'url'
 // included here for ipjs compile tree
 import bin from '../lib/bin.js' // eslint-disable-line
 
 const { assert } = chai
 
-const binPath = path.join(path.dirname(new URL(import.meta.url).pathname), '../lib/bin.js')
+const binPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../lib/bin.js')
 
 async function execBin (cmd) {
   return new Promise((resolve, reject) => {
