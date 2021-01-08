@@ -8,6 +8,20 @@
 
 **cborg** supports CBOR tags, but does not ship with them enabled by default. If you want tags, you need to plug them in to the encoder and decoder.
 
+* [Example](#example)
+* [CLI](#cli)
+  * [`cborg json2hex '<json string>'`](#cborg-json2hex-json-string)
+  * [`cborg hex2json [--pretty] <hex string>`](#cborg-hex2json---pretty-hex-string)
+  * [`cborg hex2diag <hex string>`](#cborg-hex2diag-hex-string)
+* [API](#api)
+  * [`encode(object[, options])`](#encodeobject-options)
+  * [`decode(data[, options])`](#decodedata-options)
+  * [Type encoders](#type-encoders)
+  * [Tag decoders](#tag-decoders)
+* [Deterministic encoding recommendations](#deterministic-encoding-recommendations)
+  * [Round-trip consistency](#round-trip-consistency)
+* [License and Copyright](#license-and-copyright)
+
 ## Example
 
 ```js
