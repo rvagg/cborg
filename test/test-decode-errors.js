@@ -8,6 +8,12 @@ import { fromHex } from '../lib/byte-utils.js'
 const { assert } = chai
 
 describe('decode errors', () => {
+  it('not Uint8Array', () => {
+    for (const arg of [true, false, null, undefined, 'string', { obj: 'ect' }, {}, ['array'], [], [1, 2, 3], 0, 100, 1.1, -1, Symbol.for('nope')]) {
+      assert.throws(() => decode(arg), /CBOR decode error.*must be a Uint8Array/)
+    }
+  })
+
   it('no data', () => {
     assert.throws(() => decode(new Uint8Array('')), /CBOR decode error.*content/)
   })
