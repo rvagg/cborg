@@ -20,9 +20,15 @@ const fixtures = [
   { data: 'fb8000000000000002', expected: -1e-323, type: 'float64' },
   { data: 'fb3fefffffffffffff', expected: 0.9999999999999999, type: 'float64' },
   { data: 'fbbfefffffffffffff', expected: -0.9999999999999999, type: 'float64' },
-  { data: 'f97c00', expected: Infinity, type: 'Infinity' },
-  { data: 'f9fc00', expected: -Infinity, type: '-Infinity' },
-  { data: 'f97e00', expected: NaN, type: 'NaN' },
+  { data: 'f97c00', expected: Infinity, type: 'Infinity' }, // special CBOR token for -Infinity
+  { data: 'fb7ff0000000000000', expected: Infinity, type: 'Infinity', strict: false }, // an IEEE 754 representation of Infinity
+  { data: 'f9fc00', expected: -Infinity, type: '-Infinity' }, // special CBOR token for -Infinity
+  { data: 'fbfff0000000000000', expected: -Infinity, type: '-Infinity', strict: false }, // an IEEE 754 representation of Infinity
+  { data: 'f97e00', expected: NaN, type: 'NaN' }, // special CBOR token for NaN
+  { data: 'f97ff8', expected: NaN, type: 'NaN', strict: false }, // one of the many IEEE 754 representations of NaN
+  { data: 'fa7ff80000', expected: NaN, type: 'NaN', strict: false },
+  { data: 'fb7ff8000000000000', expected: NaN, type: 'NaN', strict: false },
+  { data: 'fb7ff8cafedeadbeef', expected: NaN, type: 'NaN', strict: false }, // yep, that's NaN too
   { data: 'fb40f4241a31a5a515', expected: 82497.63712086187, type: 'float64' }
 ]
 
@@ -47,9 +53,11 @@ describe('float', () => {
 
   describe('encode', () => {
     for (const fixture of fixtures) {
-      it(`should encode ${fixture.type}=${fixture.expected}`, () => {
-        assert.strictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type}`)
-      })
+      if (fixture.strict !== false) {
+        it(`should encode ${fixture.type}=${fixture.expected}`, () => {
+          assert.strictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type}`)
+        })
+      }
     }
   })
 
@@ -98,11 +106,17 @@ describe('float', () => {
       assert.deepStrictEqual(decode(fromHex('830102f9fc00')), [1, 2, -Infinity])
       assert.throws(() => decode(fromHex('830102f97c00'), { allowInfinity: false }), /Infinity/)
       assert.throws(() => decode(fromHex('830102f9fc00'), { allowInfinity: false }), /Infinity/)
+      for (const fixture of fixtures.filter((f) => f.type.endsWith('Infinity'))) {
+        assert.throws(() => decode(fromHex(fixture.data), { allowInfinity: false }), /Infinity/)
+      }
     })
 
     it('can switch off NaN support', () => {
       assert.deepStrictEqual(decode(fromHex('830102f97e00')), [1, 2, NaN])
       assert.throws(() => decode(fromHex('830102f97e00'), { allowNaN: false }), /NaN/)
+      for (const fixture of fixtures.filter((f) => f.type === 'NaN')) {
+        assert.throws(() => decode(fromHex(fixture.data), { allowNaN: false }), /NaN/)
+      }
     })
   })
 })

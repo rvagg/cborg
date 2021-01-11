@@ -243,6 +243,7 @@ cborg is designed with deterministic encoding forms as a primary feature. It is 
 
 * Varying number sizes and no strict requirement for their encoding - e.g. a `1` may be encoded as `0x01`, `0x1801`, `0x190001`, `1a00000001` or `1b0000000000000001`.
 * Varying int sizes used as lengths for lengthed objects (maps, arrays, strings, bytes) - e.g. a single entry array could specify its length using any of the above forms for `1`. Tags can also vary in size and still represent the same number.
+* IEEE 754 allows for `NaN`, `Infinity` and `-Infinity` to be represented in many different ways, meaning it is possible to represent the same data using many different byte forms.
 * Indefinite length items where the length is omitted from the additional item of the entity token and a "break" is inserted to indicate the end of of the object. This provides two ways to encode the same object.
 * Tags that can allow alternative representations of objects - e.g. using the bigint or negative bigint tags to represent standard size integers.
 * Map ordering is flexible by default, so a single map can be represented in many different forms by shuffling the keys.
@@ -258,6 +259,7 @@ By default, cborg will always **encode** objects to the same bytes by applying s
 By default, cborg allows for some flexibility on **decode** of objects, which will present some challenges if users wish to impose strictness requirements at both serialization _and_ deserialization. Options that can be provided to `decode()` to impose some strictness requirements are:
 
 * `strict: true` to impose strict sizing rules for int, negative ints and lengths of lengthed objects
+* `allowNaN: false` and `allowInfinity` to prevent decoding of any value that would resolve to `NaN`, `Infinity` or `-Infinity`, using CBOR tokens or IEEE 754 representation—as long as your application can do without these symbols.
 * `allowIndefinite: false` to disallow indefinite lengthed objects and the "break" tag
 * Not providing any tag decoders, or ensuring that tag decoders are strict about their forms (e.g. a bigint decoder could reject bigints that could have fit into a standard major 0 64-bit integer).
 * Overriding type decoders where they may introduce undesired flexibility.
