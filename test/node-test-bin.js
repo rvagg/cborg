@@ -42,6 +42,23 @@ Valid commands:
     }
   })
 
+  it('bad cmd', async () => {
+    try {
+      await execBin('blip')
+      assert.fail('should have errored')
+    } catch (e) {
+      assert.strictEqual(e.stdout, '')
+      assert.strictEqual(e.stderr,
+`Unknown command: 'blip'
+Usage: cborg <command> <args>
+Valid commands:
+\thex2diag <hex input>
+\thex2json [--pretty] <hex input>
+\tjson2hex '<json input>'
+`)
+    }
+  })
+
   it('help', async () => {
     const { stdout, stderr } = await execBin('help')
     assert.strictEqual(stdout, '')
