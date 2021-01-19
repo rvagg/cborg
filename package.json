@@ -9,7 +9,7 @@
   },
   "scripts": {
     "lint": "standard *.js lib/*.js test/*.js",
-    "build": "npx ipjs@latest build --tests && cp cli.js dist/",
+    "build": "npx ipjs build --tests && cp cli.js dist/",
     "test:cjs": "npm run build && mocha dist/cjs/node-test/test-*.js dist/cjs/node-test/node-test-*.js",
     "test:node": "c8 --check-coverage --branches 100 --functions 100 --lines 100 mocha test/test-*.js test/node-test-*.js",
     "test:browser": "polendina --page --worker --serviceworker --cleanup dist/cjs/node-test/test-*.js",
@@ -28,7 +28,7 @@
   "devDependencies": {
     "c8": "^7.4.0",
     "chai": "^4.2.0",
-    "ipld-garbage": "^1.0.3",
+    "ipld-garbage": "^2.0.0",
     "mocha": "^8.2.1",
     "polendina": "^1.1.0",
     "standard": "^16.0.3"
