@@ -89,4 +89,15 @@ describe('uint', () => {
       }
     })
   })
+
+  describe('toosmall', () => {
+    for (const fixture of fixtures) {
+      if (fixture.strict !== false && typeof fixture.expected === 'number') {
+        const small = BigInt(fixture.expected)
+        it(`should encode ${small}n`, () => {
+          assert.strictEqual(toHex(encode(BigInt(small))), fixture.data, `encode ${small}`)
+        })
+      }
+    }
+  })
 })
