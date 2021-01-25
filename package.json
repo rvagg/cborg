@@ -39,6 +39,9 @@
     },
     "./taglib": {
       "import": "./taglib.js"
+    },
+    "./json": {
+      "import": "./lib/json/json.js"
     }
   },
   "types": "cborg.d.ts"
