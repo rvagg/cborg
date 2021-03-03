@@ -40,5 +40,6 @@
     "./taglib": {
       "import": "./taglib.js"
     }
-  }
+  },
+  "types": "cborg.d.ts"
 }
