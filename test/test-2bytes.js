@@ -1,9 +1,10 @@
 /* eslint-env mocha */
 
 import chai from 'chai'
+import { Buffer } from 'buffer'
 
 import { decode, encode } from '../cborg.js'
-import { useBuffer, fromHex, toHex } from '../lib/byte-utils.js'
+import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
 
@@ -178,15 +179,13 @@ describe('bytes', () => {
     }
   })
 
-  if (useBuffer) {
-    describe('buffer', () => {
-      it('can encode Node.js Buffers', () => {
-        const obj = global.Buffer.from([1, 2, 3])
-        assert.equal(toHex(encode(obj)), '43010203')
-        const decoded = decode(fromHex('43010203'))
-        assert.instanceOf(decoded, Uint8Array)
-        assert.equal(toHex(decoded), toHex(obj))
-      })
+  describe('buffer', () => {
+    it('can encode Node.js Buffers', () => {
+      const obj = Buffer.from([1, 2, 3])
+      assert.equal(toHex(encode(obj)), '43010203')
+      const decoded = decode(fromHex('43010203'))
+      assert.instanceOf(decoded, Uint8Array)
+      assert.equal(toHex(decoded), toHex(obj))
     })
-  }
+  })
 })

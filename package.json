@@ -41,5 +41,8 @@
       "import": "./taglib.js"
     }
   },
-  "types": "cborg.d.ts"
+  "types": "cborg.d.ts",
+  "dependencies": {
+    "buffer": "^5.7.1"
+  }
 }
