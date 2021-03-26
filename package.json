@@ -9,7 +9,7 @@
   },
   "scripts": {
     "lint": "standard *.js lib/*.js test/*.js",
-    "build": "npx ipjs build --tests && cp cli.js cborg.d.ts dist/",
+    "build": "npx ipjs build --tests --main && cp cli.js cborg.d.ts dist/",
     "test:cjs": "npm run build && mocha dist/cjs/node-test/test-*.js dist/cjs/node-test/node-test-*.js",
     "test:node": "c8 --check-coverage --branches 100 --functions 100 --lines 100 mocha test/test-*.js test/node-test-*.js",
     "test:browser": "polendina --page --worker --serviceworker --cleanup dist/cjs/node-test/test-*.js",
