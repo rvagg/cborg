@@ -74,8 +74,8 @@ describe('uint', () => {
   describe('toobig', () => {
     it('bigger than 64-bit', () => {
       // boundary condition is right on 64-bit int
-      assert.doesNotThrow(() => encode(BigInt(2) ** BigInt(64) - BigInt(1)))
-      assert.throws(() => encode(BigInt(2) ** BigInt(64)), /BigInt larger than allowable range/)
+      assert.doesNotThrow(() => encode(BigInt('18446744073709551615') /* BigInt(2) ** BigInt(64) - BigInt(1) */))
+      assert.throws(() => encode(BigInt('18446744073709551616') /* BigInt(2) ** BigInt(64) */), /BigInt larger than allowable range/)
     })
 
     it('disallow BigInt', () => {

@@ -66,8 +66,8 @@ describe('negint', () => {
   describe('toobig', () => {
     it('bigger than 64-bit', () => {
       // boundary condition is right below 64-bit negint
-      assert.doesNotThrow(() => encode(BigInt(-1) * BigInt(2) ** BigInt(64)))
-      assert.throws(() => encode(BigInt(-1) * BigInt(2) ** BigInt(64) - BigInt(1)), /BigInt larger than allowable range/)
+      assert.doesNotThrow(() => encode(BigInt('-18446744073709551616') /* BigInt(-1) * BigInt(2) ** BigInt(64) */))
+      assert.throws(() => encode(BigInt('-18446744073709551617') /* BigInt(-1) * BigInt(2) ** BigInt(64) - BigInt(1) */), /BigInt larger than allowable range/)
     })
 
     it('disallow BigInt', () => {

@@ -16,7 +16,7 @@ can be done), or as examples for writing additional tags. Additional standard
 const neg1b = BigInt(-1)
 const pos1b = BigInt(1)
 const zerob = BigInt(0)
-const twob = BigInt(2)
+// const twob = BigInt(2)
 const eightb = BigInt(8)
 
 export function bigIntDecoder (bytes) {
@@ -39,8 +39,8 @@ function fromBigInt (bi) {
 
 // assuming that we're receiving a BigInt here, it should be registered for
 // type 'bigint' for this to work.
-const maxSafeBigInt = (twob ** BigInt(64)) - pos1b
-const minSafeBigInt = neg1b * (twob ** BigInt(64))
+const maxSafeBigInt = BigInt('18446744073709551615') // (twob ** BigInt(64)) - pos1b
+const minSafeBigInt = BigInt('-18446744073709551616') // neg1b * (twob ** BigInt(64))
 export function bigIntEncoder (obj) {
   if (obj >= minSafeBigInt && obj <= maxSafeBigInt) {
     return null // null = do it the standard way
