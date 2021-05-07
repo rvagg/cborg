@@ -19,6 +19,10 @@ const zerob = BigInt(0)
 // const twob = BigInt(2)
 const eightb = BigInt(8)
 
+/**
+ * @param {Uint8Array} bytes
+ * @returns {bigint}
+ */
 export function bigIntDecoder (bytes) {
   // TODO: assert that `bytes` is a `Uint8Array`
   let bi = zerob
@@ -28,6 +32,10 @@ export function bigIntDecoder (bytes) {
   return bi
 }
 
+/**
+ * @param {bigint} bi
+ * @returns {Uint8Array}
+ */
 function fromBigInt (bi) {
   const buf = []
   while (bi > 0) {
@@ -41,6 +49,10 @@ function fromBigInt (bi) {
 // type 'bigint' for this to work.
 const maxSafeBigInt = BigInt('18446744073709551615') // (twob ** BigInt(64)) - pos1b
 const minSafeBigInt = BigInt('-18446744073709551616') // neg1b * (twob ** BigInt(64))
+/**
+ * @param {bigint} obj
+ * @returns {Token[]|null}
+ */
 export function bigIntEncoder (obj) {
   if (obj >= minSafeBigInt && obj <= maxSafeBigInt) {
     return null // null = do it the standard way
@@ -51,7 +63,11 @@ export function bigIntEncoder (obj) {
   ]
 }
 
-/* TAG(3) Negative Bignums https://tools.ietf.org/html/rfc8949#section-3.4.3 */
+/**
+ * TAG(3) Negative Bignums https://tools.ietf.org/html/rfc8949#section-3.4.3
+ * @param {Uint8Array} bytes
+ * @returns {bigint}
+ */
 export function bigNegIntDecoder (bytes) {
   return neg1b - bigIntDecoder(bytes)
 }

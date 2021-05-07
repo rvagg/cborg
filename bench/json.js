@@ -3,7 +3,7 @@
 
 import assert from 'assert'
 import garbage from 'ipld-garbage'
-import { decode, encode } from './json.js'
+import { decode, encode } from '../lib/json/json.js'
 
 let writebuf = ''
 const write = process.stdout
