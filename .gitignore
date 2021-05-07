@@ -4,3 +4,4 @@ node_modules/
 coverage/
 c/
 dist/
+types/

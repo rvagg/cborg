@@ -1,5 +1,5 @@
-import { encode } from './encode.js'
-import { decode } from './decode.js'
+import { encode } from '../lib/json/encode.js'
+import { decode } from '../lib/json/decode.js'
 import assert from 'assert'
 
 function verify (obj) {

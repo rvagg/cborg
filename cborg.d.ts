@@ -1,16 +1,4 @@
-export type TagDecoder = (inner: any) => any
-export type TypeEncoder = (data: any) => Token[] | null
-
-export interface DecodeOptions {
-    allowIndefinite?: boolean
-    allowUndefined?: boolean
-    allowInfinity?: boolean
-    allowNaN?: boolean
-    allowBigInt?: boolean
-    strict?: boolean
-    useMaps?: boolean
-    tags?: TagDecoder[]
-}
+export type TypeEncoder = (data: any, typ?:string, options?:EncodeOptions, refStack?:Ref) => Token | Token[] | null
 
 export interface EncodeOptions {
     float64?: boolean
