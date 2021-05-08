@@ -299,22 +299,22 @@ Similar to the [CBOR example above](#example), using JSON:
 ```js
 import { encode, decode } from 'cborg/json'
 
-const decoded = decode(Buffer.from('7b2274686973223a7b226973223a2243424f5221222c22796179223a747275657d7d', 'hex'))
+const decoded = decode(Buffer.from('7b2274686973223a7b226973223a224a534f4e21222c22796179223a747275657d7d', 'hex'))
 console.log('decoded:', decoded)
 console.log('encoded:', encode(decoded))
 console.log('encoded (string):', Buffer.from(encode(decoded)).toString())
 ```
 
 ```
-decoded: { this: { is: 'CBOR!', yay: true } }
+decoded: { this: { is: 'JSON!', yay: true } }
 encoded: Uint8Array(34) [
   123,  34, 116, 104, 105, 115,  34,  58,
-  123,  34, 105, 115,  34,  58,  34,  67,
-   66,  79,  82,  33,  34,  44,  34, 121,
+  123,  34, 105, 115,  34,  58,  34,  74,
+   83,  79,  78,  33,  34,  44,  34, 121,
    97, 121,  34,  58, 116, 114, 117, 101,
   125, 125
 ]
-encoded (string): {"this":{"is":"CBOR!","yay":true}}
+encoded (string): {"this":{"is":"JSON!","yay":true}}
 ```
 
 ## License and Copyright
