@@ -14,11 +14,15 @@ function verifyRoundTrip (obj, sorting) {
 }
 
 function verifyEncodedForm (testCase) {
+  // round trip the original object
   const obj = JSON.parse(testCase)
   const encoded = encode(obj)
   assert.strictEqual(new TextDecoder().decode(encoded), JSON.stringify(obj))
   const decoded = decode(encoded)
   assert.deepStrictEqual(decoded, obj)
+  // now look at the original form
+  const decoded2 = decode(toBytes(testCase))
+  assert.deepStrictEqual(decoded2, obj)
 }
 
 describe('json basics', () => {
@@ -41,6 +45,8 @@ describe('json basics', () => {
     assert.strictEqual(decode(toBytes('0.1e1')), 1)
     assert.strictEqual(decode(toBytes('1e-1')), 0.1)
     assert.strictEqual(decode(toBytes('1e+00')), 1)
+    assert.strictEqual(decode(toBytes('10.0')), 10)
+    assert.deepStrictEqual(decode(toBytes('[-10.0,1.0,0.0,100.0]')), [-10, 1, 0, 100])
     verifyRoundTrip(true)
     verifyRoundTrip(false)
     verifyRoundTrip(null)
@@ -79,7 +85,8 @@ describe('json basics', () => {
       '[]',
       '[null]',
       '[true, false]',
-      '[0,1, 2,  3,\n4]',
+      '[ \n 0,1, 2\n ,  3,\n4] \n ',
+      '[-10.0, 1.0, 0.0, 100.0]',
       '[["2 deep"]]'
     ]
     for (const testCase of testCases) {
