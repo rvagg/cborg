@@ -2,7 +2,7 @@
 // with additional dependencies for cborg installed here
 
 import assert from 'assert'
-import garbage from 'ipld-garbage'
+import { garbage } from 'ipld-garbage'
 import { decode, encode } from '../lib/json/json.js'
 
 let writebuf = ''

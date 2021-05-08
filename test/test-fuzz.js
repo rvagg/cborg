@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import garbage from 'ipld-garbage'
+import { garbage } from 'ipld-garbage'
 import { decode, encode } from '../cborg.js'
 import chai from 'chai'
 
