@@ -15,11 +15,15 @@
   * [`cborg hex2diag <hex string>`](#cborg-hex2diag-hex-string)
 * [API](#api)
   * [`encode(object[, options])`](#encodeobject-options)
+    * [Options](#options)
   * [`decode(data[, options])`](#decodedata-options)
+    * [Options](#options-1)
   * [Type encoders](#type-encoders)
   * [Tag decoders](#tag-decoders)
 * [Deterministic encoding recommendations](#deterministic-encoding-recommendations)
   * [Round-trip consistency](#round-trip-consistency)
+* [JSON mode](#json-mode)
+  * [Example](#example-1)
 * [License and Copyright](#license-and-copyright)
 
 ## Example
@@ -117,6 +121,7 @@ Encode a JavaScript object and return a `Uint8Array` with the CBOR byte represen
 
 * `float64` (boolean, default `false`): do not attempt to store floats as their smallest possible form, store all floats as 64-bit
 * `typeEncoders` (object): a mapping of type name to function that can encode that type into cborg tokens. This may also be used to reject or transform types as objects are dissected for encoding. See the [Type encoders](#type-encoders) section below for more information.
+* `mapSorter` (function): a function taking two arguments, where each argument is a `Token`, or an array of `Token`s representing the keys of a map being encoded. Similar to other JavaScript compare functions, a `-1`, `1` or `0` (which shouldn't be possible) should be returned depending on the sorting order of the keys. See the source code for the default sorting order which uses the length-first rule recommendation from [RFC 7049](https://tools.ietf.org/html/rfc7049).
 
 ### `decode(data[, options])`
 
@@ -145,6 +150,7 @@ Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScrip
   * Currently, this form of deterministic strictness cannot be enforced for float representations, or map key ordering (pull requests _very_ welcome).
 * `useMaps` (boolean, default `false`): when decoding major 5 (map) entries, use a `Map` rather than a plain `Object`. This will nest for any encountered map. During encode, a `Map` will be interpreted as an `Object` and will round-trip as such unless `useMaps` is supplied, in which case, all `Map`s and `Object`s will round-trip as `Map`s. There is no way to retain the distinction during round-trip without using a custom tag.
 * `tags` (array): a mapping of tag number to tag decoder function. By default no tags are supported. See [Tag decoders](#tag-decoders).
+* `tokenizer` (object): an object with two methods, `next()` which returns a `Token` and `done()` which returns a `boolean`. Can be used to implement custom input decoding. See the source code for examples.
 
 ### Type encoders
 
@@ -275,6 +281,41 @@ There are a number of forms where an object will not round-trip precisely, if th
 
 * All `TypedArray`s will decode as `Uint8Array`s, unless a custom tag is used.
 * Both `Map` and `Object` will be encoded as a CBOR `map`, as will any other object that inherits from `Object` that can't be differentiated by the [@sindresorhus/is](https://github.com/sindresorhus/is) algorithm. They will all decode as `Object` by default, or `Map` if `useMaps` is set to `true`. e.g. `{ foo: new Map() }` will round-trip to `{ foo: {} }` by default.
+
+## JSON mode
+
+**cborg** can also encode and decode JSON using the same pipeline and many of the same settings. For most (but not all) cases it will be faster to use `JSON.parse()` and `JSON.stringify()`, however **cborg** provides much more control over the process to handle determinism and be more restrictive in allowable forms. It also operates natively with Uint8Arrays rather than strings which may also offer some minor efficiency or usability gains in some circumstances.
+
+Use `import { encode, decode } from 'cborg/json'` or `const { encode, decode } = require('cborg/json')` to access the JSON handling encoder and decoder.
+
+Many of the same encode and decode options available for CBOR can be used to manage JSON handling. These include strictness requirements for decode and custom tag encoders for encode. Tag encoders can't create new tags as there are no tags in JSON, but they can replace JavaScript object forms with custom JSON forms (e.g. convert a `Uint8Array` to a valid JSON form rather than having the encoder throw an error). The inverse is also possible, turning specific JSON forms into JavaScript forms, by using a custom tokenizer on decode.
+
+See **[@ipld/dag-json](https://github.com/ipld/js-dag-json)** for an advanced use of the **cborg** JSON encoder and decoder including round-tripping of `Uint8Array`s and custom JavaScript classes (IPLD `CID` objects in this case).
+
+### Example
+
+Similar to the [CBOR example above](#example), using JSON:
+
+```js
+import { encode, decode } from 'cborg/json'
+
+const decoded = decode(Buffer.from('7b2274686973223a7b226973223a2243424f5221222c22796179223a747275657d7d', 'hex'))
+console.log('decoded:', decoded)
+console.log('encoded:', encode(decoded))
+console.log('encoded (string):', Buffer.from(encode(decoded)).toString())
+```
+
+```
+decoded: { this: { is: 'CBOR!', yay: true } }
+encoded: Uint8Array(34) [
+  123,  34, 116, 104, 105, 115,  34,  58,
+  123,  34, 105, 115,  34,  58,  34,  67,
+   66,  79,  82,  33,  34,  44,  34, 121,
+   97, 121,  34,  58, 116, 114, 117, 101,
+  125, 125
+]
+encoded (string): {"this":{"is":"CBOR!","yay":true}}
+```
 
 ## License and Copyright
 
