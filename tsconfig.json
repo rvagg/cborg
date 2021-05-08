@@ -25,11 +25,15 @@
     "stripInternal": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "paths": {
+      "cborg": [
+        "cborg.js"
+      ]
+    }
   },
   "include": [
     "cborg.js",
-    "cli.js",
     "example.js",
     "taglib.js",
     "lib/"
