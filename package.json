@@ -32,7 +32,7 @@
     "c8": "^7.6.0",
     "chai": "^4.3.3",
     "ipjs": "^5.0.0",
-    "ipld-garbage": "^2.0.0",
+    "ipld-garbage": "^3.0.3",
     "mocha": "^8.3.0",
     "polendina": "^1.1.0",
     "standard": "^16.0.3",
