@@ -47,6 +47,12 @@ describe('array', () => {
           assert.deepStrictEqual(decode(data, { strict: true }), fixture.expected, `decode ${fixture.type}`)
         }
       })
+
+      it('should fail to decode very large length', () => {
+        assert.throws(
+          () => decode(fromHex('9ba5f702b3a5f7020403040506')),
+          /CBOR decode error: 64-bit integer array lengths not supported/)
+      })
     }
   })
 

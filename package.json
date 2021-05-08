@@ -9,7 +9,10 @@
   },
   "scripts": {
     "lint": "standard *.js lib/*.js test/*.js",
-    "build": "npx ipjs build --tests --main && cp cli.js cborg.d.ts dist/",
+    "build": "npm run build:js && npm run build:types",
+    "build:js": "ipjs build --tests --main",
+    "build:copy": "mkdir -p dist/test && cp test/*.js dist/test/ && cp -a tsconfig.json *.js *.ts lib/ dist/",
+    "build:types": "npm run build:copy && cd dist && tsc --build",
     "test:cjs": "npm run build && mocha dist/cjs/node-test/test-*.js dist/cjs/node-test/node-test-*.js",
     "test:node": "c8 --check-coverage --branches 100 --functions 100 --lines 100 mocha test/test-*.js test/node-test-*.js",
     "test:browser": "polendina --page --worker --serviceworker --cleanup dist/cjs/node-test/test-*.js",
@@ -28,10 +31,12 @@
   "devDependencies": {
     "c8": "^7.6.0",
     "chai": "^4.3.3",
+    "ipjs": "^5.0.0",
     "ipld-garbage": "^2.0.0",
     "mocha": "^8.3.0",
     "polendina": "^1.1.0",
-    "standard": "^16.0.3"
+    "standard": "^16.0.3",
+    "typescript": "^4.2.4"
   },
   "exports": {
     ".": {
@@ -44,5 +49,18 @@
       "import": "./lib/json/json.js"
     }
   },
-  "types": "cborg.d.ts"
+  "types": "cborg.d.ts",
+  "typesVersions": {
+    "*": {
+			"json": [
+			  "types/lib/json/json.d.ts"
+			],
+      "*": [
+        "types/*"
+      ],
+      "types/*": [
+        "types/*"
+      ]
+    }
+  }
 }

@@ -185,6 +185,12 @@ describe('map', () => {
             `decode ${fixture.type}`)
         }
       })
+
+      it('should fail to decode very large length', () => {
+        assert.throws(
+          () => decode(fromHex('bba5f702b3a5f70201616101')),
+          /CBOR decode error: 64-bit integer map lengths not supported/)
+      })
     }
 
     it('errors', () => {
@@ -236,5 +242,43 @@ describe('map', () => {
     it('can switch off indefinite length support', () => {
       assert.throws(() => decode(fromHex('bf616f01617402ff'), { allowIndefinite: false }), /indefinite/)
     })
+  })
+
+  describe('sorting', () => {
+    it('sorts int map keys', () => {
+      assert.strictEqual(toHex(encode(new Map([[1, 1], [2, 2]]))), 'a201010202')
+      assert.strictEqual(toHex(encode(new Map([[2, 1], [1, 2]]))), 'a201020201')
+    })
+
+    it('sorts negint map keys', () => {
+      assert.strictEqual(toHex(encode(new Map([[-1, 1], [-2, 2]]))), 'a220012102')
+      assert.strictEqual(toHex(encode(new Map([[-2, 1], [-1, 2]]))), 'a220022101')
+    })
+
+    it('sorts bytes map keys', () => {
+      assert.strictEqual(toHex(encode(new Map([[Uint8Array.from([1, 2]), 1], [Uint8Array.from([2, 1]), 2]]))), 'a24201020142020102')
+      assert.strictEqual(toHex(encode(new Map([[Uint8Array.from([2, 1]), 1], [Uint8Array.from([1, 2]), 2]]))), 'a24201020242020101')
+      // shortest first
+      assert.strictEqual(toHex(encode(new Map([[Uint8Array.from([1, 2]), 1], [Uint8Array.from([2, 1]), 2], [Uint8Array.from([200]), 3]]))), 'a341c8034201020142020102')
+    })
+
+    it('sorts bytes map keys', () => {
+      assert.strictEqual(toHex(encode(new Map([[Uint8Array.from([1, 2]), 1], [Uint8Array.from([2, 1]), 2]]))), 'a24201020142020102')
+      assert.strictEqual(toHex(encode(new Map([[Uint8Array.from([2, 1]), 1], [Uint8Array.from([1, 2]), 2]]))), 'a24201020242020101')
+      // shortest first
+      assert.strictEqual(toHex(encode(new Map([[Uint8Array.from([1, 2]), 1], [Uint8Array.from([2, 1]), 2], [Uint8Array.from([200]), 3]]))), 'a341c8034201020142020102')
+    })
+
+    it('sorts array map keys (length only)', () => {
+      assert.strictEqual(toHex(encode(new Map([[[1], 1], [[1, 1], 2]]))), 'a281010182010102')
+      assert.strictEqual(toHex(encode(new Map([[[1, 1], 1], [[1], 2]]))), 'a281010282010101')
+    })
+
+    it('sorts map map keys (length only)', () => {
+      assert.strictEqual(toHex(encode(new Map([[{ a: 1 }, 1], [{ a: 1, b: 1 }, 2]]))), 'a2a161610101a261610161620102')
+      assert.strictEqual(toHex(encode(new Map([[{ a: 1, b: 1 }, 1], [{ a: 1 }, 2]]))), 'a2a161610102a261610161620101')
+    })
+
+    // TODO: tag keys .. but why would you do this!?
   })
 })
