@@ -52,9 +52,9 @@
   "types": "cborg.d.ts",
   "typesVersions": {
     "*": {
-			"json": [
-			  "types/lib/json/json.d.ts"
-			],
+      "json": [
+        "types/lib/json/json.d.ts"
+      ],
       "*": [
         "types/*"
       ],
