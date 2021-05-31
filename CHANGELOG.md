@@ -1,3 +1,10 @@
+### [1.3.3](https://github.com/rvagg/cborg/compare/v1.3.2...v1.3.3) (2021-05-31)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump ipld-garbage from 3.0.6 to 4.0.1 ([1615ec2](https://github.com/rvagg/cborg/commit/1615ec2251afed7bad4eb581c4975bf4913a10f7))
+
 ### [1.3.2](https://github.com/rvagg/cborg/compare/v1.3.1...v1.3.2) (2021-05-28)
 
 
