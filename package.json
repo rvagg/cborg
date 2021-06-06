@@ -15,7 +15,7 @@
     "build:types": "npm run build:copy && cd dist && tsc --build",
     "test:cjs": "npm run build && mocha dist/cjs/node-test/test-*.js dist/cjs/node-test/node-test-*.js",
     "test:node": "c8 --check-coverage --branches 100 --functions 100 --lines 100 mocha test/test-*.js test/node-test-*.js",
-    "test:browser": "polendina --page --worker --serviceworker --cleanup dist/cjs/node-test/test-*.js",
+    "test:browser": "polendina --page --worker --serviceworker --cleanup dist/cjs/browser-test/test-*.js",
     "test": "npm run lint && npm run test:node && npm run test:cjs && npm run test:browser",
     "coverage": "c8 --reporter=html mocha test/test-*.js && npx st -d coverage -p 8080"
   },
