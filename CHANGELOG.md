@@ -1,3 +1,10 @@
+### [1.3.4](https://github.com/rvagg/cborg/compare/v1.3.3...v1.3.4) (2021-06-08)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump mocha from 8.4.0 to 9.0.0 ([8ad0905](https://github.com/rvagg/cborg/commit/8ad0905f714a82a431e50d07390d2fc5f80070e8))
+
 ### [1.3.3](https://github.com/rvagg/cborg/compare/v1.3.2...v1.3.3) (2021-05-31)
 
 
