@@ -1,3 +1,10 @@
+### [1.3.8](https://github.com/rvagg/cborg/compare/v1.3.7...v1.3.8) (2021-08-05)
+
+
+### Trivial Changes
+
+* **deps:** bump actions/setup-node from 2.3.1 to 2.3.2 ([3a3cdc1](https://github.com/rvagg/cborg/commit/3a3cdc18ef9aaccff971950279a5470623841b53))
+
 ### [1.3.7](https://github.com/rvagg/cborg/compare/v1.3.6...v1.3.7) (2021-08-03)
 
 
