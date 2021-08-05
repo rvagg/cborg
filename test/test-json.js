@@ -63,7 +63,8 @@ describe('json basics', () => {
       if (str === undefined) {
         str = String(inp)
       }
-      assert.strictEqual(decode(toBytes(str)), inp)
+      assert.strictEqual(decode(toBytes(str), { allowBigInt: true }), inp)
+      assert.strictEqual(decode(toBytes(str)), parseFloat(str)) // no BigInt for you
     }
     verify(Number.MAX_SAFE_INTEGER)
     verify(-Number.MAX_SAFE_INTEGER)

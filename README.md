@@ -290,6 +290,10 @@ Use `import { encode, decode } from 'cborg/json'` or `const { encode, decode } =
 
 Many of the same encode and decode options available for CBOR can be used to manage JSON handling. These include strictness requirements for decode and custom tag encoders for encode. Tag encoders can't create new tags as there are no tags in JSON, but they can replace JavaScript object forms with custom JSON forms (e.g. convert a `Uint8Array` to a valid JSON form rather than having the encoder throw an error). The inverse is also possible, turning specific JSON forms into JavaScript forms, by using a custom tokenizer on decode.
 
+Special notes on options specific to the JSON:
+
+* Decoder `allowBigInt` option: is repurposed for the JSON decoder and defaults to `false`. When `false`, all numbers are decoded as `Number`, possibly losing precision when encountering numbers outside of the JavaScript safe integer range. When `true` numbers that have a decimal point (`.`, even if just `.0`) are returned as a `Number`, but for numbers without a decimal point _and_ that are outside of the JavaScript safe integer range, they are returned as `BigInt`s. This behaviour differs from CBOR decoding which will error when decoding integer and negative integer tokens that are outside of the JavaScript safe integer range if `allowBigInt` is `false`.
+
 See **[@ipld/dag-json](https://github.com/ipld/js-dag-json)** for an advanced use of the **cborg** JSON encoder and decoder including round-tripping of `Uint8Array`s and custom JavaScript classes (IPLD `CID` objects in this case).
 
 ### Example
