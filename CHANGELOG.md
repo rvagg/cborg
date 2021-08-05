@@ -1,3 +1,11 @@
+## [1.4.0](https://github.com/rvagg/cborg/compare/v1.3.8...v1.4.0) (2021-08-05)
+
+
+### Features
+
+* handle JSON decoding of large integers as BigInt ([dc87eb4](https://github.com/rvagg/cborg/commit/dc87eb47f7afcd71d51f2d849a92951567f9d565))
+* use `allowBigInt` option so BigInt handling isn't a breaking change ([66d61b5](https://github.com/rvagg/cborg/commit/66d61b51ada9e5f189d4fbc0f52b2423052f5bb1))
+
 ### [1.3.8](https://github.com/rvagg/cborg/compare/v1.3.7...v1.3.8) (2021-08-05)
 
 
