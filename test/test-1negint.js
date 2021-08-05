@@ -24,7 +24,8 @@ const fixtures = [
   // kind of hard to assert on these (TODO: improve bignum handling)
   { data: '3b001fffffffffffff', expected: BigInt('-9007199254740992') /* Number.MIN_SAFE_INTEGER - 1 */, type: 'negint64' },
   { data: '3b0020000000000000', expected: BigInt('-9007199254740993') /* Number.MIN_SAFE_INTEGER - 2 */, type: 'negint64' },
-  { data: '3ba5f702b3a5f702b3', expected: BigInt('-11959030306112471732'), type: 'negint64' }
+  { data: '3ba5f702b3a5f702b3', expected: BigInt('-11959030306112471732'), type: 'negint64' },
+  { data: '3bffffffffffffffff', expected: BigInt('-18446744073709551616'), type: 'negint64' }
 ]
 
 describe('negint', () => {

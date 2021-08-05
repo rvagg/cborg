@@ -58,6 +58,32 @@ describe('json basics', () => {
     verifyRoundTrip(1.0011111e-18)
   })
 
+  it('handles large integers as BigInt', () => {
+    const verify = (inp, str) => {
+      if (str === undefined) {
+        str = String(inp)
+      }
+      assert.strictEqual(decode(toBytes(str)), inp)
+    }
+    verify(Number.MAX_SAFE_INTEGER)
+    verify(-Number.MAX_SAFE_INTEGER)
+    verify(BigInt('9007199254740992')) // Number.MAX_SAFE_INTEGER+1
+    verify(BigInt('9007199254740993'))
+    verify(BigInt('11959030306112471731'))
+    verify(BigInt('18446744073709551615')) // max uint64
+    verify(BigInt('9223372036854775807')) // max int64
+    verify(BigInt('-9007199254740992'))
+    verify(BigInt('-9007199254740993'))
+    verify(BigInt('-9223372036854776000')) // min int64
+    verify(BigInt('-11959030306112471732'))
+    verify(BigInt('-18446744073709551616')) // min -uint64
+
+    // these are "floats", distinct from "ints" which wouldn't have the `.` in them
+    verify(-9007199254740992, '-9007199254740992.0')
+    verify(-9223372036854776000, '-9223372036854776000.0')
+    verify(-18446744073709551616, '-18446744073709551616.0')
+  })
+
   it('can round-trip string literals', () => {
     const testCases = [
       JSON.stringify(''),
@@ -154,5 +180,6 @@ describe('json basics', () => {
     assert.throws(() => decode(toBytes('[tr]')), 'CBOR decode error: unexpected end of input at position 1')
     assert.throws(() => decode(toBytes('{"v":flase}')), 'CBOR decode error: unexpected token at position 7, expected to find \'false\'')
     assert.throws(() => decode(toBytes('[fa]')), 'CBOR decode error: unexpected end of input at position 1')
+    assert.throws(() => decode(toBytes('-0..1')), 'CBOR decode error: unexpected token at position 3')
   })
 })
