@@ -1,3 +1,10 @@
+### [1.4.2](https://github.com/rvagg/cborg/compare/v1.4.1...v1.4.2) (2021-08-23)
+
+
+### Bug Fixes
+
+* add a decimal point for whole number float tokens ([3a18861](https://github.com/rvagg/cborg/commit/3a18861dd8faff2af6ebd06f82b2d1a6dc691fbc))
+
 ### [1.4.1](https://github.com/rvagg/cborg/compare/v1.4.0...v1.4.1) (2021-08-05)
 
 
