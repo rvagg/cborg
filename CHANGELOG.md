@@ -1,3 +1,10 @@
+## [1.5.0](https://github.com/rvagg/cborg/compare/v1.4.2...v1.5.0) (2021-08-25)
+
+
+### Features
+
+* enhance CLI - more commands & accept stdin ([333b379](https://github.com/rvagg/cborg/commit/333b379190b9a27ce9ab4811a8417a566eaeb7ed))
+
 ### [1.4.2](https://github.com/rvagg/cborg/compare/v1.4.1...v1.4.2) (2021-08-23)
 
 
