@@ -1,3 +1,10 @@
+### [1.5.2](https://github.com/rvagg/cborg/compare/v1.5.1...v1.5.2) (2021-10-18)
+
+
+### Trivial Changes
+
+* **deps,no-release:** bump actions/checkout from 2.3.4 to 2.3.5 ([#29](https://github.com/rvagg/cborg/issues/29)) ([fd0db75](https://github.com/rvagg/cborg/commit/fd0db75e19690541969d2aac8fb0d7d940be72a1))
+
 ### [1.5.1](https://github.com/rvagg/cborg/compare/v1.5.0...v1.5.1) (2021-09-28)
 
 
