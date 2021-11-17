@@ -29,6 +29,7 @@ export interface DecodeTokenizer {
 }
 
 export type TagDecoder = (inner: any) => any
+export type TagDecoderFun = (tag: number, inner: any, def: void) => any
 
 export interface DecodeOptions {
   allowIndefinite?: boolean
@@ -38,7 +39,7 @@ export interface DecodeOptions {
   allowBigInt?: boolean
   strict?: boolean
   useMaps?: boolean
-  tags?: TagDecoder[],
+  tags?: TagDecoder[] | TagDecoderFun,
   tokenizer?: DecodeTokenizer
 }
 

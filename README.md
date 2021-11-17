@@ -149,7 +149,7 @@ Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScrip
 * `strict` (boolean, default `false`): when decoding integers, including for lengths (arrays, maps, strings, bytes), values will be checked to see whether they were encoded in their smallest possible form. If not, an error will be thrown.
   * Currently, this form of deterministic strictness cannot be enforced for float representations, or map key ordering (pull requests _very_ welcome).
 * `useMaps` (boolean, default `false`): when decoding major 5 (map) entries, use a `Map` rather than a plain `Object`. This will nest for any encountered map. During encode, a `Map` will be interpreted as an `Object` and will round-trip as such unless `useMaps` is supplied, in which case, all `Map`s and `Object`s will round-trip as `Map`s. There is no way to retain the distinction during round-trip without using a custom tag.
-* `tags` (array): a mapping of tag number to tag decoder function. By default no tags are supported. See [Tag decoders](#tag-decoders).
+* `tags` (array|function): a mapping of tag number to tag decoder function. By default no tags are supported. See [Tag decoders](#tag-decoders).
 * `tokenizer` (object): an object with two methods, `next()` which returns a `Token` and `done()` which returns a `boolean`. Can be used to implement custom input decoding. See the source code for examples.
 
 ### Type encoders
@@ -225,6 +225,18 @@ tags[2] = bigIntDecoder
 tags[3] = bigNegIntDecoder
 
 decode(bytes, { tags })
+```
+
+Or as a function:
+
+```js
+const tags = function(tag, value, def) {
+  switch(tag) {
+    case 2: return bigIntDecoder(value);
+    case 3: return bigNegIntDecoder(value);
+    default: def();
+  }
+}
 ```
 
 Implementation:
