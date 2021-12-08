@@ -1,7 +1,6 @@
 /* eslint-env mocha,es2020 */
 
 import chai from 'chai'
-import { inspect } from 'util'
 
 import { decode, encode } from '../cborg.js'
 import * as taglib from 'cborg/taglib'
@@ -93,3 +92,16 @@ describe('cbor/test-vectors', () => {
   it.skip('encode w/ tags', () => {
   })
 })
+
+function inspect (o) {
+  if (typeof o === 'string') {
+    return `'${o}'`
+  }
+  if (o instanceof Uint8Array) {
+    return `Uint8Array<${o.join(',')}>`
+  }
+  if (o == null || typeof o !== 'object') {
+    return String(o)
+  }
+  return JSON.stringify(o)
+}
