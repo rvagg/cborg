@@ -1,3 +1,17 @@
+### [1.5.4](https://github.com/rvagg/cborg/compare/v1.5.3...v1.5.4) (2021-12-08)
+
+
+### Bug Fixes
+
+* remove 'util' dependency ([875d5ea](https://github.com/rvagg/cborg/commit/875d5ea6cf226c6db8fc0a3fce6089592c9aadcd))
+
+
+### Trivial Changes
+
+* **deps-dev:** bump polendina from 1.1.1 to 2.0.0 ([9aeed6b](https://github.com/rvagg/cborg/commit/9aeed6bd2bbec7996b16dc8c2e00daa06721527e))
+* expand browser testing to esm ([cc2a626](https://github.com/rvagg/cborg/commit/cc2a6261a9600abf005e46dc799940dca6626aaf))
+* **no-release:** bump actions/setup-node from 2.4.1 to 2.5.0 ([#32](https://github.com/rvagg/cborg/issues/32)) ([5f7dba1](https://github.com/rvagg/cborg/commit/5f7dba1d1ade3e3da13db18d16635c2e01e71334))
+
 ### [1.5.3](https://github.com/rvagg/cborg/compare/v1.5.2...v1.5.3) (2021-11-04)
 
 
