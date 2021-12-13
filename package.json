@@ -14,11 +14,13 @@
     "build:copy": "mkdir -p dist/test && cp test/*.js dist/test/ && cp -a tsconfig.json *.js *.ts lib dist/",
     "build:types": "npm run build:copy && cd dist && tsc --build",
     "test:cjs": "npm run build && mocha dist/cjs/node-test/test-*.js dist/cjs/node-test/node-test-*.js",
+    "test:esm": "npm run build && mocha dist/esm/node-test/test-*.js dist/esm/node-test/node-test-*.js",
     "test:node": "c8 --check-coverage --branches 100 --functions 100 --lines 100 mocha test/test-*.js test/node-test-*.js",
-    "test:browser:cjs": "polendina --page --worker --serviceworker --cleanup dist/cjs/node-test/test-*.js",
-    "test:browser:esm": "polendina --page --worker --serviceworker --cleanup dist/esm/node-test/test-*.js",
+    "test:browser:cjs": "polendina --page --worker --serviceworker --cleanup dist/cjs/browser-test/test-*.js",
+    "test:browser:esm": "polendina --page --worker --serviceworker --cleanup dist/esm/browser-test/test-*.js",
     "test:browser": "npm run test:browser:cjs && npm run test:browser:cjs",
-    "test": "npm run lint && npm run test:node && npm run test:cjs && npm run test:browser",
+    "test": "npm run lint && npm run test:node && npm run test:esm && npm run test:browser:esm",
+    "test:ci": "npm run lint && npm run test:node && npm run test:cjs && npm run test:esm && npm run test:browser",
     "coverage": "c8 --reporter=html mocha test/test-*.js && npx st -d coverage -p 8080"
   },
   "repository": {
@@ -31,14 +33,14 @@
   "author": "Rod <rod@vagg.org> (http://r.va.gg/)",
   "license": "Apache-2.0",
   "devDependencies": {
-    "c8": "^7.6.0",
-    "chai": "^4.3.3",
-    "ipjs": "^5.0.0",
-    "ipld-garbage": "^4.0.1",
-    "mocha": "^9.0.0",
-    "polendina": "^2.0.0",
-    "standard": "^16.0.3",
-    "typescript": "^4.2.4"
+    "c8": "^7.10.0",
+    "chai": "^4.3.4",
+    "ipjs": "^5.2.0",
+    "ipld-garbage": "^4.0.10",
+    "mocha": "^9.1.3",
+    "polendina": "~2.0.1",
+    "standard": "^16.0.4",
+    "typescript": "~4.5.3"
   },
   "exports": {
     ".": {
@@ -70,35 +72,83 @@
       "master"
     ],
     "plugins": [
-      ["@semantic-release/commit-analyzer", {
-        "preset": "conventionalcommits",
-        "releaseRules": [
-          {"breaking": true, "release": "major"},
-          {"revert": true, "release": "patch"},
-          {"type": "feat", "release": "minor"},
-          {"type": "fix", "release": "patch"},
-          {"type": "chore", "release": "patch"},
-          {"type": "docs", "release": "patch"},
-          {"type": "test", "release": "patch"},
-          {"scope": "no-release", "release": false}
-        ]
-      }],
-      ["@semantic-release/release-notes-generator", {
-        "preset": "conventionalcommits",
-        "presetConfig": {
-          "types": [
-            {"type": "feat", "section": "Features"},
-            {"type": "fix", "section": "Bug Fixes"},
-            {"type": "chore", "section": "Trivial Changes"},
-            {"type": "docs", "section": "Trivial Changes"},
-            {"type": "test", "section": "Tests"}
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "conventionalcommits",
+          "releaseRules": [
+            {
+              "breaking": true,
+              "release": "major"
+            },
+            {
+              "revert": true,
+              "release": "patch"
+            },
+            {
+              "type": "feat",
+              "release": "minor"
+            },
+            {
+              "type": "fix",
+              "release": "patch"
+            },
+            {
+              "type": "chore",
+              "release": "patch"
+            },
+            {
+              "type": "docs",
+              "release": "patch"
+            },
+            {
+              "type": "test",
+              "release": "patch"
+            },
+            {
+              "scope": "no-release",
+              "release": false
+            }
           ]
         }
-      }],
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits",
+          "presetConfig": {
+            "types": [
+              {
+                "type": "feat",
+                "section": "Features"
+              },
+              {
+                "type": "fix",
+                "section": "Bug Fixes"
+              },
+              {
+                "type": "chore",
+                "section": "Trivial Changes"
+              },
+              {
+                "type": "docs",
+                "section": "Trivial Changes"
+              },
+              {
+                "type": "test",
+                "section": "Tests"
+              }
+            ]
+          }
+        }
+      ],
       "@semantic-release/changelog",
-      ["@semantic-release/npm", {
-        "pkgRoot": "dist"
-      }],
+      [
+        "@semantic-release/npm",
+        {
+          "pkgRoot": "dist"
+        }
+      ],
       "@semantic-release/github",
       "@semantic-release/git"
     ]
