@@ -6,7 +6,7 @@ jobs:
       fail-fast: false
       matrix:
         node: [14.x, 16.x]
-        os: [macos-latest, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Repository
@@ -20,30 +20,13 @@ jobs:
           npm install --no-progress
       - name: Run tests
         run: |
-          npm test
-  test-windows:
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [14.x, 16.x]
-        os: [windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2.4.0
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v2.5.0
-        with:
-          node-version: ${{ matrix.node }}
-      - name: Install Dependencies
-        run: |
-          npm install --no-progress
-      - name: Run tests
-        run: |
-          npm run test:node
+          npm config set script-shell bash
+          npm run test:ci
+      - name: Typecheck
+        uses: gozala/typescript-error-reporter-action@v1.0.8
   release:
     name: Release
-    needs: [test, test-windows]
+    needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
