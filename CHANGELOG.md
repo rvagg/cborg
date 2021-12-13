@@ -1,3 +1,16 @@
+## [1.6.0](https://github.com/rvagg/cborg/compare/v1.5.4...v1.6.0) (2021-12-13)
+
+
+### Features
+
+* add support for coerceUndefinedToNull option ([fd61bbe](https://github.com/rvagg/cborg/commit/fd61bbe95bfbc255fa371ae8e1e241a96f31e211))
+
+
+### Trivial Changes
+
+* test and document coerceUndefinedToNull ([61fd015](https://github.com/rvagg/cborg/commit/61fd0150be586aef5518f2fa9f64456639bd2011))
+* update deps & test setup ([1246122](https://github.com/rvagg/cborg/commit/1246122ace46bbc6ba18b07a66afd4cfb057a3e7))
+
 ### [1.5.4](https://github.com/rvagg/cborg/compare/v1.5.3...v1.5.4) (2021-12-08)
 
 
