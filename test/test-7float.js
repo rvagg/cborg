@@ -97,8 +97,17 @@ describe('float', () => {
     })
 
     it('can switch off undefined support', () => {
+      assert.deepStrictEqual(decode(fromHex('f7')), undefined)
+      assert.throws(() => decode(fromHex('f7'), { allowUndefined: false }), /undefined/)
       assert.deepStrictEqual(decode(fromHex('830102f7')), [1, 2, undefined])
       assert.throws(() => decode(fromHex('830102f7'), { allowUndefined: false }), /undefined/)
+    })
+
+    it('can coerce undefined to null', () => {
+      assert.deepStrictEqual(decode(fromHex('f7'), { coerceUndefinedToNull: false }), undefined)
+      assert.deepStrictEqual(decode(fromHex('f7'), { coerceUndefinedToNull: true }), null)
+      assert.deepStrictEqual(decode(fromHex('830102f7'), { coerceUndefinedToNull: false }), [1, 2, undefined])
+      assert.deepStrictEqual(decode(fromHex('830102f7'), { coerceUndefinedToNull: true }), [1, 2, null])
     })
 
     it('can switch off Infinity support', () => {

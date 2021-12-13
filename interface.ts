@@ -33,6 +33,7 @@ export type TagDecoder = (inner: any) => any
 export interface DecodeOptions {
   allowIndefinite?: boolean
   allowUndefined?: boolean
+  coerceUndefinedToNull?: boolean
   allowInfinity?: boolean
   allowNaN?: boolean
   allowBigInt?: boolean
