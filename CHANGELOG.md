@@ -1,3 +1,15 @@
+### [1.6.1](https://github.com/rvagg/cborg/compare/v1.6.0...v1.6.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* **diagnostic:** handle zero-length recursives properly in diag output ([38ec7ea](https://github.com/rvagg/cborg/commit/38ec7ea054726bb8d71cc836019949e6b0e28d78))
+
+
+### Trivial Changes
+
+* **no-release:** bump actions/setup-node from 2.5.0 to 2.5.1 ([#38](https://github.com/rvagg/cborg/issues/38)) ([d46fae2](https://github.com/rvagg/cborg/commit/d46fae2c02641ddda0dfab21aa028d06ae6a8c13))
+
 ## [1.6.0](https://github.com/rvagg/cborg/compare/v1.5.4...v1.6.0) (2021-12-13)
 
 
