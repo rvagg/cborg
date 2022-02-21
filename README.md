@@ -10,9 +10,18 @@
 
 * [Example](#example)
 * [CLI](#cli)
-  * [`cborg json2hex '<json string>'`](#cborg-json2hex-json-string)
-  * [`cborg hex2json [--pretty] <hex string>`](#cborg-hex2json---pretty-hex-string)
-  * [`cborg hex2diag <hex string>`](#cborg-hex2diag-hex-string)
+  * [`cborg bin2diag [binary input]`](#cborg-bin2diag-binary-input)
+  * [`cborg bin2hex [binary string]`](#cborg-bin2hex-binary-string)
+  * [`cborg bin2json [--pretty] [binary input]`](#cborg-bin2json---pretty-binary-input)
+  * [`cborg diag2bin [diagnostic string]`](#cborg-diag2bin-diagnostic-string)
+  * [`cborg diag2hex [diagnostic string]`](#cborg-diag2hex-diagnostic-string)
+  * [`cborg diag2json [--pretty] [diagnostic string]`](#cborg-diag2json---pretty-diagnostic-string)
+  * [`cborg hex2bin [hex string]`](#cborg-hex2bin-hex-string)
+  * [`cborg hex2diag [hex string]`](#cborg-hex2diag-hex-string)
+  * [`cborg hex2json [--pretty] [hex string]`](#cborg-hex2json---pretty-hex-string)
+  * [`cborg json2bin [json string]`](#cborg-json2bin-json-string)
+  * [`cborg json2diag [json string]`](#cborg-json2diag-json-string)
+  * [`cborg json2hex '[json string]'`](#cborg-json2hex-json-string)
 * [API](#api)
   * [`encode(object[, options])`](#encodeobject-options)
     * [Options](#options)
@@ -50,18 +59,87 @@ encoded: Uint8Array(21) [
 
 When installed globally via `npm` (with `npm install cborg --global`), the `cborg` command will be available that provides some handy CBOR CLI utilities. Run with `cborg help` for additional details.
 
-### `cborg json2hex '<json string>'`
+The following commands take either input from the command line, or if no input is supplied will read from stdin. Output is printed to stdout. So you can `cat foo | cborg <command>`.
 
-Convert a JSON object into CBOR bytes in hexadecimal format.
+### `cborg bin2diag [binary input]`
+
+Convert CBOR from binary input to a CBOR diagnostic output format which explains the byte contents.
 
 ```
-$ cborg json2hex '["a", "b", 1, "😀"]'
+$ cborg hex2bin 84616161620164f09f9880 | cborg bin2diag
+84                                                # array(4)
+  61                                              #   string(1)
+    61                                            #     "a"
+  61                                              #   string(1)
+    62                                            #     "b"
+  01                                              #   uint(1)
+  64 f09f                                         #   string(2)
+    f09f9880                                      #     "😀"
+```
+
+### `cborg bin2hex [binary string]`
+
+A utility method to convert a binary input (stdin only) to hexadecimal output (does not involve CBOR).
+
+### `cborg bin2json [--pretty] [binary input]`
+
+Convert CBOR from binary input to JSON format.
+
+```
+$ cborg hex2bin 84616161620164f09f9880 | cborg bin2json
+["a","b",1,"😀"]
+```
+
+### `cborg diag2bin [diagnostic string]`
+
+Convert a CBOR diagnostic string to a binary data form of the CBOR.
+
+```
+$ cborg json2diag '["a","b",1,"😀"]' | cborg diag2bin | cborg bin2hex
 84616161620164f09f9880
 ```
 
-### `cborg hex2json [--pretty] <hex string>`
+### `cborg diag2hex [diagnostic string]`
 
-Convert a hexadecimal string to a JSON format.
+Convert a CBOR diagnostic string to the CBOR bytes in hexadecimal format.
+
+```
+$ cborg json2diag '["a","b",1,"😀"]' | cborg diag2hex
+84616161620164f09f9880
+```
+
+### `cborg diag2json [--pretty] [diagnostic string]`
+
+Convert a CBOR diagnostic string to JSON format.
+
+```
+$ cborg json2diag '["a","b",1,"😀"]' | cborg diag2json
+["a","b",1,"😀"]
+```
+
+### `cborg hex2bin [hex string]`
+
+A utility method to convert a hex string to binary output (does not involve CBOR).
+
+### `cborg hex2diag [hex string]`
+
+Convert CBOR from a hexadecimal string to a CBOR diagnostic output format which explains the byte contents.
+
+```
+$ cborg hex2diag 84616161620164f09f9880
+84                                                # array(4)
+  61                                              #   string(1)
+    61                                            #     "a"
+  61                                              #   string(1)
+    62                                            #     "b"
+  01                                              #   uint(1)
+  64 f09f                                         #   string(2)
+    f09f9880                                      #     "😀"
+```
+
+### `cborg hex2json [--pretty] [hex string]`
+
+Convert CBOR from a hexadecimal string to JSON format.
 
 ```
 $ cborg hex2json 84616161620164f09f9880
@@ -75,12 +153,21 @@ $ cborg hex2json --pretty 84616161620164f09f9880
 ]
 ```
 
-### `cborg hex2diag <hex string>`
+### `cborg json2bin [json string]`
 
-Convert a hexadecimal string to a CBOR diagnostic output format which explains the byte contents.
+Convert a JSON object into a binary data form of the CBOR.
 
 ```
-$ cborg hex2diag 84616161620164f09f9880
+$ cborg json2bin '["a","b",1,"😀"]' | cborg bin2hex
+84616161620164f09f9880
+```
+
+### `cborg json2diag [json string]`
+
+Convert a JSON object into a CBOR diagnostic output format which explains the contents of the CBOR form of the input object.
+
+```
+$ cborg json2diag '["a", "b", 1, "😀"]'
 84                                                # array(4)
   61                                              #   string(1)
     61                                            #     "a"
@@ -89,6 +176,15 @@ $ cborg hex2diag 84616161620164f09f9880
   01                                              #   uint(1)
   64 f09f                                         #   string(2)
     f09f9880                                      #     "😀"
+```
+
+### `cborg json2hex '[json string]'`
+
+Convert a JSON object into CBOR bytes in hexadecimal format.
+
+```
+$ cborg json2hex '["a", "b", 1, "😀"]'
+84616161620164f09f9880
 ```
 
 ## API

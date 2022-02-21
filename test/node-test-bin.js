@@ -4,11 +4,62 @@ import chai from 'chai'
 import { exec } from 'child_process'
 import process from 'process'
 import path from 'path'
+import { platform } from 'os'
 import { fileURLToPath } from 'url'
 // included here for ipjs compile tree
 import bin from '../lib/bin.js' // eslint-disable-line
 
 const { assert } = chai
+
+const fixture1JsonString = '{"a":1,"b":[2,3],"smile":"😀"}'
+const fixture1JsonPrettyString =
+`{
+  "a": 1,
+  "b": [
+    2,
+    3
+  ],
+  "smile": "😀"
+}
+`
+const fixture1HexString = 'a3616101616282020365736d696c6564f09f9880'
+const fixture1Bin = fromHex(fixture1HexString)
+const fixture1BinString = new TextDecoder().decode(fixture1Bin)
+const fixture1DiagnosticString =
+`a3                                                # map(3)
+  61                                              #   string(1)
+    61                                            #     "a"
+  01                                              #   uint(1)
+  61                                              #   string(1)
+    62                                            #     "b"
+  82                                              #   array(2)
+    02                                            #     uint(2)
+    03                                            #     uint(3)
+  65                                              #   string(5)
+    736d696c65                                    #     "smile"
+  64                                              #   string(2)
+    f09f9880                                      #     "😀"
+`
+const fixture2HexString = 'a4616101616282020363627566440102036165736d696c6564f09f9880'
+const fixture2DiagnosticString =
+`a4                                                # map(4)
+  61                                              #   string(1)
+    61                                            #     "a"
+  01                                              #   uint(1)
+  61                                              #   string(1)
+    62                                            #     "b"
+  82                                              #   array(2)
+    02                                            #     uint(2)
+    03                                            #     uint(3)
+  63                                              #   string(3)
+    627566                                        #     "buf"
+  44                                              #   bytes(4)
+    01020361                                      #     "\\x01\\x02\\x03a"
+  65                                              #   string(5)
+    736d696c65                                    #     "smile"
+  64                                              #   string(2)
+    f09f9880                                      #     "😀"
+`
 
 const binPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../lib/bin.js')
 
@@ -48,15 +99,18 @@ describe('Bin', () => {
       assert.strictEqual(e.stderr,
 `Usage: cborg <command> <args>
 Valid commands:
-\thex2diag [hex input]
-\thex2bin [hex input]
-\thex2json [--pretty] [hex input]
-\tbin2hex [binary input]
 \tbin2diag [binary input]
+\tbin2hex [binary input]
 \tbin2json [--pretty] [binary input]
-\tjson2hex '[json input]'
-\tjson2diag '[json input]'
+\tdiag2bin [diagnostic input]
+\tdiag2hex [diagnostic input]
+\tdiag2json [--pretty] [diagnostic input]
+\thex2bin [hex input]
+\thex2diag [hex input]
+\thex2json [--pretty] [hex input]
 \tjson2bin '[json input]'
+\tjson2diag '[json input]'
+\tjson2hex '[json input]'
 Input may either be supplied as an argument or piped via stdin
 `)
     }
@@ -72,15 +126,18 @@ Input may either be supplied as an argument or piped via stdin
 `Unknown command: 'blip'
 Usage: cborg <command> <args>
 Valid commands:
-\thex2diag [hex input]
-\thex2bin [hex input]
-\thex2json [--pretty] [hex input]
-\tbin2hex [binary input]
 \tbin2diag [binary input]
+\tbin2hex [binary input]
 \tbin2json [--pretty] [binary input]
-\tjson2hex '[json input]'
-\tjson2diag '[json input]'
+\tdiag2bin [diagnostic input]
+\tdiag2hex [diagnostic input]
+\tdiag2json [--pretty] [diagnostic input]
+\thex2bin [hex input]
+\thex2diag [hex input]
+\thex2json [--pretty] [hex input]
 \tjson2bin '[json input]'
+\tjson2diag '[json input]'
+\tjson2hex '[json input]'
 Input may either be supplied as an argument or piped via stdin
 `)
     }
@@ -92,164 +149,137 @@ Input may either be supplied as an argument or piped via stdin
     assert.strictEqual(stderr,
 `Usage: cborg <command> <args>
 Valid commands:
-\thex2diag [hex input]
-\thex2bin [hex input]
-\thex2json [--pretty] [hex input]
-\tbin2hex [binary input]
 \tbin2diag [binary input]
+\tbin2hex [binary input]
 \tbin2json [--pretty] [binary input]
-\tjson2hex '[json input]'
-\tjson2diag '[json input]'
+\tdiag2bin [diagnostic input]
+\tdiag2hex [diagnostic input]
+\tdiag2json [--pretty] [diagnostic input]
+\thex2bin [hex input]
+\thex2diag [hex input]
+\thex2json [--pretty] [hex input]
 \tjson2bin '[json input]'
+\tjson2diag '[json input]'
+\tjson2hex '[json input]'
 Input may either be supplied as an argument or piped via stdin
 `)
   })
 
-  for (const stdin of [true, false]) {
-    it(`hex2json${stdin ? ' (stdin)' : ''}`, async () => {
-      const { stdout, stderr } = stdin
-        ? await execBin('hex2json a3616101616282020365736d696c6564f09f9880')
-        : await execBin('hex2json', 'a3616101616282020365736d696c6564f09f9880')
-      assert.strictEqual(stderr, '')
-      assert.strictEqual(stdout, '{"a":1,"b":[2,3],"smile":"😀"}\n')
-    })
-
-    it(`hex2json pretty${stdin ? ' (stdin)' : ''}`, async () => {
-      const { stdout, stderr } = stdin
-        ? await execBin('hex2json --pretty a3616101616282020365736d696c6564f09f9880')
-        : await execBin('hex2json --pretty', 'a3616101616282020365736d696c6564f09f9880')
-      assert.strictEqual(stderr, '')
-      assert.strictEqual(stdout,
-`{
-  "a": 1,
-  "b": [
-    2,
-    3
-  ],
-  "smile": "😀"
-}
-`)
-    })
-
-    it(`hex2diag${stdin ? ' (stdin)' : ''}`, async () => {
-      const { stdout, stderr } = stdin
-        ? await execBin('hex2diag a4616101616282020363627566440102036165736d696c6564f09f9880')
-        : await execBin('hex2diag', 'a4616101616282020363627566440102036165736d696c6564f09f9880')
-      assert.strictEqual(stderr, '')
-      assert.strictEqual(stdout,
-`a4                                                # map(4)
-  61                                              #   string(1)
-    61                                            #     "a"
-  01                                              #   uint(1)
-  61                                              #   string(1)
-    62                                            #     "b"
-  82                                              #   array(2)
-    02                                            #     uint(2)
-    03                                            #     uint(3)
-  63                                              #   string(3)
-    627566                                        #     "buf"
-  44                                              #   bytes(4)
-    01020361                                      #     "\\x01\\x02\\x03a"
-  65                                              #   string(5)
-    736d696c65                                    #     "smile"
-  64 f09f                                         #   string(2)
-    f09f9880                                      #     "😀"
-`)
-    })
-
-    it(`hex2bin${stdin ? ' (stdin)' : ''}`, async () => {
-      const { stdout, stderr } = stdin
-        ? await execBin('hex2bin a3616101616282020365736d696c6564f09f9880')
-        : await execBin('hex2bin', 'a3616101616282020365736d696c6564f09f9880')
-      assert.strictEqual(stderr, '')
-      assert.strictEqual(stdout, new TextDecoder().decode(fromHex('a3616101616282020365736d696c6564f09f9880')))
-    })
-
-    it(`json2hex${stdin ? ' (stdin)' : ''}`, async () => {
-      const { stdout, stderr } = stdin
-        ? await execBin('json2hex "{\\"a\\":1,\\"b\\":[2,3],\\"smile\\":\\"😀\\"}"')
-        : await execBin('json2hex', '{"a":1,"b":[2,3],"smile":"😀"}')
-      assert.strictEqual(stderr, '')
-      assert.strictEqual(stdout, 'a3616101616282020365736d696c6564f09f9880\n')
-    })
-
-    it(`json2bin${stdin ? ' (stdin)' : ''}`, async () => {
-      const { stdout, stderr } = stdin
-        ? await execBin('json2bin "{\\"a\\":1,\\"b\\":[2,3],\\"smile\\":\\"😀\\"}"')
-        : await execBin('json2bin', '{"a":1,"b":[2,3],"smile":"😀"}')
-      assert.strictEqual(stderr, '')
-      assert.strictEqual(stdout, new TextDecoder().decode(fromHex('a3616101616282020365736d696c6564f09f9880')))
-    })
-
-    it(`json2diag${stdin ? ' (stdin)' : ''}`, async () => {
-      const { stdout, stderr } = stdin
-        ? await execBin('json2diag "{\\"a\\":1,\\"b\\":[2,3],\\"smile\\":\\"😀\\"}"')
-        : await execBin('json2diag', '{"a":1,"b":[2,3],"smile":"😀"}')
-      assert.strictEqual(stderr, '')
-      assert.strictEqual(stdout,
-`a3                                                # map(3)
-  61                                              #   string(1)
-    61                                            #     "a"
-  01                                              #   uint(1)
-  61                                              #   string(1)
-    62                                            #     "b"
-  82                                              #   array(2)
-    02                                            #     uint(2)
-    03                                            #     uint(3)
-  65                                              #   string(5)
-    736d696c65                                    #     "smile"
-  64 f09f                                         #   string(2)
-    f09f9880                                      #     "😀"
-`)
-    })
-  }
-
   it('bin2diag (stdin)', async () => {
-    const { stdout, stderr } = await execBin('bin2diag', fromHex('a3616101616282020365736d696c6564f09f9880'))
+    const { stdout, stderr } = await execBin('bin2diag', fixture1Bin)
     assert.strictEqual(stderr, '')
-    assert.strictEqual(stdout,
-`a3                                                # map(3)
-  61                                              #   string(1)
-    61                                            #     "a"
-  01                                              #   uint(1)
-  61                                              #   string(1)
-    62                                            #     "b"
-  82                                              #   array(2)
-    02                                            #     uint(2)
-    03                                            #     uint(3)
-  65                                              #   string(5)
-    736d696c65                                    #     "smile"
-  64 f09f                                         #   string(2)
-    f09f9880                                      #     "😀"
-`)
-  })
-
-  it('bin2json (stdin)', async () => {
-    const { stdout, stderr } = await execBin('bin2json', fromHex('a3616101616282020365736d696c6564f09f9880'))
-    assert.strictEqual(stderr, '')
-    assert.strictEqual(stdout, '{"a":1,"b":[2,3],"smile":"😀"}\n')
-  })
-
-  it('bin2json pretty (stdin)', async () => {
-    const { stdout, stderr } = await execBin('bin2json --pretty', fromHex('a3616101616282020365736d696c6564f09f9880'))
-    assert.strictEqual(stderr, '')
-    assert.strictEqual(stdout,
-`{
-  "a": 1,
-  "b": [
-    2,
-    3
-  ],
-  "smile": "😀"
-}
-`)
+    assert.strictEqual(stdout, fixture1DiagnosticString)
   })
 
   it('bin2hex (stdin)', async () => {
-    const { stdout, stderr } = await execBin('bin2hex', fromHex('a3616101616282020365736d696c6564f09f9880'))
+    const { stdout, stderr } = await execBin('bin2hex', fixture1Bin)
     assert.strictEqual(stderr, '')
-    assert.strictEqual(stdout, 'a3616101616282020365736d696c6564f09f9880\n')
+    assert.strictEqual(stdout, `${fixture1HexString}\n`)
   })
+
+  it('bin2json (stdin)', async () => {
+    const { stdout, stderr } = await execBin('bin2json', fixture1Bin)
+    assert.strictEqual(stderr, '')
+    assert.strictEqual(stdout, `${fixture1JsonString}\n`)
+  })
+
+  it('bin2json pretty (stdin)', async () => {
+    const { stdout, stderr } = await execBin('bin2json --pretty', fixture1Bin)
+    assert.strictEqual(stderr, '')
+    assert.strictEqual(stdout, fixture1JsonPrettyString)
+  })
+
+  for (const stdin of [true, false]) {
+    if (platform() !== 'win32' || stdin) { // multiline CLI input is hard (impossible?) on Windows
+      it(`diag2bin${stdin ? ' (stdin)' : ''}`, async () => {
+        const { stdout, stderr } = !stdin
+          ? await execBin(`diag2bin '${fixture1DiagnosticString}'`)
+          : await execBin('diag2bin', fixture1DiagnosticString)
+        assert.strictEqual(stderr, '')
+        assert.strictEqual(stdout, fixture1BinString)
+      })
+
+      it(`diag2hex${stdin ? ' (stdin)' : ''}`, async () => {
+        const { stdout, stderr } = !stdin
+          ? await execBin(`diag2hex '${fixture1DiagnosticString}'`)
+          : await execBin('diag2hex', fixture1DiagnosticString)
+        assert.strictEqual(stderr, '')
+        assert.strictEqual(stdout, `${fixture1HexString}\n`)
+      })
+
+      it(`diag2json${stdin ? ' (stdin)' : ''}`, async () => {
+        const { stdout, stderr } = !stdin
+          ? await execBin(`diag2json '${fixture1DiagnosticString}'`)
+          : await execBin('diag2json', fixture1DiagnosticString)
+        assert.strictEqual(stderr, '')
+        assert.strictEqual(stdout, `${fixture1JsonString}\n`)
+      })
+
+      it(`diag2json pretty${stdin ? ' (stdin)' : ''}`, async () => {
+        const { stdout, stderr } = !stdin
+          ? await execBin(`diag2json --pretty '${fixture1DiagnosticString}'`)
+          : await execBin('diag2json --pretty', fixture1DiagnosticString)
+        assert.strictEqual(stderr, '')
+        assert.strictEqual(stdout, fixture1JsonPrettyString)
+      })
+    }
+
+    it(`hex2bin${stdin ? ' (stdin)' : ''}`, async () => {
+      const { stdout, stderr } = !stdin
+        ? await execBin(`hex2bin ${fixture1HexString}`)
+        : await execBin('hex2bin', fixture1HexString)
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout, fixture1BinString)
+    })
+
+    it(`hex2diag${stdin ? ' (stdin)' : ''}`, async () => {
+      const { stdout, stderr } = !stdin
+        ? await execBin(`hex2diag ${fixture2HexString}`)
+        : await execBin('hex2diag', fixture2HexString)
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout, fixture2DiagnosticString)
+    })
+
+    it(`hex2json${stdin ? ' (stdin)' : ''}`, async () => {
+      const { stdout, stderr } = !stdin
+        ? await execBin(`hex2json ${fixture1HexString}`)
+        : await execBin('hex2json', fixture1HexString)
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout, `${fixture1JsonString}\n`)
+    })
+
+    it(`hex2json pretty${stdin ? ' (stdin)' : ''}`, async () => {
+      const { stdout, stderr } = !stdin
+        ? await execBin(`hex2json --pretty ${fixture1HexString}`)
+        : await execBin('hex2json --pretty', fixture1HexString)
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout, fixture1JsonPrettyString)
+    })
+
+    it(`json2bin${stdin ? ' (stdin)' : ''}`, async () => {
+      const { stdout, stderr } = !stdin
+        ? await execBin('json2bin "{\\"a\\":1,\\"b\\":[2,3],\\"smile\\":\\"😀\\"}"')
+        : await execBin('json2bin', fixture1JsonString)
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout, fixture1BinString)
+    })
+
+    it(`json2diag${stdin ? ' (stdin)' : ''}`, async () => {
+      const { stdout, stderr } = !stdin
+        ? await execBin('json2diag "{\\"a\\":1,\\"b\\":[2,3],\\"smile\\":\\"😀\\"}"')
+        : await execBin('json2diag', fixture1JsonString)
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout, fixture1DiagnosticString)
+    })
+
+    it(`json2hex${stdin ? ' (stdin)' : ''}`, async () => {
+      const { stdout, stderr } = !stdin
+        ? await execBin(`json2hex "${fixture1JsonString.replace(/"/g, '\\"')}"`)
+        : await execBin('json2hex', fixture1JsonString)
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout, `${fixture1HexString}\n`)
+    })
+  }
 
   // complicated nesting to test indenting algorithm
   it('diag indenting', async () => {
@@ -310,5 +340,46 @@ Input may either be supplied as an argument or piped via stdin
     66                                            #     "f"
   01                                              #   uint(1)
 `)
+  })
+
+  describe('diag length bytes', () => {
+    it('compact', async () => {
+      const { stdout, stderr } = await execBin('json2diag', '"aaaaaaaaaaaaaaaaaaaaaaa"')
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout,
+`77                                                # string(23)
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+`)
+    })
+
+    it('1-byte', async () => {
+      const { stdout, stderr } = await execBin('json2diag', '"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"')
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout,
+`78 23                                             # string(35)
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  616161616161616161616161                        #   "aaaaaaaaaaaa"
+`)
+    })
+
+    it('2-byte', async () => {
+      const { stdout, stderr } = await execBin('json2diag', '"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"')
+      assert.strictEqual(stderr, '')
+      assert.strictEqual(stdout,
+`79 0100                                           # string(256)
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  6161616161616161616161616161616161616161616161  #   "aaaaaaaaaaaaaaaaaaaaaaa"
+  616161                                          #   "aaa"
+`)
+    })
   })
 })
