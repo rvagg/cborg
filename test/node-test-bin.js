@@ -250,4 +250,65 @@ Input may either be supplied as an argument or piped via stdin
     assert.strictEqual(stderr, '')
     assert.strictEqual(stdout, 'a3616101616282020365736d696c6564f09f9880\n')
   })
+
+  // complicated nesting to test indenting algorithm
+  it('diag indenting', async () => {
+    const { stdout, stderr } = await execBin('json2diag', '{"a":[],"b":{},"c":{"a":1,"b":{"a":{"a":{}}}},"d":{"a":{"a":{"a":1},"b":2,"c":[]}},"e":[[[[{"a":{}}]]]],"f":1}')
+    assert.strictEqual(stderr, '')
+    assert.strictEqual(stdout,
+`a6                                                # map(6)
+  61                                              #   string(1)
+    61                                            #     "a"
+  80                                              #   array(0)
+  61                                              #   string(1)
+    62                                            #     "b"
+  a0                                              #   map(0)
+  61                                              #   string(1)
+    63                                            #     "c"
+  a2                                              #   map(2)
+    61                                            #     string(1)
+      61                                          #       "a"
+    01                                            #     uint(1)
+    61                                            #     string(1)
+      62                                          #       "b"
+    a1                                            #     map(1)
+      61                                          #       string(1)
+        61                                        #         "a"
+      a1                                          #       map(1)
+        61                                        #         string(1)
+          61                                      #           "a"
+        a0                                        #         map(0)
+  61                                              #   string(1)
+    64                                            #     "d"
+  a1                                              #   map(1)
+    61                                            #     string(1)
+      61                                          #       "a"
+    a3                                            #     map(3)
+      61                                          #       string(1)
+        61                                        #         "a"
+      a1                                          #       map(1)
+        61                                        #         string(1)
+          61                                      #           "a"
+        01                                        #         uint(1)
+      61                                          #       string(1)
+        62                                        #         "b"
+      02                                          #       uint(2)
+      61                                          #       string(1)
+        63                                        #         "c"
+      80                                          #       array(0)
+  61                                              #   string(1)
+    65                                            #     "e"
+  81                                              #   array(1)
+    81                                            #     array(1)
+      81                                          #       array(1)
+        81                                        #         array(1)
+          a1                                      #           map(1)
+            61                                    #             string(1)
+              61                                  #               "a"
+            a0                                    #             map(0)
+  61                                              #   string(1)
+    66                                            #     "f"
+  01                                              #   uint(1)
+`)
+  })
 })
