@@ -1,3 +1,10 @@
+### [1.6.2](https://github.com/rvagg/cborg/compare/v1.6.1...v1.6.2) (2022-02-21)
+
+
+### Bug Fixes
+
+* **diagnostic:** rework indenting algorithm to better handle recursives ([af47da1](https://github.com/rvagg/cborg/commit/af47da12835bd6d82982784ca4cd8903c4a966f1))
+
 ### [1.6.1](https://github.com/rvagg/cborg/compare/v1.6.0...v1.6.1) (2022-01-17)
 
 
