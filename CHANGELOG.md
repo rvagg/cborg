@@ -1,3 +1,10 @@
+## [1.7.0](https://github.com/rvagg/cborg/compare/v1.6.2...v1.7.0) (2022-02-21)
+
+
+### Features
+
+* **cli:** add diag2* commands, minor diag fixes, README update ([bb52262](https://github.com/rvagg/cborg/commit/bb5226268bd7ed4170ff5a6230998cacf0397231))
+
 ### [1.6.2](https://github.com/rvagg/cborg/compare/v1.6.1...v1.6.2) (2022-02-21)
 
 
