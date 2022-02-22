@@ -382,4 +382,23 @@ Input may either be supplied as an argument or piped via stdin
 `)
     })
   })
+
+  it('diag non-utf8 and non-printable ascii', async () => {
+    const input = '7864f55ff8f12508b63ef2bfeca7557ae90df6311a5ec1631b4a1fa843310bd9c3a710eaace5a1bdd72ad0bfe049771c11e756338bd93865e645f1adec9b9c99ef407fbd4fc6859e7904c5ad7dc9bd10a5cc16973d5b28ec1a6dd43d9f82f9f18c3d03418e35'
+    let { stdout, stderr } = await execBin(`hex2diag ${input}`)
+    assert.strictEqual(stderr, '')
+    assert.strictEqual(stdout,
+`78 64                                             # string(86)
+  f55ff8f12508b63ef2bfeca7557ae90df6311a5ec1631b  #   "õ_øñ%\\x08¶>ò¿ì§Uzé\\x0dö1\\x1a^Ác\\x1b"
+  4a1fa843310bd9c3a710eaace5a1bdd72ad0bfe049771c  #   "J\\x1f¨C1\\x0bÙÃ§\\x10ê¬å¡½×*Ð¿àIw\\x1c"
+  11e756338bd93865e645f1adec9b9c99ef407fbd4fc685  #   "\\x11çV3\\x8bÙ8eæEñ\\xadì\\x9b\\x9c\\x99ï@\\x7f½OÆ\\x85"
+  9e7904c5ad7dc9bd10a5cc16973d5b28ec1a6dd43d9f82  #   "\\x9ey\\x04Å\\xad}É½\\x10¥Ì\\x16\\x97=[(ì\\x1amÔ=\\x9f\\x82"
+  f9f18c3d03418e35                                #   "ùñ\\x8c=\\x03A\\x8e5"
+`)
+
+    // round-trip
+    ;({ stdout, stderr } = await execBin('diag2hex', stdout))
+    assert.strictEqual(stderr, '')
+    assert.strictEqual(stdout, `${input}\n`)
+  })
 })
