@@ -1,3 +1,15 @@
+## [1.8.0](https://github.com/rvagg/cborg/compare/v1.7.0...v1.8.0) (2022-02-25)
+
+
+### Features
+
+* **string:** add `retainStringBytes` decode option, better non-unicode & non-printable diag output ([770dd6e](https://github.com/rvagg/cborg/commit/770dd6e2ad8da4b394164d42822b84805429c9ff))
+
+
+### Trivial Changes
+
+* **no-release:** bump actions/setup-node from 2.5.1 to 3.0.0 ([#44](https://github.com/rvagg/cborg/issues/44)) ([149afe0](https://github.com/rvagg/cborg/commit/149afe0f2a61084f0d29e3b49515fe4cef945e41))
+
 ## [1.7.0](https://github.com/rvagg/cborg/compare/v1.6.2...v1.7.0) (2022-02-21)
 
 
