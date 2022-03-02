@@ -1,3 +1,11 @@
+### [1.8.1](https://github.com/rvagg/cborg/compare/v1.8.0...v1.8.1) (2022-03-02)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 4.5.5 to 4.6.2 ([#46](https://github.com/rvagg/cborg/issues/46)) ([cfe6aab](https://github.com/rvagg/cborg/commit/cfe6aab0cb2c67b61b4621d510d1df3d87485ff8))
+* **no-release:** bump actions/checkout from 2.4.0 to 3 ([#45](https://github.com/rvagg/cborg/issues/45)) ([6620054](https://github.com/rvagg/cborg/commit/6620054274fc768ee5e874de1c590f929d331314))
+
 ## [1.8.0](https://github.com/rvagg/cborg/compare/v1.7.0...v1.8.0) (2022-02-25)
 
 
