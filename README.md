@@ -27,6 +27,7 @@
     * [Options](#options)
   * [`decode(data[, options])`](#decodedata-options)
     * [Options](#options-1)
+  * [`encodedLength(data[, options])`](#encodedlengthdata-options)
   * [Type encoders](#type-encoders)
   * [Tag decoders](#tag-decoders)
 * [Deterministic encoding recommendations](#deterministic-encoding-recommendations)
@@ -249,6 +250,20 @@ Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScrip
 * `retainStringBytes` (boolean, default `false`): when decoding strings, retain the original bytes on the `Token` object as `byteValue`. Since it is possible to encode non-UTF-8 characters in strings in CBOR, and JavaScript doesn't properly handle non-UTF-8 in its conversion from bytes (`TextEncoder` or `Buffer`), this can result in a loss of data (and an inability to round-trip). Where this is important, a token stream should be consumed instead of a plain `decode()` and the `byteValue` property on string tokens can be inspected (see [lib/diagnostic.js](lib/diagnostic.js) for an example of its use.)
 * `tags` (array): a mapping of tag number to tag decoder function. By default no tags are supported. See [Tag decoders](#tag-decoders).
 * `tokenizer` (object): an object with two methods, `next()` which returns a `Token` and `done()` which returns a `boolean`. Can be used to implement custom input decoding. See the source code for examples.
+
+### `encodedLength(data[, options])`
+
+```js
+import { encodedLength } from 'cborg/length'
+```
+
+```js
+const { encodedLength } = require('cborg/length')
+```
+
+Calculate the byte length of the given data when encoded as CBOR with the options provided. The options are the same as for an `encode()` call. This calculation will be accurate if the same options are used as when performing a normal `encode()`. Some encode options can change the encoding output length.
+
+A `tokensToLength()` function is available which deals directly with a tokenized form of the object, but this only recommended for advanced users.
 
 ### Type encoders
 

@@ -16,6 +16,7 @@ export type StrictTypeEncoder = (data: any, typ: string, options: EncodeOptions,
 export type TokenTypeEncoder = {
   (buf: Bl, token: Token, options?: EncodeOptions): void;
   compareTokens(t1: Token, t2: Token): number;
+  // TODO: make this non-optional as a breaking change and remove the throw in length.js
   encodedSize?(token: Token, options?: EncodeOptions): number;
 }
 
