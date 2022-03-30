@@ -1,3 +1,10 @@
+## [1.9.0](https://github.com/rvagg/cborg/compare/v1.8.1...v1.9.0) (2022-03-30)
+
+
+### Features
+
+* add encodedLength() function ([#48](https://github.com/rvagg/cborg/issues/48)) ([e8be1c0](https://github.com/rvagg/cborg/commit/e8be1c0f2cbe5b889cbf21a16693ec37cee1a1d6))
+
 ### [1.8.1](https://github.com/rvagg/cborg/compare/v1.8.0...v1.8.1) (2022-03-02)
 
 
