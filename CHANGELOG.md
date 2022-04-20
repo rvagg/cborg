@@ -1,3 +1,17 @@
+### [1.9.1](https://github.com/rvagg/cborg/compare/v1.9.0...v1.9.1) (2022-04-20)
+
+
+### Bug Fixes
+
+* standard@17 getting picky about ternaries ([5069065](https://github.com/rvagg/cborg/commit/50690659bfbf3fce871eeff6d311ec30bf6b9813))
+
+
+### Trivial Changes
+
+* **deps-dev:** bump standard from 16.0.4 to 17.0.0 ([291c6ca](https://github.com/rvagg/cborg/commit/291c6ca23f302aec8e74363a039ba4b0696faf9f))
+* **no-release:** bump actions/setup-node from 3.0.0 to 3.1.0 ([#49](https://github.com/rvagg/cborg/issues/49)) ([61e25e0](https://github.com/rvagg/cborg/commit/61e25e03481cebd7b3e25c0c42388b68df1f0474))
+* **no-release:** bump actions/setup-node from 3.1.0 to 3.1.1 ([#51](https://github.com/rvagg/cborg/issues/51)) ([2993a82](https://github.com/rvagg/cborg/commit/2993a82d90197f424ca04041d5721ac16dbf1618))
+
 ## [1.9.0](https://github.com/rvagg/cborg/compare/v1.8.1...v1.9.0) (2022-03-30)
 
 
