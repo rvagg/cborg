@@ -6,8 +6,6 @@ import process from 'process'
 import path from 'path'
 import { platform } from 'os'
 import { fileURLToPath } from 'url'
-// included here for ipjs compile tree
-import bin from '../lib/bin.js' // eslint-disable-line
 
 const { assert } = chai
 
