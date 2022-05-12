@@ -1,3 +1,17 @@
+### [1.9.2](https://github.com/rvagg/cborg/compare/v1.9.1...v1.9.2) (2022-05-12)
+
+
+### Bug Fixes
+
+* rework lib/bin.js inclusion in ipjx compile chain ([7b3cd32](https://github.com/rvagg/cborg/commit/7b3cd3297b174b42cf1c8fe480c8df430415db6e))
+
+
+### Trivial Changes
+
+* **deps-dev:** bump mocha from 9.2.2 to 10.0.0 ([67db9a3](https://github.com/rvagg/cborg/commit/67db9a39991e0ac163d08870a93ef015510d8d35))
+* **no-release:** bump polendina from 2.0.15 to 3.0.0 ([#54](https://github.com/rvagg/cborg/issues/54)) ([84e8037](https://github.com/rvagg/cborg/commit/84e80374a1a3c0ecaea8be67fd0b054a7d9422e3))
+* **no-release:** bump polendina from 3.0.0 to 3.1.0 ([#55](https://github.com/rvagg/cborg/issues/55)) ([57a47f8](https://github.com/rvagg/cborg/commit/57a47f81ceacef6a00dcabf37befcefb2cd40860))
+
 ### [1.9.1](https://github.com/rvagg/cborg/compare/v1.9.0...v1.9.1) (2022-04-20)
 
 
