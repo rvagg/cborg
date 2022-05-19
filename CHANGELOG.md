@@ -1,3 +1,15 @@
+### [1.9.3](https://github.com/rvagg/cborg/compare/v1.9.2...v1.9.3) (2022-05-19)
+
+
+### Bug Fixes
+
+* allow diag output to deal with integers outside of safe range ([5d4ed2c](https://github.com/rvagg/cborg/commit/5d4ed2c7e6f00db40150cb6e56c859bfb965d752))
+
+
+### Trivial Changes
+
+* **no-release:** bump actions/setup-node from 3.1.1 to 3.2.0 ([#57](https://github.com/rvagg/cborg/issues/57)) ([9594b16](https://github.com/rvagg/cborg/commit/9594b160dd9613baac0dadb14ee6e139c2c36853))
+
 ### [1.9.2](https://github.com/rvagg/cborg/compare/v1.9.1...v1.9.2) (2022-05-12)
 
 
