@@ -1,3 +1,10 @@
+### [1.9.4](https://github.com/rvagg/cborg/compare/v1.9.3...v1.9.4) (2022-05-25)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 4.6.4 to 4.7.2 ([b3a63e5](https://github.com/rvagg/cborg/commit/b3a63e594afed42af0fbdd1f9f098ac31bc727b8))
+
 ### [1.9.3](https://github.com/rvagg/cborg/compare/v1.9.2...v1.9.3) (2022-05-19)
 
 
