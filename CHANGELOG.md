@@ -1,3 +1,14 @@
+## [1.9.5](https://github.com/rvagg/cborg/compare/v1.9.4...v1.9.5) (2022-08-26)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 4.7.4 to 4.8.2 ([#63](https://github.com/rvagg/cborg/issues/63)) ([b28e7de](https://github.com/rvagg/cborg/commit/b28e7defe986bfa134a8f1a9b9ea71f60682dbd3))
+* **no-release:** bump actions/setup-node from 3.2.0 to 3.3.0 ([#59](https://github.com/rvagg/cborg/issues/59)) ([5f317db](https://github.com/rvagg/cborg/commit/5f317db133d5dd6b6eac369819860351b77a0954))
+* **no-release:** bump actions/setup-node from 3.3.0 to 3.4.0 ([#61](https://github.com/rvagg/cborg/issues/61)) ([a104eb7](https://github.com/rvagg/cborg/commit/a104eb73f3b9e12fd30556e1ed9db017ca4b3b73))
+* **no-release:** bump actions/setup-node from 3.4.0 to 3.4.1 ([#62](https://github.com/rvagg/cborg/issues/62)) ([883b273](https://github.com/rvagg/cborg/commit/883b273a68b08361a7cc8cb5f4f8be6aa8ae7ccc))
+* **no-release:** bump ipld-garbage from 4.0.10 to 5.0.0 ([#60](https://github.com/rvagg/cborg/issues/60)) ([42e6f9a](https://github.com/rvagg/cborg/commit/42e6f9a20a1dcce5061c0a493931e4a060f1442e))
+
 ### [1.9.4](https://github.com/rvagg/cborg/compare/v1.9.3...v1.9.4) (2022-05-25)
 
 
