@@ -1,3 +1,12 @@
+## [1.9.6](https://github.com/rvagg/cborg/compare/v1.9.5...v1.9.6) (2022-11-15)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 4.8.4 to 4.9.3 ([#66](https://github.com/rvagg/cborg/issues/66)) ([38fc1c8](https://github.com/rvagg/cborg/commit/38fc1c862625bcab76340398897c0a2d928dc482))
+* **no-release:** bump actions/setup-node from 3.4.1 to 3.5.0 ([#64](https://github.com/rvagg/cborg/issues/64)) ([927189a](https://github.com/rvagg/cborg/commit/927189a130d579fba41f62c327042d9166d32714))
+* **no-release:** bump actions/setup-node from 3.5.0 to 3.5.1 ([#65](https://github.com/rvagg/cborg/issues/65)) ([d06f0c9](https://github.com/rvagg/cborg/commit/d06f0c9308627e3bdf2026be5ff4c05ab958b99d))
+
 ## [1.9.5](https://github.com/rvagg/cborg/compare/v1.9.4...v1.9.5) (2022-08-26)
 
 
