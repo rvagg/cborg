@@ -40,6 +40,7 @@ export interface DecodeOptions {
   allowBigInt?: boolean
   strict?: boolean
   useMaps?: boolean
+  rejectDuplicateMapKeys?: boolean
   retainStringBytes?: boolean
   tags?: TagDecoder[],
   tokenizer?: DecodeTokenizer
