@@ -56,4 +56,10 @@ describe('decode errors', () => {
     // two '1's
     assert.throws(() => decode(fromHex('0101')), /too many terminals/)
   })
+
+  it('rejectDuplicateMapKeys enabled on duplicate keys', () => {
+    assert.deepStrictEqual(decode(fromHex('a3636261720363666f6f0163666f6f02')), { foo: 2, bar: 3 })
+    assert.throws(() => decode(fromHex('a3636261720363666f6f0163666f6f02'), { rejectDuplicateMapKeys: true }), /CBOR decode error: found repeat map key "foo"/)
+    assert.throws(() => decode(fromHex('a3636261720363666f6f0163666f6f02'), { useMaps: true, rejectDuplicateMapKeys: true }), /CBOR decode error: found repeat map key "foo"/)
+  })
 })

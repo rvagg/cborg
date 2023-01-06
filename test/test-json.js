@@ -183,4 +183,9 @@ describe('json basics', () => {
     assert.throws(() => decode(toBytes('[fa]')), 'CBOR decode error: unexpected end of input at position 1')
     assert.throws(() => decode(toBytes('-0..1')), 'CBOR decode error: unexpected token at position 3')
   })
+
+  it('should throw when rejectDuplicateMapKeys enabled on duplicate keys', () => {
+    assert.deepStrictEqual(decode(toBytes('{"foo":1,"foo":2}')), { foo: 2 })
+    assert.throws(() => decode(toBytes('{"foo":1,"foo":2}'), { rejectDuplicateMapKeys: true }), /CBOR decode error: found repeat map key "foo"/)
+  })
 })
