@@ -1,3 +1,16 @@
+## [1.10.0](https://github.com/rvagg/cborg/compare/v1.9.6...v1.10.0) (2023-01-06)
+
+
+### Features
+
+* add rejectDuplicateMapKeys option (default false) ([450bc8c](https://github.com/rvagg/cborg/commit/450bc8c68006eb109c671084c5ff5dd22dc64e7a))
+
+
+### Trivial Changes
+
+* **no-release:** bump actions/setup-node from 3.5.1 to 3.6.0 ([#73](https://github.com/rvagg/cborg/issues/73)) ([a7d9e99](https://github.com/rvagg/cborg/commit/a7d9e99662eaf0b020b0124fceba56810d8a55d0))
+* **no-release:** update node.js versions in CI ([6fe4131](https://github.com/rvagg/cborg/commit/6fe4131cc00a1c9c824974afb28eba7f6fea9ef1))
+
 ## [1.9.6](https://github.com/rvagg/cborg/compare/v1.9.5...v1.9.6) (2022-11-15)
 
 
