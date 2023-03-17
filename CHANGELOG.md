@@ -1,3 +1,15 @@
+## [1.10.1](https://github.com/rvagg/cborg/compare/v1.10.0...v1.10.1) (2023-03-17)
+
+
+### Bug Fixes
+
+* release with Node.js 18 ([e1de3dc](https://github.com/rvagg/cborg/commit/e1de3dcb2376149c6db18bbb46a4dee6dd3bae3c))
+
+
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 4.9.5 to 5.0.2 ([46974d7](https://github.com/rvagg/cborg/commit/46974d7dd5eed6b7f776990ba81b33360333f56e))
+
 ## [1.10.0](https://github.com/rvagg/cborg/compare/v1.9.6...v1.10.0) (2023-01-06)
 
 
