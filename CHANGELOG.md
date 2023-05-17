@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/rvagg/cborg/compare/v1.10.1...v1.10.2) (2023-05-17)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump polendina from 3.1.0 to 3.2.1 ([6098702](https://github.com/rvagg/cborg/commit/6098702f415a1e15a6d5a1fb3d630ebdce31cdfd))
+
 ## [1.10.1](https://github.com/rvagg/cborg/compare/v1.10.0...v1.10.1) (2023-03-17)
 
 
