@@ -1,3 +1,14 @@
+## [2.0.0](https://github.com/rvagg/cborg/compare/v1.10.2...v2.0.0) (2023-06-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node.js 14.x support
+
+### Trivial Changes
+
+* drop Node.js 14.x support ([cc28594](https://github.com/rvagg/cborg/commit/cc28594041204a80d5f722c137f41dd9ebc5b987))
+
 ## [1.10.2](https://github.com/rvagg/cborg/compare/v1.10.1...v1.10.2) (2023-05-17)
 
 
