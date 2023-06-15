@@ -23,7 +23,7 @@ jobs:
           npm config set script-shell bash
           npm run test:ci
       - name: Typecheck
-        uses: gozala/typescript-error-reporter-action@v1.0.8
+        uses: gozala/typescript-error-reporter-action@v1.0.9
   release:
     name: Release
     needs: test
