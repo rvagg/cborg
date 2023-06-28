@@ -1,3 +1,11 @@
+## [2.0.2](https://github.com/rvagg/cborg/compare/v2.0.1...v2.0.2) (2023-06-28)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 5.0.4 to 5.1.5 ([e5ed650](https://github.com/rvagg/cborg/commit/e5ed650051efb63cd55a2f7ab3d6c0768aea3b0d))
+* **deps:** bump gozala/typescript-error-reporter-action ([9ac5f4a](https://github.com/rvagg/cborg/commit/9ac5f4a2a542b9f4eec61e5bce1e6a9d2c49a951))
+
 ## [2.0.1](https://github.com/rvagg/cborg/compare/v2.0.0...v2.0.1) (2023-06-14)
 
 
