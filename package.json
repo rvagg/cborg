@@ -44,15 +44,19 @@
   },
   "exports": {
     ".": {
+      "types": "./types/cborg.d.ts",
       "import": "./cborg.js"
     },
     "./length": {
+      "types": "./types/lib/cborg.d.ts",
       "import": "./lib/length.js"
     },
     "./taglib": {
+      "types": "./types/taglib.d.ts",
       "import": "./taglib.js"
     },
     "./json": {
+      "types": "./types/lib/json/json.d.ts",
       "import": "./lib/json/json.js"
     }
   },
