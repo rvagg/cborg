@@ -1,3 +1,11 @@
+## [2.0.5](https://github.com/rvagg/cborg/compare/v2.0.4...v2.0.5) (2023-08-25)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 5.1.6 to 5.2.2 ([4518600](https://github.com/rvagg/cborg/commit/451860087ae73f1aeaffcfa5fe64ecca068412e8))
+* **deps:** bump actions/setup-node from 3.8.0 to 3.8.1 ([148013b](https://github.com/rvagg/cborg/commit/148013b2eb28453a6fad2d14ceb07080127574b9))
+
 ## [2.0.4](https://github.com/rvagg/cborg/compare/v2.0.3...v2.0.4) (2023-08-14)
 
 
