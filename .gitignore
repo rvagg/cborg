@@ -1,7 +1,5 @@
 .DS_Store
-build/
 node_modules/
 coverage/
 c/
 dist/
-types/
