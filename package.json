@@ -5,23 +5,17 @@
   "main": "cborg.js",
   "type": "module",
   "bin": {
-    "cborg": "cli.js"
+    "cborg": "lib/bin.js"
   },
   "scripts": {
     "lint": "standard *.js lib/*.js test/*.js",
-    "build": "npm run build:js && npm run build:types",
-    "build:js": "ipjs build --tests --main",
-    "build:copy": "mkdir -p dist/test && cp test/*.js dist/test/ && cp -a tsconfig.json *.js *.ts lib dist/",
-    "build:types": "npm run build:copy && cd dist && tsc --build",
-    "test:cjs": "npm run build && mocha dist/cjs/node-test/test-*.js dist/cjs/node-test/node-test-*.js",
-    "test:esm": "npm run build && mocha dist/esm/node-test/test-*.js dist/esm/node-test/node-test-*.js",
-    "test:node": "c8 --check-coverage --branches 100 --functions 100 --lines 100 mocha test/test-*.js test/node-test-*.js",
-    "test:browser:cjs": "polendina --page --worker --serviceworker --cleanup dist/cjs/browser-test/test-*.js",
-    "test:browser:esm": "polendina --page --worker --serviceworker --cleanup dist/esm/browser-test/test-*.js",
-    "test:browser": "npm run test:browser:cjs && npm run test:browser:cjs",
-    "test": "npm run lint && npm run test:node && npm run test:esm && npm run test:browser:esm",
-    "test:ci": "npm run lint && npm run test:node && npm run test:cjs && npm run test:esm && npm run test:browser",
-    "coverage": "c8 --reporter=html mocha test/test-*.js && npx st -d coverage -p 8080"
+    "build": "npm run build:types",
+    "build:types": "tsc --build",
+    "prepublishOnly": "npm run build",
+    "test:node": "c8 --check-coverage --exclude=test/** mocha test/test-*.js",
+    "test:browser": "polendina --cleanup test/test-*.js",
+    "test": "npm run lint && npm run build && npm run test:node && npm run test:browser",
+    "coverage": "c8 --reporter=html --reporter=text mocha test/test-*.js && npx st -d coverage -p 8888"
   },
   "repository": {
     "type": "git",
@@ -33,27 +27,33 @@
   "author": "Rod <rod@vagg.org> (http://r.va.gg/)",
   "license": "Apache-2.0",
   "devDependencies": {
-    "c8": "^8.0.0",
-    "chai": "^4.3.4",
-    "ipjs": "^5.2.0",
+    "@types/chai": "^4.3.6",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.5.9",
+    "c8": "^8.0.1",
+    "chai": "^4.3.8",
     "ipld-garbage": "^5.0.0",
-    "mocha": "^10.0.0",
-    "polendina": "~3.2.1",
-    "standard": "^17.0.0",
-    "typescript": "~5.2.2"
+    "mocha": "^10.2.0",
+    "polendina": "^3.2.1",
+    "standard": "^17.1.0",
+    "typescript": "^5.2.2"
   },
   "exports": {
     ".": {
-      "import": "./cborg.js"
+      "import": "./cborg.js",
+      "types": "./types/cborg.d.ts"
     },
     "./length": {
-      "import": "./lib/length.js"
+      "import": "./lib/length.js",
+      "types": "./types/lib/length.d.ts"
     },
     "./taglib": {
-      "import": "./taglib.js"
+      "import": "./taglib.js",
+      "types": "./types/taglib.d.ts"
     },
     "./json": {
-      "import": "./lib/json/json.js"
+      "import": "./lib/json/json.js",
+      "types": "./types/lib/json/json.d.ts"
     }
   },
   "types": "cborg.d.ts",
@@ -149,12 +149,7 @@
         }
       ],
       "@semantic-release/changelog",
-      [
-        "@semantic-release/npm",
-        {
-          "pkgRoot": "dist"
-        }
-      ],
+      "@semantic-release/npm",
       "@semantic-release/github",
       "@semantic-release/git"
     ]
