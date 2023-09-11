@@ -27,6 +27,7 @@
     * [Options](#options)
   * [`decode(data[, options])`](#decodedata-options)
     * [Options](#options-1)
+  * [`decodeFirst(data[, options])`](#decodefirstdata-options)
   * [`encodedLength(data[, options])`](#encodedlengthdata-options)
   * [Type encoders](#type-encoders)
   * [Tag decoders](#tag-decoders)
@@ -196,10 +197,6 @@ $ cborg json2hex '["a", "b", 1, "😀"]'
 import { encode } from 'cborg'
 ```
 
-```js
-const { encode } = require('cborg')
-```
-
 Encode a JavaScript object and return a `Uint8Array` with the CBOR byte representation.
 
 * Objects containing circular references will be rejected.
@@ -226,10 +223,6 @@ Encode a JavaScript object and return a `Uint8Array` with the CBOR byte represen
 import { decode } from 'cborg'
 ```
 
-```js
-const { decode } = require('cborg')
-```
-
 Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScript object.
 
 * Integers (major 0 and 1) that are outside of the safe integer range will be converted to a `BigInt`.
@@ -252,14 +245,47 @@ Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScrip
 * `tags` (array): a mapping of tag number to tag decoder function. By default no tags are supported. See [Tag decoders](#tag-decoders).
 * `tokenizer` (object): an object with two methods, `next()` which returns a `Token` and `done()` which returns a `boolean`. Can be used to implement custom input decoding. See the source code for examples.
 
+### `decodeFirst(data[, options])`
+
+```js
+import { decodeFirst } from 'cborg'
+```
+
+Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScript object ***and*** the remainder of the original byte array that was not consumed by the decode. This can be useful for decoding concatenated CBOR objects, which is often used in streaming modes of CBOR.
+
+The returned remainder `Uint8Array` is a subarray of the original input `Uint8Array` and will share the same underlying buffer. This means that there are no new allocations performed by this function and it is as efficient to use as `decode` but without the additional byte-consumption check.
+
+The options for `decodeFirst` are the same as for [`decode()`](#decodedata-options), but the return type is different and `decodeFirst()` will not error if a decode operation doesn't consume all of the input bytes.
+
+The return value is an array with two elements:
+
+* `value`: the decoded JavaScript object
+* `remainder`: a `Uint8Array` containing the bytes that were not consumed by the decode operation
+
+```js
+import { decodeFirst } from 'cborg'
+
+let buf = Buffer.from('a16474686973a26269736543424f522163796179f564746869736269736543424f522163796179f5', 'hex')
+while (buf.length) {
+  const [value, remainder] = decodeFirst(buf)
+  console.log('decoded:', value)
+  buf = remainder
+}
+```
+
+```
+decoded: { this: { is: 'CBOR!', yay: true } }
+decoded: this
+decoded: is
+decoded: CBOR!
+decoded: yay
+decoded: true
+```
+
 ### `encodedLength(data[, options])`
 
 ```js
 import { encodedLength } from 'cborg/length'
-```
-
-```js
-const { encodedLength } = require('cborg/length')
 ```
 
 Calculate the byte length of the given data when encoded as CBOR with the options provided. The options are the same as for an `encode()` call. This calculation will be accurate if the same options are used as when performing a normal `encode()`. Some encode options can change the encoding output length.
@@ -400,7 +426,7 @@ There are a number of forms where an object will not round-trip precisely, if th
 
 **cborg** can also encode and decode JSON using the same pipeline and many of the same settings. For most (but not all) cases it will be faster to use `JSON.parse()` and `JSON.stringify()`, however **cborg** provides much more control over the process to handle determinism and be more restrictive in allowable forms. It also operates natively with Uint8Arrays rather than strings which may also offer some minor efficiency or usability gains in some circumstances.
 
-Use `import { encode, decode } from 'cborg/json'` or `const { encode, decode } = require('cborg/json')` to access the JSON handling encoder and decoder.
+Use `import { encode, decode } from 'cborg/json'` to access the JSON handling encoder and decoder.
 
 Many of the same encode and decode options available for CBOR can be used to manage JSON handling. These include strictness requirements for decode and custom tag encoders for encode. Tag encoders can't create new tags as there are no tags in JSON, but they can replace JavaScript object forms with custom JSON forms (e.g. convert a `Uint8Array` to a valid JSON form rather than having the encoder throw an error). The inverse is also possible, turning specific JSON forms into JavaScript forms, by using a custom tokenizer on decode.
 

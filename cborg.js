@@ -1,5 +1,5 @@
 import { encode } from './lib/encode.js'
-import { decode } from './lib/decode.js'
+import { decode, decodeFirst } from './lib/decode.js'
 import { Token, Type } from './lib/token.js'
 
 /**
@@ -13,6 +13,7 @@ import { Token, Type } from './lib/token.js'
 
 export {
   decode,
+  decodeFirst,
   encode,
   Token,
   Type
