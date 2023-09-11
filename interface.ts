@@ -26,7 +26,8 @@ export type QuickEncodeToken = (token: Token) => Uint8Array | undefined
 
 export interface DecodeTokenizer {
   done(): boolean,
-  next(): Token
+  next(): Token,
+  pos(): number,
 }
 
 export type TagDecoder = (inner: any) => any
