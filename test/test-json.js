@@ -1,7 +1,7 @@
 /* eslint-env mocha,es2020 */
 
 import { assert } from 'chai'
-import { decode, encode } from 'cborg/json'
+import { decode, decodeFirst, encode } from 'cborg/json'
 
 const toBytes = (str) => new TextEncoder().encode(str)
 
@@ -187,5 +187,33 @@ describe('json basics', () => {
   it('should throw when rejectDuplicateMapKeys enabled on duplicate keys', () => {
     assert.deepStrictEqual(decode(toBytes('{"foo":1,"foo":2}')), { foo: 2 })
     assert.throws(() => decode(toBytes('{"foo":1,"foo":2}'), { rejectDuplicateMapKeys: true }), /CBOR decode error: found repeat map key "foo"/)
+  })
+
+  it('decodeFirst', () => {
+    /*
+    const encoded = new TextDecoder().decode(encode(obj, sorting === false ? { mapSorter: null } : undefined))
+    const json = JSON.stringify(obj)
+    assert.strictEqual(encoded, json)
+    const decoded = decode(toBytes(JSON.stringify(obj)))
+    assert.deepStrictEqual(decoded, obj)
+    */
+    let buf = new TextEncoder().encode('{"foo":1,"bar":2}1"ping"2null3[1,2,3]""[[],[],{"boop":true}]')
+    const expected = [
+      { foo: 1, bar: 2 },
+      1,
+      'ping',
+      2,
+      null,
+      3,
+      [1, 2, 3],
+      '',
+      [[], [], { boop: true }]
+    ]
+    for (const exp of expected) {
+      const [obj, rest] = decodeFirst(buf)
+      assert.deepStrictEqual(exp, obj)
+      buf = rest
+    }
+    assert.strictEqual(buf.length, 0)
   })
 })

@@ -426,7 +426,7 @@ There are a number of forms where an object will not round-trip precisely, if th
 
 **cborg** can also encode and decode JSON using the same pipeline and many of the same settings. For most (but not all) cases it will be faster to use `JSON.parse()` and `JSON.stringify()`, however **cborg** provides much more control over the process to handle determinism and be more restrictive in allowable forms. It also operates natively with Uint8Arrays rather than strings which may also offer some minor efficiency or usability gains in some circumstances.
 
-Use `import { encode, decode } from 'cborg/json'` to access the JSON handling encoder and decoder.
+Use `import { encode, decode, decodeFirst } from 'cborg/json'` to access the JSON handling encoder and decoder.
 
 Many of the same encode and decode options available for CBOR can be used to manage JSON handling. These include strictness requirements for decode and custom tag encoders for encode. Tag encoders can't create new tags as there are no tags in JSON, but they can replace JavaScript object forms with custom JSON forms (e.g. convert a `Uint8Array` to a valid JSON form rather than having the encoder throw an error). The inverse is also possible, turning specific JSON forms into JavaScript forms, by using a custom tokenizer on decode.
 
