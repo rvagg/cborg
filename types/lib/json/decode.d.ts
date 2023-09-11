@@ -7,6 +7,12 @@ export type DecodeTokenizer = import('../../interface').DecodeTokenizer;
  */
 export function decode(data: Uint8Array, options?: import("../../interface").DecodeOptions | undefined): any;
 /**
+ * @param {Uint8Array} data
+ * @param {DecodeOptions} [options]
+ * @returns {[any, Uint8Array]}
+ */
+export function decodeFirst(data: Uint8Array, options?: import("../../interface").DecodeOptions | undefined): [any, Uint8Array];
+/**
  * @typedef {import('../../interface').DecodeOptions} DecodeOptions
  * @typedef {import('../../interface').DecodeTokenizer} DecodeTokenizer
  */
@@ -19,12 +25,13 @@ export class Tokenizer implements DecodeTokenizer {
      * @param {DecodeOptions} options
      */
     constructor(data: Uint8Array, options?: DecodeOptions);
-    pos: number;
+    _pos: number;
     data: Uint8Array;
     options: import("../../interface").DecodeOptions;
     /** @type {string[]} */
     modeStack: string[];
     lastToken: string;
+    pos(): number;
     /**
      * @returns {boolean}
      */

@@ -10,9 +10,10 @@ export class Tokeniser implements DecodeTokenizer {
      * @param {DecodeOptions} options
      */
     constructor(data: Uint8Array, options?: DecodeOptions);
-    pos: number;
+    _pos: number;
     data: Uint8Array;
     options: import("../interface").DecodeOptions;
+    pos(): number;
     done(): boolean;
     next(): import("./token.js").Token;
 }
@@ -28,6 +29,12 @@ export function tokensToObject(tokeniser: DecodeTokenizer, options: DecodeOption
  * @returns {any}
  */
 export function decode(data: Uint8Array, options?: import("../interface").DecodeOptions | undefined): any;
+/**
+ * @param {Uint8Array} data
+ * @param {DecodeOptions} [options]
+ * @returns {[any, Uint8Array]}
+ */
+export function decodeFirst(data: Uint8Array, options?: import("../interface").DecodeOptions | undefined): [any, Uint8Array];
 declare const BREAK: unique symbol;
 declare const DONE: unique symbol;
 export {};
