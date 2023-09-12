@@ -39,7 +39,7 @@
     "@types/node": "^20.5.9",
     "c8": "^8.0.1",
     "chai": "^4.3.8",
-    "conventional-changelog-conventionalcommits": "^6.1.0",
+    "conventional-changelog-conventionalcommits": "^7.0.2",
     "ipld-garbage": "^5.0.0",
     "mocha": "^10.2.0",
     "polendina": "^3.2.1",
