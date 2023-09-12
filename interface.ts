@@ -1,5 +1,4 @@
 import { Token } from './lib/token'
-import { Bl } from './lib/bl'
 
 export type TokenOrNestedTokens = Token | Token[] | TokenOrNestedTokens[]
 
@@ -58,4 +57,11 @@ export interface EncodeOptions {
    * encoding.
    */
   ignoreUndefinedProperties?: boolean,
+}
+
+export interface Bl {
+  chunks: (Uint8Array | number[])[];
+  reset(): void;
+  push(bytes: Uint8Array | number[]): void;
+  toBytes(reset?: boolean | undefined): Uint8Array;
 }

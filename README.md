@@ -25,6 +25,7 @@
 * [API](#api)
   * [`encode(object[, options])`](#encodeobject-options)
     * [Options](#options)
+  * [`encodeInto(data, destination[, options])`](#encodeintodata-destination-options)
   * [`decode(data[, options])`](#decodedata-options)
     * [Options](#options-1)
   * [`decodeFirst(data[, options])`](#decodefirstdata-options)
@@ -220,6 +221,26 @@ Encode a JavaScript object and return a `Uint8Array` with the CBOR byte represen
 * `typeEncoders` (object): a mapping of type name to function that can encode that type into cborg tokens. This may also be used to reject or transform types as objects are dissected for encoding. See the [Type encoders](#type-encoders) section below for more information.
 * `mapSorter` (function): a function taking two arguments, where each argument is a `Token`, or an array of `Token`s representing the keys of a map being encoded. Similar to other JavaScript compare functions, a `-1`, `1` or `0` (which shouldn't be possible) should be returned depending on the sorting order of the keys. See the source code for the default sorting order which uses the length-first rule recommendation from [RFC 7049](https://tools.ietf.org/html/rfc7049).
 * `ignoreUndefinedProperties` (boolean, default `false`): when encoding a plain object, properties with `undefined` values will be omitted. Does not apply to `Map`s or arrays.
+
+### `encodeInto(data, destination[, options])`
+
+```js
+import { encodeInto } from 'cborg'
+```
+
+Encode a JavaScript object directly into a provided `Uint8Array` destination buffer, returning an object with a `written` property indicating the number of bytes written.
+
+This API mirrors [`TextEncoder.encodeInto()`](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder/encodeInto) and is useful for performance-critical scenarios where you want to avoid allocations by reusing a buffer.
+
+```js
+const destination = new Uint8Array(1024)
+const { written } = encodeInto({ hello: 'world' }, destination)
+const encoded = destination.subarray(0, written)
+```
+
+If the destination buffer is too small to hold the encoded data, an error will be thrown. Use `encodedLength()` to pre-calculate the required size if needed.
+
+The same encoding rules and options as [`encode()`](#encodeobject-options) apply.
 
 ### `decode(data[, options])`
 

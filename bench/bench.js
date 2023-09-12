@@ -3,8 +3,10 @@
 
 import assert from 'assert'
 import { garbage } from 'ipld-garbage'
-import { decode, encode } from '../cborg.js'
+import { decode, encode, encodeInto } from '../cborg.js'
 import borc from 'borc'
+
+const WITH_CBORG_FIXED_DESTINATION = true
 
 let writebuf = ''
 const write = process.stdout
@@ -25,6 +27,20 @@ function runWith (description, count, targetTime, size, options) {
       borcDecoder = new borc.Decoder({ size: 10 * 1024 * 1024 })
     }
     return borcDecoder.decodeAll(bytes)[0]
+  }
+
+  let cborgEncoder = WITH_CBORG_FIXED_DESTINATION ? null : encode
+
+  const cborgEncode = (bytes) => {
+    if (!cborgEncoder) {
+      // account for initial allocation & setup time in benchmark
+      const fixedDestination = new Uint8Array(10 * 1024 * 1024)
+      cborgEncoder = (bytes) => {
+        const { written } = encodeInto(bytes, fixedDestination)
+        return fixedDestination.subarray(0, written)
+      }
+    }
+    return cborgEncoder(bytes)
   }
 
   const fixtures = []
@@ -91,7 +107,7 @@ function runWith (description, count, targetTime, size, options) {
   }
 
   return [
-    cmp('encode', () => enc(encode), () => enc(borc.encode)),
+    cmp('encode', () => enc(cborgEncode), () => enc(borc.encode)),
     cmp('decode', () => dec(decode), () => dec(borcDecode))
   ]
 }

@@ -3,11 +3,19 @@
 import * as chai from 'chai'
 
 import { Token, Type } from '../lib/token.js'
-import { decode, encode } from '../cborg.js'
+import { decode, encode, encodeInto } from '../cborg.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
 import { dateDecoder, dateEncoder } from './common.js'
 
 const { assert } = chai
+
+// Helper to get encoded bytes from encodeInto (which returns { written })
+const encodeIntoBytes = (data, dest, options) => {
+  const { written } = encodeInto(data, dest, options)
+  return dest.subarray(0, written)
+}
+
+const fixedDest = new Uint8Array(1024)
 
 function Uint16ArrayDecoder (obj) {
   if (typeof obj !== 'string') {
@@ -36,6 +44,11 @@ describe('tag', () => {
       'c074323031332d30332d32315432303a30343a30305a' // from appendix_a
     )
 
+    assert.equal(
+      toHex(encodeIntoBytes(new Date('2013-03-21T20:04:00Z'), fixedDest, { typeEncoders: { Date: dateEncoder } })),
+      'c074323031332d30332d32315432303a30343a30305a' // from appendix_a
+    )
+
     const decodedDate = decode(fromHex('c074323031332d30332d32315432303a30343a30305a'), { tags: { 0: dateDecoder } })
     assert.instanceOf(decodedDate, Date)
     assert.equal(decodedDate.toISOString(), new Date('2013-03-21T20:04:00Z').toISOString())
@@ -44,6 +57,11 @@ describe('tag', () => {
   it('Uint16Array as hex/23 (overide existing type)', () => {
     assert.equal(
       toHex(encode(Uint16Array.from([1, 2, 3]), { typeEncoders: { Uint16Array: Uint16ArrayEncoder } })),
+      'd76c303130303032303030333030' // tag(23) + string('010002000300')
+    )
+
+    assert.equal(
+      toHex(encodeIntoBytes(Uint16Array.from([1, 2, 3]), fixedDest, { typeEncoders: { Uint16Array: Uint16ArrayEncoder } })),
       'd76c303130303032303030333030' // tag(23) + string('010002000300')
     )
 
