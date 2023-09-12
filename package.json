@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rvagg/cborg.git"
+    "url": "git@github.com:rvagg/cborg.git"
   },
   "keywords": [
     "cbor"
@@ -28,14 +28,22 @@
   "author": "Rod <rod@vagg.org> (http://r.va.gg/)",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^10.0.4",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.0.5",
+    "@semantic-release/npm": "^10.0.5",
+    "@semantic-release/release-notes-generator": "^11.0.7",
     "@types/chai": "^4.3.6",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.5.9",
     "c8": "^8.0.1",
     "chai": "^4.3.8",
+    "conventional-changelog-conventionalcommits": "^6.1.0",
     "ipld-garbage": "^5.0.0",
     "mocha": "^10.2.0",
     "polendina": "^3.2.1",
+    "semantic-release": "^21.1.1",
     "standard": "^17.1.0",
     "typescript": "^5.2.2"
   },
