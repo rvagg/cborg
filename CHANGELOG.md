@@ -1,3 +1,25 @@
+## [4.0.0](https://github.com/rvagg/cborg/compare/v3.0.0...v4.0.0) (2023-09-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* decodeFirst(), & require DecodeTokenizer to implement pos()
+
+### Features
+
+* add decodeFirst to json decoder ([a1bd349](https://github.com/rvagg/cborg/commit/a1bd349a6eb382737716ec1fc6c1061e710358d1))
+* decodeFirst(), & require DecodeTokenizer to implement pos() ([1b35871](https://github.com/rvagg/cborg/commit/1b358712d51bfd941382b6baab333722dafdada5))
+
+
+### Bug Fixes
+
+* make semantic-release work again ([7ab7a4e](https://github.com/rvagg/cborg/commit/7ab7a4eac21bfd3c98bf8836c3dccca9c56a41e4))
+
+
+### Trivial Changes
+
+* recompile types ([06133db](https://github.com/rvagg/cborg/commit/06133dbf73025b3e1af8065702d7d65ef03be407))
+
 ## [2.0.5](https://github.com/rvagg/cborg/compare/v2.0.4...v2.0.5) (2023-08-25)
 
 
