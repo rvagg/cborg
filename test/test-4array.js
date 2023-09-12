@@ -2,10 +2,16 @@
 
 import * as chai from 'chai'
 
-import { decode, encode } from '../cborg.js'
+import { decode, encode, encodeInto } from '../cborg.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
+
+// Helper to get encoded bytes from encodeInto (which returns { written })
+const encodeIntoBytes = (data, dest) => {
+  const { written } = encodeInto(data, dest)
+  return dest.subarray(0, written)
+}
 
 const fixtures = [
   { data: '80', expected: [], type: 'array empty' },
@@ -35,6 +41,8 @@ const fixtures = [
   { data: '9b000000000000000403040506', expected: [3, 4, 5, 6], type: 'array 4 ints, length64', strict: false }
 ]
 
+const fixedDest = new Uint8Array(1024)
+
 describe('array', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
@@ -63,8 +71,10 @@ describe('array', () => {
           assert.throws(encode.bind(null, fixture.expected), Error, /^CBOR encode error: number too large to encode \(\d+\)$/)
         } else if (fixture.strict === false) {
           assert.notDeepEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type} !strict`)
+          assert.notDeepEqual(toHex(encodeIntoBytes(fixture.expected, fixedDest)), fixture.data, `encode ${fixture.type} !strict`)
         } else {
           assert.strictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encodeIntoBytes(fixture.expected, fixedDest)), fixture.data, `encode ${fixture.type}`)
         }
       })
     }

@@ -19,8 +19,9 @@ import { decodeFirst } from './lib/decode.js';
 import { Tokeniser } from './lib/decode.js';
 import { tokensToObject } from './lib/decode.js';
 import { encode } from './lib/encode.js';
+import { encodeInto } from './lib/encode.js';
 import { rfc8949EncodeOptions } from './lib/encode.js';
 import { Token } from './lib/token.js';
 import { Type } from './lib/token.js';
-export { decode, decodeFirst, Tokeniser as Tokenizer, tokensToObject, encode, rfc8949EncodeOptions, Token, Type };
+export { decode, decodeFirst, Tokeniser as Tokenizer, tokensToObject, encode, encodeInto, rfc8949EncodeOptions, Token, Type };
 //# sourceMappingURL=cborg.d.ts.map
