@@ -1,3 +1,10 @@
+## [4.0.2](https://github.com/rvagg/cborg/compare/v4.0.1...v4.0.2) (2023-09-18)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/npm from 10.0.6 to 11.0.0 ([9b07df9](https://github.com/rvagg/cborg/commit/9b07df9d1b4c7dbc3bf41020179fa23010598a46))
+
 ## [4.0.1](https://github.com/rvagg/cborg/compare/v4.0.0...v4.0.1) (2023-09-12)
 
 ## [4.0.0](https://github.com/rvagg/cborg/compare/v3.0.0...v4.0.0) (2023-09-12)
