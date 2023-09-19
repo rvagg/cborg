@@ -1,3 +1,10 @@
+## [4.0.3](https://github.com/rvagg/cborg/compare/v4.0.2...v4.0.3) (2023-09-19)
+
+
+### Trivial Changes
+
+* **dev-deps:** upgrade devDeps ([84527a4](https://github.com/rvagg/cborg/commit/84527a425c5552a1c8d7b42ec9c8b377b03cca55))
+
 ## [4.0.2](https://github.com/rvagg/cborg/compare/v4.0.1...v4.0.2) (2023-09-18)
 
 
