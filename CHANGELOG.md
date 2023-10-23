@@ -1,3 +1,10 @@
+## [4.0.4](https://github.com/rvagg/cborg/compare/v4.0.3...v4.0.4) (2023-10-23)
+
+
+### Bug Fixes
+
+* add interface.d.ts to exports ([#101](https://github.com/rvagg/cborg/issues/101)) ([e8ec67d](https://github.com/rvagg/cborg/commit/e8ec67d8f5e5cc58fea7f7c7860007dcbde92418))
+
 ## [4.0.3](https://github.com/rvagg/cborg/compare/v4.0.2...v4.0.3) (2023-09-19)
 
 
