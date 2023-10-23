@@ -63,6 +63,9 @@
     "./json": {
       "import": "./lib/json/json.js",
       "types": "./types/lib/json/json.d.ts"
+    },
+    "./interface": {
+      "types": "./types/interface.d.ts"
     }
   },
   "types": "cborg.d.ts",
