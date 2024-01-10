@@ -1,6 +1,6 @@
 /* eslint-env mocha,es2020 */
 
-import chai from 'chai'
+import * as chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
 import * as taglib from 'cborg/taglib'
