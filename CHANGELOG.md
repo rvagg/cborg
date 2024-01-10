@@ -1,3 +1,11 @@
+## [4.0.7](https://github.com/rvagg/cborg/compare/v4.0.6...v4.0.7) (2024-01-10)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump chai from 4.3.10 to 5.0.0 ([e6ec5a8](https://github.com/rvagg/cborg/commit/e6ec5a87df8512b5902c9500841137b431d22c07))
+* **deps:** bump actions/setup-node from 4.0.0 to 4.0.1 ([e61b03e](https://github.com/rvagg/cborg/commit/e61b03eb47d916c8da5f2bbeec3687d82880a0e8))
+
 ## [4.0.6](https://github.com/rvagg/cborg/compare/v4.0.5...v4.0.6) (2024-01-04)
 
 
