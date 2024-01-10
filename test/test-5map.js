@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import chai from 'chai'
+import * as chai from 'chai'
 
 import { decode, encode } from '../cborg.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'

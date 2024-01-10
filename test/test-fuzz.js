@@ -2,7 +2,7 @@
 
 import { garbage } from 'ipld-garbage'
 import { decode, encode } from '../cborg.js'
-import chai from 'chai'
+import * as chai from 'chai'
 
 const { assert } = chai
 

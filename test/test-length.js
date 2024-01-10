@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import chai from 'chai'
+import * as chai from 'chai'
 import { garbage } from 'ipld-garbage'
 import { uintBoundaries } from '../lib/0uint.js'
 import { encode } from '../cborg.js'

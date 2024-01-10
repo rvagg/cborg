@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import chai from 'chai'
+import * as chai from 'chai'
 
 import { Token, Type } from '../lib/token.js'
 import { decode, encode } from '../cborg.js'

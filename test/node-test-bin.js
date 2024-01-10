@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import chai from 'chai'
+import * as chai from 'chai'
 import { exec } from 'child_process'
 import process from 'process'
 import path from 'path'

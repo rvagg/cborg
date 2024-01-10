@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import chai from 'chai'
+import * as chai from 'chai'
 import { Bl } from '../lib/bl.js'
 
 const { assert } = chai
