@@ -1,3 +1,10 @@
+## [4.0.8](https://github.com/rvagg/cborg/compare/v4.0.7...v4.0.8) (2024-01-15)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump semantic-release from 22.0.12 to 23.0.0 ([5e40a65](https://github.com/rvagg/cborg/commit/5e40a6584e34e70ccca1a5c443ae5c41a59aa0c3))
+
 ## [4.0.7](https://github.com/rvagg/cborg/compare/v4.0.6...v4.0.7) (2024-01-10)
 
 
