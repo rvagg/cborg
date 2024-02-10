@@ -23,4 +23,25 @@ export class Bl {
      */
     toBytes(reset?: boolean | undefined): Uint8Array;
 }
+export class U8Bl {
+    /**
+     * @param {Uint8Array} dest
+     */
+    constructor(dest: Uint8Array);
+    dest: Uint8Array;
+    /** @type {number} */
+    cursor: number;
+    /** @type {Uint8Array[]} */
+    chunks: Uint8Array[];
+    reset(): void;
+    /**
+     * @param {Uint8Array|number[]} bytes
+     */
+    push(bytes: Uint8Array | number[]): void;
+    /**
+     * @param {boolean} [reset]
+     * @returns {Uint8Array}
+     */
+    toBytes(reset?: boolean | undefined): Uint8Array;
+}
 //# sourceMappingURL=bl.d.ts.map

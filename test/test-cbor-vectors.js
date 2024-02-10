@@ -2,13 +2,15 @@
 
 import * as chai from 'chai'
 
-import { decode, encode } from '../cborg.js'
+import { decode, encode, encodeInto } from '../cborg.js'
 import * as taglib from 'cborg/taglib'
 import { fromHex, toHex } from '../lib/byte-utils.js'
 // fixtures from https://github.com/cbor/test-vectors
 import { fixtures } from './appendix_a.js'
 
 const { assert } = chai
+
+const fixedDest = new Uint8Array(1024)
 
 const tags = []
 const typeEncoders = {}
@@ -80,8 +82,11 @@ describe('cbor/test-vectors', () => {
         if (fixture.roundtrip) {
           if (fixture.noTagEncodeError) {
             assert.throws(() => encode(decode(u8a, { tags })), fixture.noTagEncodeError)
+            assert.throws(() => encodeInto(decode(u8a, { tags }), fixedDest), fixture.noTagEncodeError)
           }
-          const reencoded = encode(decode(u8a, { tags }), { typeEncoders })
+          let reencoded = encode(decode(u8a, { tags }), { typeEncoders })
+          assert.equal(toHex(reencoded), fixture.hex)
+          reencoded = encodeInto(decode(u8a, { tags }), fixedDest, { typeEncoders })
           assert.equal(toHex(reencoded), fixture.hex)
         }
       }

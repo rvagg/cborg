@@ -2,7 +2,7 @@
 
 import * as chai from 'chai'
 
-import { decode, encode } from '../cborg.js'
+import { decode, encode, encodeInto } from '../cborg.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
@@ -133,6 +133,8 @@ const fixtures = [
   { data: 'bb0000000000000001616101', expected: { a: 1 }, type: 'map 1 pair, length64', strict: false }
 ]
 
+const fixedDest = new Uint8Array(1024)
+
 function toMap (arr) {
   const m = new Map()
   for (const [key, value] of arr) {
@@ -205,9 +207,9 @@ describe('map', () => {
         if (fixture.unsafe) {
           assert.throws(encode.bind(null, toEncode), Error, /^CBOR encode error: number too large to encode \(\d+\)$/)
         } else if (fixture.strict === false || fixture.roundtrip === false) {
-          assert.notDeepEqual(toHex(encode(toEncode)), fixture.data, `encode ${fixture.type} !strict`)
+          assert.notDeepEqual(toHex(encodeInto(toEncode, fixedDest)), fixture.data, `encode ${fixture.type} !strict`)
         } else {
-          assert.strictEqual(toHex(encode(toEncode)), fixture.data, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encodeInto(toEncode, fixedDest)), fixture.data, `encode ${fixture.type}`)
         }
       })
     }

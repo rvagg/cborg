@@ -2,7 +2,7 @@
 
 import * as chai from 'chai'
 
-import { decode, encode } from '../cborg.js'
+import { decode, encode, encodeInto } from '../cborg.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
@@ -26,6 +26,8 @@ const fixtures = [
   { data: '1ba5f702b3a5f702b3', expected: BigInt('11959030306112471731'), type: 'uint64' },
   { data: '1bffffffffffffffff', expected: BigInt('18446744073709551615'), type: 'uint64' }
 ]
+
+const fixedDest = new Uint8Array(1024)
 
 describe('uint', () => {
   describe('decode', () => {
@@ -53,8 +55,10 @@ describe('uint', () => {
       it(`should encode ${fixture.type}=${fixture.expected}`, () => {
         if (fixture.strict === false) {
           assert.notStrictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type} !strict`)
+          assert.notStrictEqual(toHex(encodeInto(fixture.expected, fixedDest)), fixture.data, `encode ${fixture.type} !strict`)
         } else {
           assert.strictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encodeInto(fixture.expected, fixedDest)), fixture.data, `encode ${fixture.type}`)
         }
       })
     }
@@ -66,6 +70,7 @@ describe('uint', () => {
       if (fixture.strict !== false) {
         it(`should roundtrip ${fixture.type}=${fixture.expected}`, () => {
           assert.ok(decode(encode(fixture.expected)) === fixture.expected, `roundtrip ${fixture.type}`)
+          assert.ok(decode(encodeInto(fixture.expected, fixedDest)) === fixture.expected, `roundtrip ${fixture.type}`)
         })
       }
     }

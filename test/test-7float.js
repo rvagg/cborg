@@ -2,7 +2,7 @@
 
 import * as chai from 'chai'
 
-import { decode, encode } from '../cborg.js'
+import { decode, encode, encodeInto } from '../cborg.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
@@ -32,6 +32,8 @@ const fixtures = [
   { data: 'fb40f4241a31a5a515', expected: 82497.63712086187, type: 'float64' }
 ]
 
+const fixedDest = new Uint8Array(1024)
+
 describe('float', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
@@ -56,6 +58,7 @@ describe('float', () => {
       if (fixture.strict !== false) {
         it(`should encode ${fixture.type}=${fixture.expected}`, () => {
           assert.strictEqual(toHex(encode(fixture.expected)), fixture.data, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encodeInto(fixture.expected, fixedDest)), fixture.data, `encode ${fixture.type}`)
         })
       }
     }
@@ -79,6 +82,7 @@ describe('float', () => {
       if (!fixture.unsafe && fixture.strict !== false) {
         it(`should roundtrip ${fixture.type}=${fixture.expected}`, () => {
           assert.deepStrictEqual(decode(encode(fixture.expected)), fixture.expected, `roundtrip ${fixture.type}`)
+          assert.deepStrictEqual(decode(encodeInto(fixture.expected, fixedDest)), fixture.expected, `roundtrip ${fixture.type}`)
         })
       }
     }

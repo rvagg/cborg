@@ -2,7 +2,7 @@
 
 import * as chai from 'chai'
 
-import { decode, encode } from '../cborg.js'
+import { decode, encode, encodeInto } from '../cborg.js'
 import { useBuffer, fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
@@ -41,6 +41,8 @@ const fixtures = [
     strict: false
   }
 ]
+
+const fixedDest = new Uint8Array(65536 + 8)
 
 // fill up byte arrays we can validate in strict mode, the minimal size for each
 // excluding 64-bit because 4G is just too big
@@ -111,8 +113,10 @@ describe('bytes', () => {
           assert.throws(() => encode(data), Error, /^CBOR encode error: number too large to encode \(-\d+\)$/)
         } else if (fixture.strict === false) {
           assert.notStrictEqual(toHex(encode(data)), expectedHex, `encode ${fixture.type} !strict`)
+          assert.notStrictEqual(toHex(encodeInto(data, fixedDest)), expectedHex, `encode ${fixture.type} !strict`)
         } else {
           assert.strictEqual(toHex(encode(data)), expectedHex, `encode ${fixture.type}`)
+          assert.strictEqual(toHex(encodeInto(data, fixedDest)), expectedHex, `encode ${fixture.type}`)
         }
       })
     }

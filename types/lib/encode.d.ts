@@ -6,6 +6,7 @@ export type Reference = import('../interface').Reference;
 export type StrictTypeEncoder = import('../interface').StrictTypeEncoder;
 export type TokenTypeEncoder = import('../interface').TokenTypeEncoder;
 export type TokenOrNestedTokens = import('../interface').TokenOrNestedTokens;
+export type Bl = import('../interface').Bl;
 /**
  * @param {any} obj
  * @param {EncodeOptions} [options]
@@ -23,9 +24,17 @@ export function encode(data: any, options?: import("../interface").EncodeOptions
  * @param {any} data
  * @param {TokenTypeEncoder[]} encoders
  * @param {EncodeOptions} options
+ * @param {Uint8Array} [destination]
  * @returns {Uint8Array}
  */
-export function encodeCustom(data: any, encoders: TokenTypeEncoder[], options: EncodeOptions): Uint8Array;
+export function encodeCustom(data: any, encoders: TokenTypeEncoder[], options: EncodeOptions, destination?: Uint8Array | undefined): Uint8Array;
+/**
+ * @param {any} data
+ * @param {Uint8Array} destination
+ * @param {EncodeOptions} [options]
+ * @returns {Uint8Array}
+ */
+export function encodeInto(data: any, destination: Uint8Array, options?: import("../interface").EncodeOptions | undefined): Uint8Array;
 /** @implements {Reference} */
 export class Ref implements Reference {
     /**
