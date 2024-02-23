@@ -31,6 +31,7 @@
   * [`encodedLength(data[, options])`](#encodedlengthdata-options)
   * [Type encoders](#type-encoders)
   * [Tag decoders](#tag-decoders)
+* [Decoding with a custom tokeniser](#decoding-with-a-custom-tokeniser)
 * [Deterministic encoding recommendations](#deterministic-encoding-recommendations)
   * [Round-trip consistency](#round-trip-consistency)
 * [JSON mode](#json-mode)
@@ -243,7 +244,7 @@ Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScrip
 * `rejectDuplicateMapKeys` (boolean, default `false`): when the decoder encounters duplicate keys for the same map, an error will be thrown when this option is set. This is an additional _strictness_ option, disallowing data-hiding and reducing the number of same-data different-bytes possibilities where it matters.
 * `retainStringBytes` (boolean, default `false`): when decoding strings, retain the original bytes on the `Token` object as `byteValue`. Since it is possible to encode non-UTF-8 characters in strings in CBOR, and JavaScript doesn't properly handle non-UTF-8 in its conversion from bytes (`TextEncoder` or `Buffer`), this can result in a loss of data (and an inability to round-trip). Where this is important, a token stream should be consumed instead of a plain `decode()` and the `byteValue` property on string tokens can be inspected (see [lib/diagnostic.js](lib/diagnostic.js) for an example of its use.)
 * `tags` (array): a mapping of tag number to tag decoder function. By default no tags are supported. See [Tag decoders](#tag-decoders).
-* `tokenizer` (object): an object with two methods, `next()` which returns a `Token` and `done()` which returns a `boolean`. Can be used to implement custom input decoding. See the source code for examples.
+* `tokenizer` (object): an object with two methods, `next()` which returns a `Token`, `done()` which returns a `boolean` and `pos()` which returns the current byte position being decoded. Can be used to implement custom input decoding. See the source code for examples. (Note en-US spelling "tokenizer" used throughout exported methods and types, which may be confused with "tokeniser" used in these docs).
 
 ### `decodeFirst(data[, options])`
 
@@ -383,6 +384,45 @@ function bigNegIntDecoder (bytes) {
 }
 ```
 
+## Decoding with a custom tokeniser
+
+`decode()` allows overriding the `tokenizer` option to provide a custom tokeniser. This object can be described with the following interface:
+
+```typescript
+export interface DecodeTokenizer {
+  next(): Token,
+  done(): boolean,
+  pos(): number,
+}
+```
+
+`next()` should return the next token in the stream, `done()` should return `true` when the stream is finished, and `pos()` should return the current byte position in the stream.
+
+Overriding the default tokeniser can be useful for changing the rules of decode. For example, it is used to turn cborg into a JSON decoder by changing parsing rules on how to turn bytes into tokens. See the source code for how this works.
+
+The default `Tokenizer` class is available from the default export. Providing `options.tokenizer = new Tokenizer(bytes, options)` would result in the same decode path using this tokeniser. However, this can also be used to override or modify default decode paths by intercepting the token stream. For example, to perform a decode that disallows bytes, the following code would work:
+
+```js
+import { decode, Tokenizer, Type } from 'cborg'
+
+class CustomTokeniser extends Tokenizer {
+  next () {
+    const nextToken = super.next()
+    if (nextToken.type === Type.bytes) {
+      throw new Error('Unsupported type: bytes')
+    }
+    return nextToken
+  }
+}
+
+function customDecode (data, options) {
+  options = Object.assign({}, options, {
+    tokenizer: new CustomTokeniser(data, options)
+  })
+  return decode(data, options)
+}
+```
+
 ## Deterministic encoding recommendations
 
 cborg is designed with deterministic encoding forms as a primary feature. It is suitable for use with content addressed systems or other systems where convergence of binary forms is important. The ideal is to have strictly _one way_ of mapping a set of data into a binary form. Unfortunately CBOR has many opportunities for flexibility, including:
@@ -428,7 +468,7 @@ There are a number of forms where an object will not round-trip precisely, if th
 
 Use `import { encode, decode, decodeFirst } from 'cborg/json'` to access the JSON handling encoder and decoder.
 
-Many of the same encode and decode options available for CBOR can be used to manage JSON handling. These include strictness requirements for decode and custom tag encoders for encode. Tag encoders can't create new tags as there are no tags in JSON, but they can replace JavaScript object forms with custom JSON forms (e.g. convert a `Uint8Array` to a valid JSON form rather than having the encoder throw an error). The inverse is also possible, turning specific JSON forms into JavaScript forms, by using a custom tokenizer on decode.
+Many of the same encode and decode options available for CBOR can be used to manage JSON handling. These include strictness requirements for decode and custom tag encoders for encode. Tag encoders can't create new tags as there are no tags in JSON, but they can replace JavaScript object forms with custom JSON forms (e.g. convert a `Uint8Array` to a valid JSON form rather than having the encoder throw an error). The inverse is also possible, turning specific JSON forms into JavaScript forms, by using a custom tokeniser on decode.
 
 Special notes on options specific to the JSON:
 
