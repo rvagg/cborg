@@ -1,3 +1,15 @@
+## [4.1.0](https://github.com/rvagg/cborg/compare/v4.0.9...v4.1.0) (2024-02-29)
+
+
+### Features
+
+* export `Tokenizer`, document how it can be used ([fbba395](https://github.com/rvagg/cborg/commit/fbba395b6848bd8dcb66a1d18c36e1033581b5ef))
+
+
+### Bug Fixes
+
+* update tyupes for new exports ([986035d](https://github.com/rvagg/cborg/commit/986035dbffbc682b06d7bfecb8d2c3cc02048429))
+
 ## [4.0.9](https://github.com/rvagg/cborg/compare/v4.0.8...v4.0.9) (2024-02-07)
 
 
