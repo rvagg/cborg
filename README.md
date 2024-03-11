@@ -36,6 +36,7 @@
   * [Round-trip consistency](#round-trip-consistency)
 * [JSON mode](#json-mode)
   * [Example](#example-1)
+* [Advanced types and tags](#advanced-types-and-tags)
 * [License and Copyright](#license-and-copyright)
 
 ## Example
@@ -500,6 +501,10 @@ encoded: Uint8Array(34) [
 ]
 encoded (string): {"this":{"is":"JSON!","yay":true}}
 ```
+
+## Advanced types and tags
+
+As demonstrated above, the ability to provide custom `typeEncoders` to `encode()`, `tags` and even a custom `tokenizer` to `decode()` allow for quite a bit of flexibility in manipulating both the encode and decode process. An advanced example that uses all of these features can be found in [example-bytestrings.js](./example-bytestrings.js) which demonstrates how one might implement [RFC 8746](https://www.rfc-editor.org/rfc/rfc8746.html) to allow typed arrays to round-trip through CBOR and retain their original types. Since cborg is designed to speak purely in terms of `Uint8Array`s, its default behaviour will squash all typed arrays down to their byte array forms and materialise them as plain `Uint8Arrays`. Where round-trip fidelity is important and CBOR tags are an option, this form of usage is an option.
 
 ## License and Copyright
 
