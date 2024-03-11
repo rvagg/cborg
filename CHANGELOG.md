@@ -1,3 +1,10 @@
+## [4.1.1](https://github.com/rvagg/cborg/compare/v4.1.0...v4.1.1) (2024-03-11)
+
+
+### Trivial Changes
+
+* add byte strings example using tags to retain typedarray types ([5bf989b](https://github.com/rvagg/cborg/commit/5bf989bf7dde0a6124fb1605f3caf899273c6d4e))
+
 ## [4.1.0](https://github.com/rvagg/cborg/compare/v4.0.9...v4.1.0) (2024-02-29)
 
 
