@@ -1,3 +1,10 @@
+## [4.1.2](https://github.com/rvagg/cborg/compare/v4.1.1...v4.1.2) (2024-03-16)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/github from 9.2.6 to 10.0.0 ([accb364](https://github.com/rvagg/cborg/commit/accb364f14361f2f5536276b7139d44137ef7ba8))
+
 ## [4.1.1](https://github.com/rvagg/cborg/compare/v4.1.0...v4.1.1) (2024-03-11)
 
 
