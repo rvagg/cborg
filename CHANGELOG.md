@@ -1,3 +1,11 @@
+## [4.1.3](https://github.com/rvagg/cborg/compare/v4.1.2...v4.1.3) (2024-03-18)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/commit-analyzer ([9160309](https://github.com/rvagg/cborg/commit/9160309412de47ec5c1b8953fc8e74ff0fe4f065))
+* **deps-dev:** bump @semantic-release/npm from 11.0.3 to 12.0.0 ([2e6f5e0](https://github.com/rvagg/cborg/commit/2e6f5e0255087a47c5a161a66c87d2f5ceb5250d))
+
 ## [4.1.2](https://github.com/rvagg/cborg/compare/v4.1.1...v4.1.2) (2024-03-16)
 
 
