@@ -1,3 +1,10 @@
+## [4.1.4](https://github.com/rvagg/cborg/compare/v4.1.3...v4.1.4) (2024-03-26)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/release-notes-generator ([0d61874](https://github.com/rvagg/cborg/commit/0d6187404475ec3be8dc0c628e9acf073dcc6927))
+
 ## [4.1.3](https://github.com/rvagg/cborg/compare/v4.1.2...v4.1.3) (2024-03-18)
 
 
