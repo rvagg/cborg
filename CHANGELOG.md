@@ -1,3 +1,10 @@
+## [4.2.0](https://github.com/rvagg/cborg/compare/v4.1.4...v4.2.0) (2024-04-05)
+
+
+### Features
+
+* cli argument to set width of diagnostic output ([#118](https://github.com/rvagg/cborg/issues/118)) ([4891cb8](https://github.com/rvagg/cborg/commit/4891cb8e262ece06d79ce380945cc3666a32aa45))
+
 ## [4.1.4](https://github.com/rvagg/cborg/compare/v4.1.3...v4.1.4) (2024-03-26)
 
 
