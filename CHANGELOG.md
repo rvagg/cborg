@@ -1,3 +1,10 @@
+## [4.2.1](https://github.com/rvagg/cborg/compare/v4.2.0...v4.2.1) (2024-06-10)
+
+
+### Trivial Changes
+
+* **deps-dev:** bump c8 from 9.1.0 to 10.0.0 ([c66487e](https://github.com/rvagg/cborg/commit/c66487e7b35f3737919c0eb20f3f1976a3f38578))
+
 ## [4.2.0](https://github.com/rvagg/cborg/compare/v4.1.4...v4.2.0) (2024-04-05)
 
 
