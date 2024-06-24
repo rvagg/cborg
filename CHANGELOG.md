@@ -1,3 +1,12 @@
+## [4.2.2](https://github.com/rvagg/cborg/compare/v4.2.1...v4.2.2) (2024-06-24)
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/commit-analyzer ([195e3f1](https://github.com/rvagg/cborg/commit/195e3f1edf926c053d0699ce73f0acea8431b896))
+* **deps-dev:** bump @semantic-release/release-notes-generator ([83bd83b](https://github.com/rvagg/cborg/commit/83bd83b80fdcea9f1acc412ace789e2373851239))
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([12a46e2](https://github.com/rvagg/cborg/commit/12a46e205ad662d3e8e87432afec4b068e6a7a54))
+* **deps-dev:** bump semantic-release from 23.1.1 to 24.0.0 ([5fd66b9](https://github.com/rvagg/cborg/commit/5fd66b9f440e8ea5487f9022ba7eb5abcaca43a7))
+
 ## [4.2.1](https://github.com/rvagg/cborg/compare/v4.2.0...v4.2.1) (2024-06-10)
 
 
