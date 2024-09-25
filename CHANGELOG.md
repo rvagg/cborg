@@ -1,3 +1,11 @@
+## [4.2.4](https://github.com/rvagg/cborg/compare/v4.2.3...v4.2.4) (2024-09-25)
+
+### Trivial Changes
+
+* **deps-dev:** bump @types/node from 20.14.13 to 22.0.0 ([f4d71a8](https://github.com/rvagg/cborg/commit/f4d71a83c0221f7d57e45b59630f17305baf0020))
+* **deps:** bump actions/setup-node from 4.0.3 to 4.0.4 ([9a0bfc4](https://github.com/rvagg/cborg/commit/9a0bfc4092d8d0d93a015d0e0686379f041d6379))
+* update dependencies ([c75a059](https://github.com/rvagg/cborg/commit/c75a059ca4ced45e567fbb9b42649de61e0cce41))
+
 ## [4.2.3](https://github.com/rvagg/cborg/compare/v4.2.2...v4.2.3) (2024-07-10)
 
 ### Trivial Changes
