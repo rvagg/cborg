@@ -59,7 +59,7 @@ export namespace encodeArray {
      */
     function encodedSize(token: Token): number;
 }
-export type Bl = import('./bl.js').Bl;
-export type DecodeOptions = import('../interface').DecodeOptions;
+export type Bl = import("./bl.js").Bl;
+export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=4array.d.ts.map

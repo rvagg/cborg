@@ -1,11 +1,11 @@
 /** @returns {TokenTypeEncoder[]} */
 export function makeCborEncoders(): TokenTypeEncoder[];
-export type EncodeOptions = import('../interface').EncodeOptions;
-export type OptionalTypeEncoder = import('../interface').OptionalTypeEncoder;
-export type Reference = import('../interface').Reference;
-export type StrictTypeEncoder = import('../interface').StrictTypeEncoder;
-export type TokenTypeEncoder = import('../interface').TokenTypeEncoder;
-export type TokenOrNestedTokens = import('../interface').TokenOrNestedTokens;
+export type EncodeOptions = import("../interface").EncodeOptions;
+export type OptionalTypeEncoder = import("../interface").OptionalTypeEncoder;
+export type Reference = import("../interface").Reference;
+export type StrictTypeEncoder = import("../interface").StrictTypeEncoder;
+export type TokenTypeEncoder = import("../interface").TokenTypeEncoder;
+export type TokenOrNestedTokens = import("../interface").TokenOrNestedTokens;
 /**
  * @param {any} obj
  * @param {EncodeOptions} [options]

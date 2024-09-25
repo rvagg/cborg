@@ -1,5 +1,5 @@
-export type DecodeOptions = import('../../interface').DecodeOptions;
-export type DecodeTokenizer = import('../../interface').DecodeTokenizer;
+export type DecodeOptions = import("../../interface").DecodeOptions;
+export type DecodeTokenizer = import("../../interface").DecodeTokenizer;
 /**
  * @param {Uint8Array} data
  * @param {DecodeOptions} [options]

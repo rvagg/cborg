@@ -50,11 +50,11 @@ export namespace encodeFloat {
      * @param {EncodeOptions} options
      * @returns {number}
      */
-    function encodedSize(token: Token, options: import("../interface").EncodeOptions): number;
+    function encodedSize(token: Token, options: EncodeOptions): number;
     let compareTokens: (tok1: Token, tok2: Token) => number;
 }
-export type Bl = import('./bl.js').Bl;
-export type DecodeOptions = import('../interface').DecodeOptions;
-export type EncodeOptions = import('../interface').EncodeOptions;
+export type Bl = import("./bl.js").Bl;
+export type DecodeOptions = import("../interface").DecodeOptions;
+export type EncodeOptions = import("../interface").EncodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=7float.d.ts.map

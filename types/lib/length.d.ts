@@ -21,7 +21,7 @@ export function encodedLength(data: any, options?: import("../interface").Encode
  * @param {EncodeOptions} [options]
  */
 export function tokensToLength(tokens: TokenOrNestedTokens, encoders?: import("../interface").TokenTypeEncoder[] | undefined, options?: import("../interface").EncodeOptions | undefined): number;
-export type EncodeOptions = import('../interface').EncodeOptions;
-export type TokenTypeEncoder = import('../interface').TokenTypeEncoder;
-export type TokenOrNestedTokens = import('../interface').TokenOrNestedTokens;
+export type EncodeOptions = import("../interface").EncodeOptions;
+export type TokenTypeEncoder = import("../interface").TokenTypeEncoder;
+export type TokenOrNestedTokens = import("../interface").TokenOrNestedTokens;
 //# sourceMappingURL=length.d.ts.map

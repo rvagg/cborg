@@ -62,7 +62,7 @@ export namespace encodeBytes {
  * @returns {number}
  */
 export function compareBytes(b1: Uint8Array, b2: Uint8Array): number;
-export type Bl = import('./bl.js').Bl;
-export type DecodeOptions = import('../interface').DecodeOptions;
+export type Bl = import("./bl.js").Bl;
+export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=2bytes.d.ts.map

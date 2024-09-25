@@ -52,7 +52,7 @@ export namespace encodeNegint {
      */
     function compareTokens(tok1: Token, tok2: Token): number;
 }
-export type Bl = import('./bl.js').Bl;
-export type DecodeOptions = import('../interface').DecodeOptions;
+export type Bl = import("./bl.js").Bl;
+export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=1negint.d.ts.map
