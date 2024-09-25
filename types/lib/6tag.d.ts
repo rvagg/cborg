@@ -55,7 +55,7 @@ export namespace encodeTag {
      */
     function encodedSize(token: Token): number;
 }
-export type Bl = import('./bl.js').Bl;
-export type DecodeOptions = import('../interface').DecodeOptions;
+export type Bl = import("./bl.js").Bl;
+export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=6tag.d.ts.map

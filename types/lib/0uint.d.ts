@@ -94,7 +94,7 @@ export namespace encodeUintValue {
     function encodedSize(uint: number): number;
 }
 export const uintBoundaries: (number | bigint)[];
-export type Bl = import('./bl.js').Bl;
-export type DecodeOptions = import('../interface').DecodeOptions;
+export type Bl = import("./bl.js").Bl;
+export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=0uint.d.ts.map
