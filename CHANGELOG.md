@@ -1,3 +1,9 @@
+## [4.2.5](https://github.com/rvagg/cborg/compare/v4.2.4...v4.2.5) (2024-10-25)
+
+### Trivial Changes
+
+* **ci:** bump Node.js test versions ([6082d02](https://github.com/rvagg/cborg/commit/6082d0207a49129cfd95f34213557495acb36da5))
+
 ## [4.2.4](https://github.com/rvagg/cborg/compare/v4.2.3...v4.2.4) (2024-09-25)
 
 ### Trivial Changes
