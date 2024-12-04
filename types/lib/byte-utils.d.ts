@@ -21,14 +21,14 @@ export const useBuffer: boolean;
  * @param {number} end
  */
 export function toString(bytes: Uint8Array, start: number, end: number): string;
-export const fromString: ((string: string) => number[] | Buffer) | ((string: string) => Uint8Array | number[]);
+export const fromString: ((string: string) => number[] | Buffer<ArrayBuffer>) | ((string: string) => Uint8Array<ArrayBufferLike> | number[]);
 export function fromArray(arr: number[]): Uint8Array;
 /**
  * @param {Uint8Array} bytes
  * @param {number} start
  * @param {number} end
  */
-export function slice(bytes: Uint8Array, start: number, end: number): Uint8Array;
+export function slice(bytes: Uint8Array, start: number, end: number): Uint8Array<ArrayBuffer>;
 /**
  * @param {Uint8Array[]} chunks
  * @param {number} length

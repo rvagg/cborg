@@ -41,7 +41,7 @@ export class Token {
      * @param {any} [value]
      * @param {number} [encodedLength]
      */
-    constructor(type: Type, value?: any, encodedLength?: number | undefined);
+    constructor(type: Type, value?: any, encodedLength?: number);
     type: Type;
     value: any;
     encodedLength: number | undefined;

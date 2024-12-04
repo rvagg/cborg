@@ -2,7 +2,7 @@ export class Bl {
     /**
      * @param {number} [chunkSize]
      */
-    constructor(chunkSize?: number | undefined);
+    constructor(chunkSize?: number);
     chunkSize: number;
     /** @type {number} */
     cursor: number;
@@ -21,6 +21,6 @@ export class Bl {
      * @param {boolean} [reset]
      * @returns {Uint8Array}
      */
-    toBytes(reset?: boolean | undefined): Uint8Array;
+    toBytes(reset?: boolean): Uint8Array;
 }
 //# sourceMappingURL=bl.d.ts.map
