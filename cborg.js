@@ -2,6 +2,8 @@ import { encode } from './lib/encode.js'
 import { decode, decodeFirst, Tokeniser, tokensToObject } from './lib/decode.js'
 import { Token, Type } from './lib/token.js'
 
+import * as json from './lib/json/json.js'
+
 /**
  * Export the types that were present in the original manual cborg.d.ts
  * @typedef {import('./interface').TagDecoder} TagDecoder
@@ -12,6 +14,11 @@ import { Token, Type } from './lib/token.js'
  */
 
 export {
+  // this is needed to prevent the bundleing trouble which happens
+  // due to the fact that token.js is used in lib/json and so in
+  // cborg/json which ends up on bundling to have two copies of token.js
+  // which will fail stmts like token.type === Type.array
+  json,
   decode,
   decodeFirst,
   Tokeniser as Tokenizer,

@@ -1,4 +1,5 @@
 export type EncodeOptions = import("../../interface").EncodeOptions;
+export type TokenTypeEncoder = import("../../interface").TokenTypeEncoder;
 export type Token = import("../token").Token;
 export type Bl = import("../bl").Bl;
 /**

@@ -61,8 +61,8 @@
       "types": "./types/taglib.d.ts"
     },
     "./json": {
-      "import": "./lib/json/json.js",
-      "types": "./types/lib/json/json.d.ts"
+      "import": "./lib/json/forward-cborg.js",
+      "types": "./types/lib/json/forward-cborg.d.ts"
     },
     "./interface": {
       "types": "./types/interface.d.ts"

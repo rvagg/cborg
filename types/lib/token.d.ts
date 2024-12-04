@@ -12,6 +12,11 @@ export class Type {
     toString(): string;
     /**
      * @param {Type} typ
+     * @returns {boolean}
+     */
+    equals(typ: Type): boolean;
+    /**
+     * @param {Type} typ
      * @returns {number}
      */
     compare(typ: Type): number;
