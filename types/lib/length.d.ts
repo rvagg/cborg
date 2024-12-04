@@ -9,7 +9,7 @@
  * @param {EncodeOptions} [options]
  * @returns {number}
  */
-export function encodedLength(data: any, options?: import("../interface").EncodeOptions | undefined): number;
+export function encodedLength(data: any, options?: EncodeOptions): number;
 /**
  * Calculate the byte length of the data as represented by the given tokens when
  * encoded as CBOR with the options provided.
@@ -20,7 +20,7 @@ export function encodedLength(data: any, options?: import("../interface").Encode
  * @param {TokenTypeEncoder[]} [encoders]
  * @param {EncodeOptions} [options]
  */
-export function tokensToLength(tokens: TokenOrNestedTokens, encoders?: import("../interface").TokenTypeEncoder[] | undefined, options?: import("../interface").EncodeOptions | undefined): number;
+export function tokensToLength(tokens: TokenOrNestedTokens, encoders?: TokenTypeEncoder[], options?: EncodeOptions): number;
 export type EncodeOptions = import("../interface").EncodeOptions;
 export type TokenTypeEncoder = import("../interface").TokenTypeEncoder;
 export type TokenOrNestedTokens = import("../interface").TokenOrNestedTokens;

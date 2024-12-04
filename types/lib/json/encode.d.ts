@@ -6,5 +6,5 @@ export type Bl = import("../bl").Bl;
  * @param {EncodeOptions} [options]
  * @returns {Uint8Array}
  */
-export function encode(data: any, options?: import("../../interface").EncodeOptions | undefined): Uint8Array;
+export function encode(data: any, options?: EncodeOptions): Uint8Array;
 //# sourceMappingURL=encode.d.ts.map

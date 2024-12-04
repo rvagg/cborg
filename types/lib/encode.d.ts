@@ -12,13 +12,13 @@ export type TokenOrNestedTokens = import("../interface").TokenOrNestedTokens;
  * @param {Reference} [refStack]
  * @returns {TokenOrNestedTokens}
  */
-export function objectToTokens(obj: any, options?: import("../interface").EncodeOptions | undefined, refStack?: import("../interface").Reference | undefined): TokenOrNestedTokens;
+export function objectToTokens(obj: any, options?: EncodeOptions, refStack?: Reference): TokenOrNestedTokens;
 /**
  * @param {any} data
  * @param {EncodeOptions} [options]
  * @returns {Uint8Array}
  */
-export function encode(data: any, options?: import("../interface").EncodeOptions | undefined): Uint8Array;
+export function encode(data: any, options?: EncodeOptions): Uint8Array;
 /**
  * @param {any} data
  * @param {TokenTypeEncoder[]} encoders
