@@ -1,3 +1,13 @@
+## [4.2.7](https://github.com/rvagg/cborg/compare/v4.2.6...v4.2.7) (2024-12-04)
+
+### Bug Fixes
+
+* **types:** address type incompatibilities, regen types ([e9b9260](https://github.com/rvagg/cborg/commit/e9b92607fbd11c7e6016834e38465941a838fab0))
+
+### Trivial Changes
+
+* **deps-dev:** bump mocha from 10.8.2 to 11.0.1 ([98bddb9](https://github.com/rvagg/cborg/commit/98bddb91b7d3e4f2e08be8dd0d5517ae1ee3b2b7))
+
 ## [4.2.6](https://github.com/rvagg/cborg/compare/v4.2.5...v4.2.6) (2024-10-25)
 
 ### Trivial Changes
