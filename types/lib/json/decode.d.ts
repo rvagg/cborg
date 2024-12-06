@@ -63,5 +63,5 @@ export class Tokenizer implements DecodeTokenizer {
      */
     next(): Token;
 }
-import { Token } from '../token.js';
+import { Token } from 'cborg';
 //# sourceMappingURL=decode.d.ts.map
