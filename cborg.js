@@ -6,6 +6,8 @@ import { Token, Type } from './lib/token.js'
 export { encodeCustom } from './lib/encode.js'
 export { encodeErrPrefix, decodeErrPrefix } from './lib/common.js'
 export { asU8A, fromString, decodeCodePointsArray } from './lib/byte-utils.js'
+export { quickEncodeToken } from './lib/jump.js'
+export { makeCborEncoders, objectToTokens } from './lib/encode.js'
 
 /**
  * Export the types that were present in the original manual cborg.d.ts

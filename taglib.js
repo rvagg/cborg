@@ -1,4 +1,6 @@
-import { Token, Type } from './cborg.js'
+// never reference the file directly to ensure the
+// indepency of the json module
+import { Token, Type } from 'cborg'
 
 /*
 A collection of some standard CBOR tags.
