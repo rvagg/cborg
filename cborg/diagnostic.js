@@ -1,6 +1,5 @@
 import { Tokeniser } from './decode.js'
-import { Type } from './token.js'
-import { uintBoundaries, toHex, fromHex } from 'cborg/utils'
+import { uintBoundaries, toHex, fromHex, Type } from 'cborg/utils'
 
 const utf8Encoder = new TextEncoder()
 const utf8Decoder = new TextDecoder()

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import process from 'process'
-import { decode, encode } from '../cborg.js'
+import { decode, encode } from 'cborg'
 import { tokensToDiagnostic, fromDiag } from './diagnostic.js'
 import { fromHex as _fromHex, toHex } from 'cborg/utils'
 
