@@ -2,13 +2,8 @@
 
 import * as chai from 'chai'
 
-import {
-  decode,
-  encode,
-  Token,
-  Type
-} from 'cborg'
-import { fromHex, toHex } from 'cborg/utils'
+import { decode, encode } from 'cborg'
+import { fromHex, toHex, Token, Type } from 'cborg/utils'
 import { dateDecoder, dateEncoder } from './common.js'
 
 const { assert } = chai

@@ -70,7 +70,7 @@ describe('bytes', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
       const data = fromHex(fixture.data)
-      it(`should decode ${fixture.type}=${fixture.label || fixture.expected}=${fixture.data.length}`, () => {
+      it(`should decode ${fixture.type}=${fixture.label || fixture.expected}`, () => {
         let actual = decode(data)
         assert.strictEqual(
           toHex(actual),

@@ -1,4 +1,4 @@
-import { Token, Type } from 'cborg'
+import { Token, Type } from 'cborg/utils'
 
 export function dateDecoder (obj) {
   if (typeof obj !== 'string') {
