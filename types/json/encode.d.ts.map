@@ -1,0 +1,1 @@
+{"version":3,"file":"encode.d.ts","sourceRoot":"","sources":["../../json/encode.js"],"names":[],"mappings":"4BAMa,OAAO,cAAc,EAAE,aAAa;+BACpC,OAAO,cAAc,EAAE,gBAAgB;oBACvC,OAAO,aAAa,EAAE,KAAK;iBAC3B,OAAO,aAAa,EAAE,EAAE;AA0RrC;;;;GAIG;AACH,6BAJW,GAAG,YACH,aAAa,GACX,UAAU,CAKtB"}

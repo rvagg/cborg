@@ -1,6 +1,6 @@
 // never reference the file directly to ensure the
 // indepency of the json module
-import { Token, Type } from 'cborg'
+import { Token, Type } from 'cborg/utils'
 
 /*
 A collection of some standard CBOR tags.

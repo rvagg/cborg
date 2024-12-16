@@ -1,5 +1,5 @@
-export type DecodeOptions = import("../../interface").DecodeOptions;
-export type DecodeTokenizer = import("../../interface").DecodeTokenizer;
+export type DecodeOptions = import("../interface").DecodeOptions;
+export type DecodeTokenizer = import("../interface").DecodeTokenizer;
 /**
  * @param {Uint8Array} data
  * @param {DecodeOptions} [options]
@@ -24,10 +24,10 @@ export class Tokenizer implements DecodeTokenizer {
      * @param {Uint8Array} data
      * @param {DecodeOptions} options
      */
-    constructor(data: Uint8Array, options?: DecodeOptions);
+    constructor(data: Uint8Array, options: DecodeOptions);
     _pos: number;
     data: Uint8Array<ArrayBufferLike>;
-    options: import("../../interface").DecodeOptions;
+    options: import("../interface").DecodeOptions;
     /** @type {string[]} */
     modeStack: string[];
     lastToken: string;

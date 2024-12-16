@@ -1,7 +1,7 @@
-export type EncodeOptions = import("../../interface").EncodeOptions;
-export type TokenTypeEncoder = import("../../interface").TokenTypeEncoder;
-export type Token = import("../token").Token;
-export type Bl = import("../bl").Bl;
+export type EncodeOptions = import("../interface").EncodeOptions;
+export type TokenTypeEncoder = import("../interface").TokenTypeEncoder;
+export type Token = import("../lib/token").Token;
+export type Bl = import("../lib/bl").Bl;
 /**
  * @param {any} data
  * @param {EncodeOptions} [options]

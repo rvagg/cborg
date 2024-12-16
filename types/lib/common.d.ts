@@ -1,10 +1,9 @@
-export const decodeErrPrefix: "CBOR decode error:";
-export const encodeErrPrefix: "CBOR encode error:";
 export const uintMinorPrefixBytes: any[];
 /**
  * @param {Uint8Array} data
  * @param {number} pos
  * @param {number} need
+ * @param {string} decodeErrPrefix
  */
-export function assertEnoughData(data: Uint8Array, pos: number, need: number): void;
+export function assertEnoughData(data: Uint8Array, pos: number, need: number, decodeErrPrefix: string): void;
 //# sourceMappingURL=common.d.ts.map

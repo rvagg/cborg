@@ -2,8 +2,8 @@
 
 import * as chai from 'chai'
 
-import { decode, encode } from '../cborg.js'
-import { useBuffer, fromHex, toHex } from '../lib/byte-utils.js'
+import { decode, encode } from 'cborg'
+import { useBuffer, fromHex, toHex } from 'cborg/utils'
 
 const { assert } = chai
 
@@ -70,7 +70,7 @@ describe('bytes', () => {
   describe('decode', () => {
     for (const fixture of fixtures) {
       const data = fromHex(fixture.data)
-      it(`should decode ${fixture.type}=${fixture.label || fixture.expected}`, () => {
+      it(`should decode ${fixture.type}=${fixture.label || fixture.expected}=${fixture.data.length}`, () => {
         let actual = decode(data)
         assert.strictEqual(
           toHex(actual),

@@ -2,13 +2,13 @@
   "name": "cborg",
   "version": "4.2.7",
   "description": "Fast CBOR with a focus on strictness",
-  "main": "cborg.js",
+  "main": "cborg/index.js",
   "type": "module",
   "bin": {
-    "cborg": "lib/bin.js"
+    "cborg": "cborg/bin.js"
   },
   "scripts": {
-    "lint": "standard *.js lib/*.js test/*.js",
+    "lint": "standard *.js cborg/*.js json/*.js utils/*.js test/*.js",
     "build": "npm run build:types",
     "build:types": "tsc --build",
     "prepublishOnly": "npm run build",
@@ -49,33 +49,37 @@
   },
   "exports": {
     ".": {
-      "import": "./cborg.js",
-      "types": "./types/cborg.d.ts"
+      "import": "./cborg/index.js",
+      "types": "./types/cborg/index.d.ts"
     },
     "./length": {
-      "import": "./lib/length.js",
-      "types": "./types/lib/length.d.ts"
+      "import": "./cborg/length.js",
+      "types": "./types/cborg/length.d.ts"
     },
     "./taglib": {
       "import": "./taglib.js",
       "types": "./types/taglib.d.ts"
     },
     "./json": {
-      "import": "./lib/json/json.js",
-      "types": "./types/lib/json/json.d.ts"
+      "import": "./json/json.js",
+      "types": "./types/json/json.d.ts"
     },
     "./interface": {
       "types": "./types/interface.d.ts"
+    },
+    "./utils": {
+      "import": "./utils/index.js",
+      "types": "./types/utils/index.d.ts"
     }
   },
   "types": "cborg.d.ts",
   "typesVersions": {
     "*": {
       "json": [
-        "types/lib/json/json.d.ts"
+        "types/json/json.d.ts"
       ],
       "length": [
-        "types/lib/length.d.ts"
+        "types/cborg/length.d.ts"
       ],
       "*": [
         "types/*"

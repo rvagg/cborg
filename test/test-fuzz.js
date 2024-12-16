@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { garbage } from 'ipld-garbage'
-import { decode, encode } from '../cborg.js'
+import { decode, encode } from 'cborg'
 import * as chai from 'chai'
 
 const { assert } = chai

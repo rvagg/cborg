@@ -23,6 +23,4 @@ import { encode } from './lib/encode.js';
 import { Token } from './lib/token.js';
 import { Type } from './lib/token.js';
 export { decode, decodeFirst, Tokeniser as Tokenizer, tokensToObject, encode, Token, Type };
-export { encodeErrPrefix, decodeErrPrefix } from "./lib/common.js";
-export { asU8A, fromString, decodeCodePointsArray } from "./lib/byte-utils.js";
 //# sourceMappingURL=cborg.d.ts.map

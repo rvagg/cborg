@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import * as chai from 'chai'
-import { Bl } from '../lib/bl.js'
+import { Bl } from 'cborg/utils'
 
 const { assert } = chai
 

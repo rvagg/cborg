@@ -14,5 +14,5 @@ export function bigIntEncoder(obj: bigint): Token[] | null;
  * @returns {bigint}
  */
 export function bigNegIntDecoder(bytes: Uint8Array): bigint;
-import { Token } from './cborg.js';
+import { Token } from 'cborg/utils';
 //# sourceMappingURL=taglib.d.ts.map
