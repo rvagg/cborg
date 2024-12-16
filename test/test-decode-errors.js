@@ -2,8 +2,8 @@
 
 import * as chai from 'chai'
 
-import { decode } from '../cborg.js'
-import { fromHex } from '../lib/byte-utils.js'
+import { decode } from 'cborg'
+import { fromHex } from 'cborg/utils'
 
 const { assert } = chai
 
