@@ -2,9 +2,9 @@
 
 import * as chai from 'chai'
 
-import { decode, encode } from '../cborg.js'
+import { decode, encode } from 'cborg'
 import * as taglib from 'cborg/taglib'
-import { fromHex, toHex } from '../lib/byte-utils.js'
+import { fromHex, toHex } from 'cborg/utils'
 // fixtures from https://github.com/cbor/test-vectors
 import { fixtures } from './appendix_a.js'
 

@@ -28,7 +28,10 @@
     "emitDeclarationOnly": true,
     "paths": {
       "cborg": [
-        "cborg.js"
+        "cborg/index.js"
+      ],
+      "cborg/utils": [
+        "./utils/index.js"
       ]
     }
   },
@@ -37,7 +40,7 @@
     "example.js",
     "taglib.js",
     "lib/"
-  ],
+, "utils/byte-utils.js", "utils/jump.js", "utils/0uint.js", "utils/1negint.js", "utils/2bytes.js", "utils/3string.js", "utils/4array.js", "utils/5map.js", "utils/6tag.js", "utils/7float.js", "json"  ],
   "exclude": [
     "node_modules"
   ],
