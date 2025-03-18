@@ -2,8 +2,8 @@
 
 import * as chai from 'chai'
 import { garbage } from 'ipld-garbage'
-import { uintBoundaries } from '../lib/0uint.js'
-import { encode, decodeFirst } from '../cborg.js'
+import { uintBoundaries } from 'cborg/utils'
+import { encode, decodeFirst } from 'cborg'
 import { dateDecoder, dateEncoder } from './common.js'
 
 const { assert } = chai
