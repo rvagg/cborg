@@ -1,1 +1,0 @@
-{"version":3,"file":"length.d.ts","sourceRoot":"","sources":["../../lib/length.js"],"names":[],"mappings":"AAiBA;;;;;;;;;;GAUG;AACH,oCAJW,GAAG,YACH,aAAa,GACX,MAAM,CAOlB;AAED;;;;;;;;;GASG;AACH,uCAJW,mBAAmB,aACnB,gBAAgB,EAAE,YAClB,aAAa,UAiBvB;4BAxDY,OAAO,cAAc,EAAE,aAAa;+BACpC,OAAO,cAAc,EAAE,gBAAgB;kCACvC,OAAO,cAAc,EAAE,mBAAmB"}
