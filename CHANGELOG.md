@@ -1,3 +1,9 @@
+## [4.2.11](https://github.com/rvagg/cborg/compare/v4.2.10...v4.2.11) (2025-05-20)
+
+### Trivial Changes
+
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#141](https://github.com/rvagg/cborg/issues/141)) ([3943947](https://github.com/rvagg/cborg/commit/394394718f60439d425b08a1f13ec1ca69df2a04))
+
 ## [4.2.10](https://github.com/rvagg/cborg/compare/v4.2.9...v4.2.10) (2025-04-14)
 
 ### Trivial Changes
