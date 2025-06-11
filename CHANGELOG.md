@@ -1,3 +1,10 @@
+## [4.2.12](https://github.com/rvagg/cborg/compare/v4.2.11...v4.2.12) (2025-06-11)
+
+### Trivial Changes
+
+* **deps-dev:** bump @types/node from 22.15.31 to 24.0.0 ([#142](https://github.com/rvagg/cborg/issues/142)) ([b75bc12](https://github.com/rvagg/cborg/commit/b75bc125e59a95948b2388fdea54371dfb70f942))
+* remove Node.js 18 and 20 from CI matrix ([8be14cc](https://github.com/rvagg/cborg/commit/8be14cccb12c16025c7c479d29d933ff6656996e))
+
 ## [4.2.11](https://github.com/rvagg/cborg/compare/v4.2.10...v4.2.11) (2025-05-20)
 
 ### Trivial Changes
