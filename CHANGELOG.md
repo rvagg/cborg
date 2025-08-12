@@ -1,3 +1,9 @@
+## [4.2.13](https://github.com/rvagg/cborg/compare/v4.2.12...v4.2.13) (2025-08-12)
+
+### Trivial Changes
+
+* **deps:** bump actions/checkout from 4 to 5 ([#143](https://github.com/rvagg/cborg/issues/143)) ([1de06aa](https://github.com/rvagg/cborg/commit/1de06aa41fc54c6023dd4ccf0dc185538e251127))
+
 ## [4.2.12](https://github.com/rvagg/cborg/compare/v4.2.11...v4.2.12) (2025-06-11)
 
 ### Trivial Changes
