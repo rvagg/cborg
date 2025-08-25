@@ -1,3 +1,9 @@
+## [4.2.14](https://github.com/rvagg/cborg/compare/v4.2.13...v4.2.14) (2025-08-25)
+
+### Trivial Changes
+
+* **deps-dev:** bump chai from 5.3.3 to 6.0.1 ([#144](https://github.com/rvagg/cborg/issues/144)) ([2af5395](https://github.com/rvagg/cborg/commit/2af53955840e61f3bf88eb65b6359b97d4ae0bf7))
+
 ## [4.2.13](https://github.com/rvagg/cborg/compare/v4.2.12...v4.2.13) (2025-08-12)
 
 ### Trivial Changes
