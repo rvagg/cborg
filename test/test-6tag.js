@@ -2,9 +2,8 @@
 
 import * as chai from 'chai'
 
-import { Token, Type } from '../lib/token.js'
-import { decode, encode } from '../cborg.js'
-import { fromHex, toHex } from '../lib/byte-utils.js'
+import { decode, encode } from 'cborg'
+import { fromHex, toHex, Token, Type } from 'cborg/utils'
 import { dateDecoder, dateEncoder } from './common.js'
 
 const { assert } = chai
