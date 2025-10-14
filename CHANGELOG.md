@@ -1,3 +1,9 @@
+## [4.2.16](https://github.com/rvagg/cborg/compare/v4.2.15...v4.2.16) (2025-10-14)
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/npm from 12.0.2 to 13.0.0 ([#146](https://github.com/rvagg/cborg/issues/146)) ([4899130](https://github.com/rvagg/cborg/commit/48991307752413e4f747b70066753be9b4eabf1f))
+
 ## [4.2.15](https://github.com/rvagg/cborg/compare/v4.2.14...v4.2.15) (2025-09-05)
 
 ### Trivial Changes
