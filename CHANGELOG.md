@@ -1,3 +1,10 @@
+## [4.2.18](https://github.com/rvagg/cborg/compare/v4.2.17...v4.2.18) (2025-10-16)
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/github from 11.0.6 to 12.0.0 ([#148](https://github.com/rvagg/cborg/issues/148)) ([de5cbf2](https://github.com/rvagg/cborg/commit/de5cbf2b6cc297fcefce2198fd46195618a32aea))
+* **deps-dev:** bump semantic-release from 24.2.9 to 25.0.0 ([#149](https://github.com/rvagg/cborg/issues/149)) ([4820969](https://github.com/rvagg/cborg/commit/48209690d40cf13b077166e7c61d2013af68daea))
+
 ## [4.2.17](https://github.com/rvagg/cborg/compare/v4.2.16...v4.2.17) (2025-10-15)
 
 ### Trivial Changes
