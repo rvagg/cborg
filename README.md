@@ -209,7 +209,7 @@ Encode a JavaScript object and return a `Uint8Array` with the CBOR byte represen
 * Integers larger than `Number.MAX_SAFE_INTEGER` or less than `Number.MIN_SAFE_INTEGER` will be encoded as floats. There is no way to safely determine whether a number has a fractional part outside of this range.
 * `BigInt`s are supported by default within the 64-bit unsigned range but will be also be encoded to their smallest possible representation (so will not round-trip as a `BigInt` if they are smaller than `Number.MAX_SAFE_INTEGER`). Larger `BigInt`s require a tag (officially tags 2 and 3).
 * Floats will be encoded in their smallest possible representations: 16-bit, 32-bit or 64-bit. Unless the `float64` option is supplied.
-* Object properties are sorted according to the original [RFC 7049](https://tools.ietf.org/html/rfc7049) canonical representation recommended method: length-first and then bytewise. Note that this recommendation has changed in [RFC 8949](https://tools.ietf.org/html/rfc8949) to be plain bytewise (this is not currently supported but pull requests are welcome to add it as an option).
+* Object properties are sorted according to the original [RFC 7049](https://tools.ietf.org/html/rfc7049) canonical representation recommended method: length-first and then bytewise. Note that this recommendation has changed in [RFC 8949](https://tools.ietf.org/html/rfc8949) to be plain bytewise, use the `rfc8949EncodeOptions` to apply this rule.
 * The only CBOR major 7 "simple values" supported are `true`, `false`, `undefined` and `null`. "Simple values" outside of this range are intentionally not supported (pull requests welcome to enable them with an option).
 * Objects, arrays, strings and bytes are encoded as fixed-length, encoding as indefinite length is intentionally not supported.
 
@@ -439,7 +439,7 @@ cborg is designed with deterministic encoding forms as a primary feature. It is 
 By default, cborg will always **encode** objects to the same bytes by applying some strictness rules:
 
 * Using smallest-possible representations for ints, negative ints, floats and lengthed object lengths.
-* Always sorting maps using the _original_ recommended [RFC 7049](https://tools.ietf.org/html/rfc7049) map key ordering rules.
+* Always sorting maps using the _original_ recommended [RFC 7049](https://tools.ietf.org/html/rfc7049) map key ordering rules. (Note that this has changed in [RFC 8949](https://tools.ietf.org/html/rfc8949) to be plain bytewise sorting, use the `rfc8949EncodeOptions` to apply this rule).
 * Omitting support for tags (therefore omitting support for exotic object types).
 * Applying deterministic rules to `number` differentiation - if a fractional part is missing and it's within the safe integer boundary, it's encoded as an integer, otherwise it's encoded as a float.
 
