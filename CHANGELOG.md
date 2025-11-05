@@ -1,3 +1,9 @@
+## [4.3.0](https://github.com/rvagg/cborg/compare/v4.2.18...v4.3.0) (2025-11-05)
+
+### Features
+
+* support RFC8949 deterministic encoding ([#150](https://github.com/rvagg/cborg/issues/150)) ([6d44cc0](https://github.com/rvagg/cborg/commit/6d44cc0778b81bdfac6d654ab1893ac25b08eba3))
+
 ## [4.2.18](https://github.com/rvagg/cborg/compare/v4.2.17...v4.2.18) (2025-10-16)
 
 ### Trivial Changes
