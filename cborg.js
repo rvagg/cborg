@@ -1,4 +1,4 @@
-import { encode } from './lib/encode.js'
+import { encode, rfc8949EncodeOptions } from './lib/encode.js'
 import { decode, decodeFirst, Tokeniser, tokensToObject } from './lib/decode.js'
 import { Token, Type } from './lib/token.js'
 
@@ -17,6 +17,7 @@ export {
   Tokeniser as Tokenizer,
   tokensToObject,
   encode,
+  rfc8949EncodeOptions,
   Token,
   Type
 }
