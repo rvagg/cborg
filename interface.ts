@@ -53,4 +53,9 @@ export interface EncodeOptions {
   mapSorter?: MapSorter,
   quickEncodeToken?: QuickEncodeToken,
   typeEncoders?: { [typeName: string]: OptionalTypeEncoder }
+  /**
+   * If true, plain object properties with `undefined` values are ignored during
+   * encoding.
+   */
+  ignoreUndefinedProperties?: boolean,
 }
