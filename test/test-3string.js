@@ -109,6 +109,10 @@ describe('string', () => {
           () => decode(fromHex('7ba5f702b3a5f702b34c6f72656d20697073756d20646f6c6f722073697420616d65742c20636f6e73656374657475722061646970697363696e6720656c69742e20446f6e6563206d692074656c6c75732c20696163756c6973206e656320766573746962756c756d20717569732c206665726d656e74756d206e6f6e2066656c69732e204d616563656e6173207574206a7573746f20706f73756572652e')),
           /CBOR decode error: 64-bit integer string lengths not supported/)
       })
+
+      it('decodes unpaired surrogates as U+FFFD', () => {
+        assert.strictEqual(decode(fromHex('63edb88e')), '\uFFFD\uFFFD\uFFFD')
+      })
     }
   })
 
@@ -130,6 +134,20 @@ describe('string', () => {
         } else {
           assert.strictEqual(toHex(encode(data)), expectedHex, `encode ${fixture.type}`)
         }
+      })
+
+      it('should encode unpaired surrogates as U+FFFD', () => {
+        // short strings
+        assert.strictEqual(
+          toHex(encode('😎'.slice(1))),
+          toHex(encode('\uFFFD'))
+        )
+
+        // long strings (>64)
+        assert.strictEqual(
+          toHex(encode('A'.repeat(65) + '😎'.slice(1))),
+          toHex(encode('A'.repeat(65) + '\uFFFD'))
+        )
       })
     }
   })
