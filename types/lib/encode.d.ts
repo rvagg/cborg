@@ -1,5 +1,10 @@
 /** @returns {TokenTypeEncoder[]} */
 export function makeCborEncoders(): TokenTypeEncoder[];
+/** @type {EncodeOptions} */
+export const rfc8949EncodeOptions: EncodeOptions;
+export type TokenEx = Token & {
+    _keyBytes?: Uint8Array;
+};
 export type EncodeOptions = import("../interface").EncodeOptions;
 export type OptionalTypeEncoder = import("../interface").OptionalTypeEncoder;
 export type Reference = import("../interface").Reference;
@@ -47,4 +52,5 @@ export class Ref implements Reference {
      */
     includes(obj: object | any[]): boolean;
 }
+import { Token } from './token.js';
 //# sourceMappingURL=encode.d.ts.map

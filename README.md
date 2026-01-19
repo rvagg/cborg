@@ -219,6 +219,7 @@ Encode a JavaScript object and return a `Uint8Array` with the CBOR byte represen
 * `float64` (boolean, default `false`): do not attempt to store floats as their smallest possible form, store all floats as 64-bit
 * `typeEncoders` (object): a mapping of type name to function that can encode that type into cborg tokens. This may also be used to reject or transform types as objects are dissected for encoding. See the [Type encoders](#type-encoders) section below for more information.
 * `mapSorter` (function): a function taking two arguments, where each argument is a `Token`, or an array of `Token`s representing the keys of a map being encoded. Similar to other JavaScript compare functions, a `-1`, `1` or `0` (which shouldn't be possible) should be returned depending on the sorting order of the keys. See the source code for the default sorting order which uses the length-first rule recommendation from [RFC 7049](https://tools.ietf.org/html/rfc7049).
+* `ignoreUndefinedProperties` (boolean, default `false`): when encoding a plain object, properties with `undefined` values will be omitted. Does not apply to `Map`s or arrays.
 
 ### `decode(data[, options])`
 
