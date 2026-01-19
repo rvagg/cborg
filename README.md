@@ -411,7 +411,7 @@ import { decode, Tokenizer, Type } from 'cborg'
 class CustomTokeniser extends Tokenizer {
   next () {
     const nextToken = super.next()
-    if (nextToken.type === Type.bytes) {
+    if (Type.equals(nextToken.type, Type.bytes)) {
       throw new Error('Unsupported type: bytes')
     }
     return nextToken
