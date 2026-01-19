@@ -43,5 +43,10 @@ export interface EncodeOptions {
     typeEncoders?: {
         [typeName: string]: OptionalTypeEncoder;
     };
+    /**
+     * If true, plain object properties with `undefined` values are ignored during
+     * encoding.
+     */
+    ignoreUndefinedProperties?: boolean;
 }
 //# sourceMappingURL=interface.d.ts.map

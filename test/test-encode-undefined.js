@@ -47,4 +47,66 @@ describe('ignoreUndefinedProperties option', () => {
 
     assert.deepStrictEqual(decoded, { a: 1, b: undefined, c: 3, d: undefined })
   })
+
+  it('should return empty object when all properties are undefined', () => {
+    const obj = {
+      a: undefined,
+      b: undefined,
+      c: undefined
+    }
+
+    const encoded = encode(obj, { ignoreUndefinedProperties: true })
+    const decoded = decode(encoded)
+
+    assert.deepStrictEqual(decoded, {})
+  })
+
+  it('should handle nested objects with undefined properties', () => {
+    const obj = {
+      a: 1,
+      b: undefined,
+      c: {
+        d: 2,
+        e: undefined,
+        f: {
+          g: 3,
+          h: undefined
+        }
+      }
+    }
+
+    const encoded = encode(obj, { ignoreUndefinedProperties: true })
+    const decoded = decode(encoded)
+
+    assert.deepStrictEqual(decoded, {
+      a: 1,
+      c: {
+        d: 2,
+        f: {
+          g: 3
+        }
+      }
+    })
+  })
+
+  it('should handle empty object', () => {
+    const obj = {}
+
+    const encoded = encode(obj, { ignoreUndefinedProperties: true })
+    const decoded = decode(encoded)
+
+    assert.deepStrictEqual(decoded, {})
+  })
+
+  it('should not affect undefined values in arrays', () => {
+    const obj = {
+      a: [1, undefined, 3],
+      b: undefined
+    }
+
+    const encoded = encode(obj, { ignoreUndefinedProperties: true })
+    const decoded = decode(encoded)
+
+    assert.deepStrictEqual(decoded, { a: [1, undefined, 3] })
+  })
 })
