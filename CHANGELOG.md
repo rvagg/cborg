@@ -1,3 +1,21 @@
+## [4.4.0](https://github.com/rvagg/cborg/compare/v4.3.2...v4.4.0) (2026-01-19)
+
+### Features
+
+* **encode:** Allow ignoring `undefined` plain object properties ([a0db184](https://github.com/rvagg/cborg/commit/a0db18472e0a459b23affa60c20224f571968aa8)), closes [#155](https://github.com/rvagg/cborg/issues/155)
+* **token:** add Type.equals() for bundler-safe type comparison ([#159](https://github.com/rvagg/cborg/issues/159)) ([b3e7cf4](https://github.com/rvagg/cborg/commit/b3e7cf48122e512050ff04bd826cca59ba1fd2d2)), closes [#136](https://github.com/rvagg/cborg/issues/136)
+
+### Bug Fixes
+
+* **encode:** replace unpaired surrogates with U+FFFD in utf8ToBytes ([#157](https://github.com/rvagg/cborg/issues/157)) ([362856c](https://github.com/rvagg/cborg/commit/362856c6bf0cc85b946af9ef87f47831fe3d98f5))
+
+### Trivial Changes
+
+* **ci:** OIDC publishing ([743ecc3](https://github.com/rvagg/cborg/commit/743ecc3eed0a6dce904636a3ce0a46747418b06b))
+* **deps-dev:** bump @types/node from 24.10.3 to 25.0.0 ([#153](https://github.com/rvagg/cborg/issues/153)) ([20f9e4f](https://github.com/rvagg/cborg/commit/20f9e4f59d18382492b2f7546df2e1e17eaa3cd2))
+* **deps:** bump actions/setup-node from 6.1.0 to 6.2.0 ([#158](https://github.com/rvagg/cborg/issues/158)) ([feafeb2](https://github.com/rvagg/cborg/commit/feafeb2e74b266424cf97072a9dbfb73ea6ac3ee))
+* minor optimisation & test additions for ignoreUndefinedProperties ([55f653c](https://github.com/rvagg/cborg/commit/55f653c74eff0e7f4b766f3b6e81c90ba7e06a39))
+
 ## [4.3.2](https://github.com/rvagg/cborg/compare/v4.3.1...v4.3.2) (2025-12-04)
 
 ### Trivial Changes
