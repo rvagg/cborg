@@ -1,3 +1,9 @@
+## [4.4.1](https://github.com/rvagg/cborg/compare/v4.4.0...v4.4.1) (2026-01-19)
+
+### Trivial Changes
+
+* **ci:** add npm provenance ([cca0a53](https://github.com/rvagg/cborg/commit/cca0a5391e044b85f81a1f550ece6a57c86d4ceb))
+
 ## [4.4.0](https://github.com/rvagg/cborg/compare/v4.3.2...v4.4.0) (2026-01-19)
 
 ### Features
