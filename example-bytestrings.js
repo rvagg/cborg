@@ -92,7 +92,7 @@ tags[tagUint64Array] = uint64ArrayDecoder
 class ArrayBufferTransformingTokeniser extends Tokenizer {
   next () {
     const nextToken = super.next()
-    if (nextToken.type === Type.bytes) {
+    if (Type.equals(nextToken.type, Type.bytes)) {
       // Transform the (assumed) Uint8Array value to an ArrayBuffer of the same bytes, note though
       // that all tags we care about are going to be <tag><bytes>, so we're also transforming those
       // into ArrayBuffers, so our tag decoders need to also assume they are getting ArrayBuffers

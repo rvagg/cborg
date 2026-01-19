@@ -1,5 +1,14 @@
 export class Type {
     /**
+     * Check equality between two Type instances. Safe to use across different
+     * copies of the Type class (e.g., when bundlers duplicate the module).
+     * (major, name) uniquely identifies a Type; terminal is implied by these.
+     * @param {Type} a
+     * @param {Type} b
+     * @returns {boolean}
+     */
+    static equals(a: Type, b: Type): boolean;
+    /**
      * @param {number} major
      * @param {string} name
      * @param {boolean} terminal
