@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>cborg benchmarks</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      background: #1a1a1a;
+      color: #e0e0e0;
+    }
+    h1 { color: #fff; }
+    pre {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .running { color: #ffa500; }
+    .done { color: #00ff00; }
+    button {
+      background: #4a4a4a;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 0.5rem;
+    }
+    button:hover { background: #5a5a5a; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .controls { margin-bottom: 1rem; }
+    label { margin-right: 1rem; }
+    select, input {
+      background: #2d2d2d;
+      color: #e0e0e0;
+      border: 1px solid #4a4a4a;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>cborg benchmarks</h1>
+
+  <div class="controls">
+    <label>
+      Mode:
+      <select id="mode">
+        <option value="dag-cbor" selected>dag-cbor (tag 42 + strict)</option>
+        <option value="raw">raw cborg (no tags)</option>
+      </select>
+    </label>
+    <label>
+      Suite:
+      <select id="suite">
+        <option value="">All</option>
+        <option value="bsky">Bluesky (string-heavy)</option>
+        <option value="filecoin">Filecoin (bytes-heavy)</option>
+        <option value="micro">Micro-benchmarks</option>
+      </select>
+    </label>
+    <label>
+      Duration:
+      <select id="duration">
+        <option value="500">500ms</option>
+        <option value="1000" selected>1s</option>
+        <option value="2000">2s</option>
+        <option value="5000">5s</option>
+      </select>
+    </label>
+    <label>
+      <input type="checkbox" id="encodeInto"> Use encodeInto
+    </label>
+    <button id="run">Run Benchmarks</button>
+    <button id="copy" disabled>Copy JSON</button>
+  </div>
+
+  <pre id="output"><span class="running">Click "Run Benchmarks" to start...</span></pre>
+
+  <script type="module">
+    import { encode, decode, encodeInto, Token, Type } from '../cborg.js'
+    import { generateFixtures, BenchCID } from './fixtures.js'
+
+    const output = document.getElementById('output')
+    const runBtn = document.getElementById('run')
+    const copyBtn = document.getElementById('copy')
+    const modeSelect = document.getElementById('mode')
+    const suiteSelect = document.getElementById('suite')
+    const durationSelect = document.getElementById('duration')
+    const encodeIntoCheck = document.getElementById('encodeInto')
+
+    let lastResults = null
+
+    // ==========================================================================
+    // CID Tag Encoder/Decoder (matches @ipld/dag-cbor implementation)
+    // ==========================================================================
+
+    const CID_CBOR_TAG = 42
+
+    function cidEncoder(obj) {
+      if (obj.asCID !== obj && obj['/'] !== obj.bytes) {
+        return null
+      }
+      if (!(obj instanceof BenchCID)) {
+        return null
+      }
+      const bytes = new Uint8Array(obj.bytes.byteLength + 1)
+      bytes.set(obj.bytes, 1)
+      return [
+        new Token(Type.tag, CID_CBOR_TAG),
+        new Token(Type.bytes, bytes)
+      ]
+    }
+
+    function cidDecoder(bytes) {
+      if (bytes[0] !== 0) {
+        throw new Error('Invalid CID for CBOR tag 42; expected leading 0x00')
+      }
+      return new BenchCID(bytes.subarray(1))
+    }
+
+    function numberEncoder(num) {
+      if (Number.isNaN(num)) {
+        throw new Error('`NaN` is not supported by the IPLD Data Model')
+      }
+      if (num === Infinity || num === -Infinity) {
+        throw new Error('`Infinity` is not supported by the IPLD Data Model')
+      }
+      return null
+    }
+
+    function undefinedEncoder() {
+      throw new Error('`undefined` is not supported by the IPLD Data Model')
+    }
+
+    // Strict dag-cbor encode options (Filecoin, micro-benchmarks)
+    const dagCborEncodeOptions = {
+      float64: true,
+      typeEncoders: {
+        Object: cidEncoder,
+        number: numberEncoder,
+        undefined: undefinedEncoder
+      }
+    }
+
+    // Bluesky encode options - uses ignoreUndefinedProperties
+    const bskyEncodeOptions = {
+      float64: true,
+      ignoreUndefinedProperties: true,
+      typeEncoders: {
+        Object: cidEncoder,
+        number: numberEncoder
+      }
+    }
+
+    const dagCborDecodeOptions = {
+      allowIndefinite: false,
+      coerceUndefinedToNull: true,
+      allowNaN: false,
+      allowInfinity: false,
+      allowBigInt: true,
+      strict: true,
+      useMaps: false,
+      rejectDuplicateMapKeys: true,
+      tags: []
+    }
+    dagCborDecodeOptions.tags[CID_CBOR_TAG] = cidDecoder
+
+    // Raw mode CID encoder - just encodes as bytes without tag
+    function rawCidEncoder(obj) {
+      if (obj.asCID !== obj && obj['/'] !== obj.bytes) {
+        return null
+      }
+      if (!(obj instanceof BenchCID)) {
+        return null
+      }
+      return [new Token(Type.bytes, obj.bytes)]
+    }
+
+    const rawEncodeOptions = {
+      typeEncoders: {
+        Object: rawCidEncoder
+      }
+    }
+
+    const rawBskyEncodeOptions = {
+      ignoreUndefinedProperties: true,
+      typeEncoders: {
+        Object: rawCidEncoder
+      }
+    }
+
+    function getOptions(suiteType, mode) {
+      if (mode === 'raw') {
+        return {
+          encode: suiteType === 'bsky' ? rawBskyEncodeOptions : rawEncodeOptions,
+          decode: {}
+        }
+      }
+      return {
+        encode: suiteType === 'bsky' ? bskyEncodeOptions : dagCborEncodeOptions,
+        decode: dagCborDecodeOptions
+      }
+    }
+
+    // ==========================================================================
+
+    function log(msg) {
+      output.innerHTML += msg + '\n'
+      output.scrollTop = output.scrollHeight
+    }
+
+    function clear() {
+      output.innerHTML = ''
+    }
+
+    const WARMUP_ITERATIONS = 50
+
+    function bench(fn, durationMs) {
+      for (let i = 0; i < WARMUP_ITERATIONS; i++) fn()
+
+      const start = performance.now()
+      let ops = 0
+      while (performance.now() - start < durationMs) {
+        fn()
+        ops++
+      }
+      const elapsed = performance.now() - start
+      return {
+        opsPerSec: Math.round(ops / (elapsed / 1000)),
+        totalOps: ops,
+        elapsedMs: Math.round(elapsed)
+      }
+    }
+
+    function benchFixtures(name, fixtures, opts, suiteType = 'default') {
+      const { duration, useEncodeInto, mode } = opts
+      const { encode: encodeOptions, decode: decodeOptions } = getOptions(suiteType, mode)
+
+      const encoded = fixtures.map(f => encode(f, encodeOptions))
+      const totalBytes = encoded.reduce((sum, b) => sum + b.length, 0)
+      const avgBytes = Math.round(totalBytes / encoded.length)
+
+      let encodeFn = (f) => encode(f, encodeOptions)
+      if (useEncodeInto) {
+        const dest = new Uint8Array(1024 * 1024)
+        encodeFn = (f) => encodeInto(f, dest, encodeOptions)
+      }
+
+      log(`  ${name} (${fixtures.length} items, avg ${avgBytes} bytes)`)
+
+      const encResult = bench(() => {
+        for (const f of fixtures) encodeFn(f)
+      }, duration)
+      const encOpsPerItem = encResult.opsPerSec * fixtures.length
+      const encMBps = Math.round((encResult.opsPerSec * totalBytes) / (1024 * 1024) * 10) / 10
+      log(`    encode: ${encOpsPerItem.toLocaleString()} items/s (${encMBps} MB/s)`)
+
+      const decResult = bench(() => {
+        for (const e of encoded) decode(e, decodeOptions)
+      }, duration)
+      const decOpsPerItem = decResult.opsPerSec * encoded.length
+      const decMBps = Math.round((decResult.opsPerSec * totalBytes) / (1024 * 1024) * 10) / 10
+      log(`    decode: ${decOpsPerItem.toLocaleString()} items/s (${decMBps} MB/s)`)
+
+      return {
+        name,
+        count: fixtures.length,
+        avgBytes,
+        totalBytes,
+        encode: { opsPerSec: encResult.opsPerSec, itemsPerSec: encOpsPerItem, mbPerSec: encMBps },
+        decode: { opsPerSec: decResult.opsPerSec, itemsPerSec: decOpsPerItem, mbPerSec: decMBps }
+      }
+    }
+
+    function runSuite(name, fixtureGroups, opts, suiteType = 'default') {
+      log(`\n${name}`)
+      log('='.repeat(name.length))
+
+      const results = []
+      for (const [groupName, fixtures] of Object.entries(fixtureGroups)) {
+        if (Array.isArray(fixtures) && fixtures.length > 0) {
+          results.push(benchFixtures(groupName, fixtures, opts, suiteType))
+        }
+      }
+      return { suite: name, results }
+    }
+
+    async function runBenchmarks() {
+      clear()
+      runBtn.disabled = true
+      copyBtn.disabled = true
+
+      const suite = suiteSelect.value || null
+      const duration = parseInt(durationSelect.value)
+      const useEncodeInto = encodeIntoCheck.checked
+      const mode = modeSelect.value
+      const opts = { duration, useEncodeInto, mode }
+
+      log('<span class="running">Generating fixtures...</span>')
+      await new Promise(r => setTimeout(r, 10)) // Allow UI update
+
+      const fixtures = generateFixtures(12345)
+      const modeDesc = mode === 'raw' ? 'raw cborg (no tags)' : 'dag-cbor mode (tag 42 + strict)'
+      log(`Done. Running benchmarks in ${modeDesc}...\n`)
+
+      const allResults = []
+
+      if (!suite || suite === 'bsky') {
+        allResults.push(runSuite('Bluesky (string-heavy)', {
+          posts: fixtures.bsky.posts,
+          follows: fixtures.bsky.follows,
+          likes: fixtures.bsky.likes,
+          reposts: fixtures.bsky.reposts,
+          profiles: fixtures.bsky.profiles,
+          mstNodes: fixtures.bsky.mstNodes
+        }, opts, 'bsky'))
+        await new Promise(r => setTimeout(r, 10))
+      }
+
+      if (!suite || suite === 'filecoin') {
+        allResults.push(runSuite('Filecoin (bytes-heavy)', {
+          messages: fixtures.filecoin.messages,
+          blockHeaders: fixtures.filecoin.blockHeaders,
+          hamtNodes: fixtures.filecoin.hamtNodes,
+          amtNodes: fixtures.filecoin.amtNodes,
+          cidArrays: fixtures.filecoin.cidArrays
+        }, opts))
+        await new Promise(r => setTimeout(r, 10))
+      }
+
+      if (!suite || suite === 'micro') {
+        allResults.push(runSuite('Maps (key sorting)', {
+          'small (10 keys)': fixtures.micro.mapsSmall,
+          'medium (50 keys)': fixtures.micro.mapsMedium,
+          'large (200 keys)': fixtures.micro.mapsLarge
+        }, opts))
+
+        allResults.push(runSuite('Nesting depth', {
+          'shallow (depth 3)': fixtures.micro.nestedShallow,
+          'deep (depth 10)': fixtures.micro.nestedDeep
+        }, opts))
+
+        allResults.push(runSuite('Strings', {
+          'short (5-20 chars)': fixtures.micro.stringsShort,
+          'medium (20-100 chars)': fixtures.micro.stringsMedium,
+          'long (100-500 chars)': fixtures.micro.stringsLong
+        }, opts))
+
+        allResults.push(runSuite('Integers', {
+          'small (0-23)': fixtures.micro.integersSmall,
+          'medium (0-65535)': fixtures.micro.integersMedium,
+          'large (64-bit)': fixtures.micro.integersLarge
+        }, opts))
+
+        allResults.push(runSuite('Bytes', {
+          'small (<64)': fixtures.micro.bytesSmall,
+          'medium (64-512)': fixtures.micro.bytesMedium,
+          'large (1KB+)': fixtures.micro.bytesLarge
+        }, opts))
+        await new Promise(r => setTimeout(r, 10))
+      }
+
+      // Summary
+      log('\n' + '='.repeat(50))
+      const allEncodeRates = allResults.flatMap(s => s.results.map(r => r.encode.mbPerSec))
+      const allDecodeRates = allResults.flatMap(s => s.results.map(r => r.decode.mbPerSec))
+      const avgEncode = Math.round(allEncodeRates.reduce((a, b) => a + b, 0) / allEncodeRates.length * 10) / 10
+      const avgDecode = Math.round(allDecodeRates.reduce((a, b) => a + b, 0) / allDecodeRates.length * 10) / 10
+      log(`<span class="done">Average throughput: encode ${avgEncode} MB/s, decode ${avgDecode} MB/s</span>`)
+
+      lastResults = {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        seed: 12345,
+        duration,
+        mode,
+        encodeInto: useEncodeInto,
+        suites: allResults,
+        summary: { avgEncodeMBps: avgEncode, avgDecodeMBps: avgDecode }
+      }
+
+      runBtn.disabled = false
+      copyBtn.disabled = false
+    }
+
+    runBtn.addEventListener('click', runBenchmarks)
+
+    copyBtn.addEventListener('click', () => {
+      if (lastResults) {
+        navigator.clipboard.writeText(JSON.stringify(lastResults, null, 2))
+        copyBtn.textContent = 'Copied!'
+        setTimeout(() => { copyBtn.textContent = 'Copy JSON' }, 1500)
+      }
+    })
+  </script>
+</body>
+</html>
