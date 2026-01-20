@@ -53,6 +53,15 @@ export namespace encodeFloat {
     function encodedSize(token: Token, options: EncodeOptions): number;
     let compareTokens: (tok1: Token, tok2: Token) => number;
 }
+/**
+ * @typedef {import('../interface').ByteWriter} ByteWriter
+ * @typedef {import('../interface').DecodeOptions} DecodeOptions
+ * @typedef {import('../interface').EncodeOptions} EncodeOptions
+ */
+export const MINOR_FALSE: 20;
+export const MINOR_TRUE: 21;
+export const MINOR_NULL: 22;
+export const MINOR_UNDEFINED: 23;
 export type ByteWriter = import("../interface").ByteWriter;
 export type DecodeOptions = import("../interface").DecodeOptions;
 export type EncodeOptions = import("../interface").EncodeOptions;
