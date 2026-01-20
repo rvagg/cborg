@@ -5,12 +5,12 @@
  * Works in both Node.js and browser environments.
  *
  * Usage:
- *   node bench/bench-new.js                    # run all benchmarks (dag-cbor mode)
- *   node bench/bench-new.js --mode=raw         # run with raw cborg (no tags)
- *   node bench/bench-new.js --suite=bsky       # run only bluesky suite
- *   node bench/bench-new.js --json             # output JSON for comparison
- *   node bench/bench-new.js --compare=baseline.json  # compare to baseline
- *   node bench/bench-new.js --encode-into      # use encodeInto instead of encode
+ *   node bench/bench.js                           # run all benchmarks (dag-cbor mode)
+ *   node bench/bench.js --mode=raw                # run with raw cborg (no tags)
+ *   node bench/bench.js --suite=bsky              # run only bluesky suite
+ *   node bench/bench.js --json=output.json        # write JSON results to file
+ *   node bench/bench.js --compare=baseline.json   # compare to baseline
+ *   node bench/bench.js --encode-into             # use encodeInto instead of encode
  */
 
 import { encode, decode, encodeInto, Token, Type } from '../cborg.js'
@@ -129,7 +129,7 @@ const FIXTURE_SEED = 12345
 // Parse CLI args (Node.js only, ignored in browser)
 const args = typeof process !== 'undefined' ? process.argv.slice(2) : []
 const opts = {
-  json: args.includes('--json'),
+  json: args.find(a => a.startsWith('--json='))?.split('=')[1] || null,
   suite: args.find(a => a.startsWith('--suite='))?.split('=')[1] || null,
   compare: args.find(a => a.startsWith('--compare='))?.split('=')[1] || null,
   duration: parseInt(args.find(a => a.startsWith('--duration='))?.split('=')[1] || DEFAULT_DURATION_MS),
@@ -184,11 +184,11 @@ function getOptions (suiteType = 'default') {
   }
 }
 
-// Output helpers
-const log = opts.json ? () => {} : console.log.bind(console)
+// Output helpers - always show progress to console
+const log = console.log.bind(console)
 const write = typeof process !== 'undefined' && process.stdout
   ? (s) => process.stdout.write(s)
-  : (s) => log(s)
+  : (s) => console.log(s)
 
 /**
  * Run a benchmark function for a duration, return ops/sec
@@ -364,7 +364,7 @@ async function main () {
   const avgDecode = Math.round(allDecodeRates.reduce((a, b) => a + b, 0) / allDecodeRates.length * 10) / 10
   log(`Average throughput: encode ${avgEncode} MB/s, decode ${avgDecode} MB/s`)
 
-  // JSON output
+  // JSON output to file
   if (opts.json) {
     const output = {
       timestamp: new Date().toISOString(),
@@ -375,7 +375,11 @@ async function main () {
       suites: allResults,
       summary: { avgEncodeMBps: avgEncode, avgDecodeMBps: avgDecode }
     }
-    console.log(JSON.stringify(output, null, 2))
+    if (typeof process !== 'undefined') {
+      const fs = await import('fs')
+      fs.writeFileSync(opts.json, JSON.stringify(output, null, 2) + '\n')
+      log(`\nResults written to ${opts.json}`)
+    }
   }
 
   // Compare to baseline
