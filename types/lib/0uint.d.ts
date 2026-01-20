@@ -1,5 +1,5 @@
 /**
- * @typedef {import('./bl.js').Bl} Bl
+ * @typedef {import('../interface').ByteWriter} ByteWriter
  * @typedef {import('../interface').DecodeOptions} DecodeOptions
  */
 /**
@@ -63,10 +63,10 @@ export function decodeUint32(data: Uint8Array, pos: number, _minor: number, opti
  */
 export function decodeUint64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
- * @param {Bl} buf
+ * @param {ByteWriter} writer
  * @param {Token} token
  */
-export function encodeUint(buf: Bl, token: Token): void;
+export function encodeUint(writer: ByteWriter, token: Token): void;
 export namespace encodeUint {
     /**
      * @param {Token} token
@@ -81,11 +81,11 @@ export namespace encodeUint {
     function compareTokens(tok1: Token, tok2: Token): number;
 }
 /**
- * @param {Bl} buf
+ * @param {ByteWriter} writer
  * @param {number} major
  * @param {number|bigint} uint
  */
-export function encodeUintValue(buf: Bl, major: number, uint: number | bigint): void;
+export function encodeUintValue(writer: ByteWriter, major: number, uint: number | bigint): void;
 export namespace encodeUintValue {
     /**
      * @param {number} uint
@@ -94,7 +94,7 @@ export namespace encodeUintValue {
     function encodedSize(uint: number): number;
 }
 export const uintBoundaries: (number | bigint)[];
-export type Bl = import("./bl.js").Bl;
+export type ByteWriter = import("../interface").ByteWriter;
 export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=0uint.d.ts.map

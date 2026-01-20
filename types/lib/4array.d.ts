@@ -47,10 +47,10 @@ export function decodeArray64(data: Uint8Array, pos: number, _minor: number, opt
  */
 export function decodeArrayIndefinite(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
- * @param {Bl} buf
+ * @param {ByteWriter} writer
  * @param {Token} token
  */
-export function encodeArray(buf: Bl, token: Token): void;
+export function encodeArray(writer: ByteWriter, token: Token): void;
 export namespace encodeArray {
     let compareTokens: (tok1: Token, tok2: Token) => number;
     /**
@@ -59,7 +59,7 @@ export namespace encodeArray {
      */
     function encodedSize(token: Token): number;
 }
-export type Bl = import("./bl.js").Bl;
+export type ByteWriter = import("../interface").ByteWriter;
 export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=4array.d.ts.map

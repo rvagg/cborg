@@ -8,7 +8,7 @@ export interface Reference {
 export type OptionalTypeEncoder = (data: any, typ: string, options: EncodeOptions, refStack?: Reference) => TokenOrNestedTokens | null;
 export type StrictTypeEncoder = (data: any, typ: string, options: EncodeOptions, refStack?: Reference) => TokenOrNestedTokens;
 export type TokenTypeEncoder = {
-    (buf: Bl, token: Token, options?: EncodeOptions): void;
+    (writer: ByteWriter, token: Token, options?: EncodeOptions): void;
     compareTokens(t1: Token, t2: Token): number;
     encodedSize?(token: Token, options?: EncodeOptions): number;
 };
@@ -48,7 +48,7 @@ export interface EncodeOptions {
      */
     ignoreUndefinedProperties?: boolean;
 }
-export interface Bl {
+export interface ByteWriter {
     chunks: (Uint8Array | number[])[];
     reset(): void;
     push(bytes: Uint8Array | number[]): void;

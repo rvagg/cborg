@@ -1,5 +1,5 @@
 /**
- * @typedef {import('./bl.js').Bl} Bl
+ * @typedef {import('../interface').ByteWriter} ByteWriter
  * @typedef {import('../interface').DecodeOptions} DecodeOptions
  */
 /**
@@ -35,10 +35,10 @@ export function decodeNegint32(data: Uint8Array, pos: number, _minor: number, op
  */
 export function decodeNegint64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
- * @param {Bl} buf
+ * @param {ByteWriter} writer
  * @param {Token} token
  */
-export function encodeNegint(buf: Bl, token: Token): void;
+export function encodeNegint(writer: ByteWriter, token: Token): void;
 export namespace encodeNegint {
     /**
      * @param {Token} token
@@ -52,7 +52,7 @@ export namespace encodeNegint {
      */
     function compareTokens(tok1: Token, tok2: Token): number;
 }
-export type Bl = import("./bl.js").Bl;
+export type ByteWriter = import("../interface").ByteWriter;
 export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=1negint.d.ts.map

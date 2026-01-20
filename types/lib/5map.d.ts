@@ -47,10 +47,10 @@ export function decodeMap64(data: Uint8Array, pos: number, _minor: number, optio
  */
 export function decodeMapIndefinite(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
- * @param {Bl} buf
+ * @param {ByteWriter} writer
  * @param {Token} token
  */
-export function encodeMap(buf: Bl, token: Token): void;
+export function encodeMap(writer: ByteWriter, token: Token): void;
 export namespace encodeMap {
     let compareTokens: (tok1: Token, tok2: Token) => number;
     /**
@@ -59,7 +59,7 @@ export namespace encodeMap {
      */
     function encodedSize(token: Token): number;
 }
-export type Bl = import("./bl.js").Bl;
+export type ByteWriter = import("../interface").ByteWriter;
 export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=5map.d.ts.map
