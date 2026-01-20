@@ -11,7 +11,7 @@ export type Reference = import("../interface").Reference;
 export type StrictTypeEncoder = import("../interface").StrictTypeEncoder;
 export type TokenTypeEncoder = import("../interface").TokenTypeEncoder;
 export type TokenOrNestedTokens = import("../interface").TokenOrNestedTokens;
-export type Bl = import("../interface").Bl;
+export type ByteWriter = import("../interface").ByteWriter;
 /**
  * @param {any} obj
  * @param {EncodeOptions} [options]

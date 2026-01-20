@@ -1,6 +1,6 @@
 export type EncodeOptions = import("../../interface").EncodeOptions;
+export type ByteWriter = import("../../interface").ByteWriter;
 export type Token = import("../token").Token;
-export type Bl = import("../bl").Bl;
 /**
  * @param {any} data
  * @param {EncodeOptions} [options]

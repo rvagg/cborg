@@ -39,10 +39,10 @@ export function decodeBytes32(data: Uint8Array, pos: number, _minor: number, opt
  */
 export function decodeBytes64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
- * @param {Bl} buf
+ * @param {ByteWriter} writer
  * @param {Token} token
  */
-export function encodeBytes(buf: Bl, token: Token): void;
+export function encodeBytes(writer: ByteWriter, token: Token): void;
 export namespace encodeBytes {
     /**
      * @param {Token} token
@@ -62,7 +62,7 @@ export namespace encodeBytes {
  * @returns {number}
  */
 export function compareBytes(b1: Uint8Array, b2: Uint8Array): number;
-export type Bl = import("./bl.js").Bl;
+export type ByteWriter = import("../interface").ByteWriter;
 export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=2bytes.d.ts.map

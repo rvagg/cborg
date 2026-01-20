@@ -39,11 +39,11 @@ export function decodeFloat32(data: Uint8Array, pos: number, _minor: number, opt
  */
 export function decodeFloat64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
- * @param {Bl} buf
+ * @param {ByteWriter} writer
  * @param {Token} token
  * @param {EncodeOptions} options
  */
-export function encodeFloat(buf: Bl, token: Token, options: EncodeOptions): void;
+export function encodeFloat(writer: ByteWriter, token: Token, options: EncodeOptions): void;
 export namespace encodeFloat {
     /**
      * @param {Token} token
@@ -53,7 +53,7 @@ export namespace encodeFloat {
     function encodedSize(token: Token, options: EncodeOptions): number;
     let compareTokens: (tok1: Token, tok2: Token) => number;
 }
-export type Bl = import("./bl.js").Bl;
+export type ByteWriter = import("../interface").ByteWriter;
 export type DecodeOptions = import("../interface").DecodeOptions;
 export type EncodeOptions = import("../interface").EncodeOptions;
 import { Token } from './token.js';

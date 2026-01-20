@@ -1,5 +1,5 @@
 /**
- * @typedef {import('./bl.js').Bl} Bl
+ * @typedef {import('../interface').ByteWriter} ByteWriter
  * @typedef {import('../interface').DecodeOptions} DecodeOptions
  */
 /**
@@ -43,10 +43,10 @@ export function decodeTag32(data: Uint8Array, pos: number, _minor: number, optio
  */
 export function decodeTag64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
- * @param {Bl} buf
+ * @param {ByteWriter} writer
  * @param {Token} token
  */
-export function encodeTag(buf: Bl, token: Token): void;
+export function encodeTag(writer: ByteWriter, token: Token): void;
 export namespace encodeTag {
     let compareTokens: (tok1: Token, tok2: Token) => number;
     /**
@@ -55,7 +55,7 @@ export namespace encodeTag {
      */
     function encodedSize(token: Token): number;
 }
-export type Bl = import("./bl.js").Bl;
+export type ByteWriter = import("../interface").ByteWriter;
 export type DecodeOptions = import("../interface").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=6tag.d.ts.map
