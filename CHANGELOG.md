@@ -1,3 +1,5 @@
+## [4.5.2](https://github.com/rvagg/cborg/compare/v4.5.1...v4.5.2) (2026-01-20)
+
 ## [4.5.1](https://github.com/rvagg/cborg/compare/v4.5.0...v4.5.1) (2026-01-20)
 
 ## [4.5.0](https://github.com/rvagg/cborg/compare/v4.4.1...v4.5.0) (2026-01-20)
