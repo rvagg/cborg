@@ -1,3 +1,9 @@
+## [4.5.5](https://github.com/rvagg/cborg/compare/v4.5.4...v4.5.5) (2026-01-20)
+
+### Trivial Changes
+
+* **bench:** output json to file ([ca32690](https://github.com/rvagg/cborg/commit/ca326908643ce9bc2ac56dd06b6c64502b8a4f03))
+
 ## [4.5.4](https://github.com/rvagg/cborg/compare/v4.5.3...v4.5.4) (2026-01-20)
 
 ## [4.5.3](https://github.com/rvagg/cborg/compare/v4.5.2...v4.5.3) (2026-01-20)
