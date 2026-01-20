@@ -1,3 +1,10 @@
+## [4.5.0](https://github.com/rvagg/cborg/compare/v4.4.1...v4.5.0) (2026-01-20)
+
+### Features
+
+* add encodeInto() for BYO buffer encoding ([a577843](https://github.com/rvagg/cborg/commit/a5778432faa44be491ce2fdd814eceddd1979d77))
+* **bench:** add realistic IPLD workload benchmarks ([07d9618](https://github.com/rvagg/cborg/commit/07d9618f1a86262d59690ff00e268db0ad0c6d4a))
+
 ## [4.4.1](https://github.com/rvagg/cborg/compare/v4.4.0...v4.4.1) (2026-01-19)
 
 ### Trivial Changes
