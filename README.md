@@ -39,6 +39,14 @@
 * [JSON mode](#json-mode)
   * [Example](#example-1)
 * [Advanced types and tags](#advanced-types-and-tags)
+* [Extended JavaScript types (`cborg/extended`)](#extended-javascript-types-cborgextended)
+  * [When to use `cborg/extended`](#when-to-use-cborgextended)
+  * [Supported types](#supported-types)
+  * [Type fidelity: objects vs Maps](#type-fidelity-objects-vs-maps)
+  * [Interoperability](#interoperability)
+* [Selective type support (`cborg/taglib`)](#selective-type-support-cborgtaglib)
+  * [`cborg/extended` vs `cborg/taglib`](#cborgextended-vs-cborgtaglib)
+  * [Available exports](#available-exports)
 * [License and Copyright](#license-and-copyright)
 
 ## Example
@@ -380,14 +388,19 @@ Using type encoders we can:
 
 ### Tag decoders
 
-By default cborg does not support decoding of any tags. Where a tag is encountered during decode, an error will be thrown. If tag support is needed, they will need to be supplied as options to the `decode()` function. The `tags` property should contain an array where the indexes correspond to the tag numbers that are encountered during decode, and the values are functions that are able to turn the following token(s) into a JavaScript object. Each tag token in CBOR is followed by a data item, often a byte array of arbitrary length, but can be a more complex series of tokens that form a nested data item. This token is supplied to the tag decoder function.
+By default cborg does not support decoding of any tags. Where a tag is encountered during decode, an error will be thrown. If tag support is needed, they will need to be supplied as options to the `decode()` function. The `tags` property should contain an object mapping tag numbers to decoder functions.
 
-This example is available from the cborg taglib as `bigIntDecoder` and `bigNegIntDecoder` (`import { bigIntDecoder, bigNegIntDecoder } as taglib from 'cborg/taglib'`) and implements CBOR tags 2 and 3 (bigint and negative bigint). This function would be registered using an options parameter:
+Tag decoder functions receive a `decode` control object with two methods:
+- `decode()`: decode the tagged content and return it
+- `decode.entries()`: for map content, returns `[[key, value], ...]` preserving key types
+
+This example is available from the cborg taglib as `bigIntDecoder` and `bigNegIntDecoder` (`import { bigIntDecoder, bigNegIntDecoder } from 'cborg/taglib'`) and implements CBOR tags 2 and 3 (bigint and negative bigint). This function would be registered using an options parameter:
 
 ```js
-const tags = []
-tags[2] = bigIntDecoder
-tags[3] = bigNegIntDecoder
+const tags = {
+  2: bigIntDecoder,
+  3: bigNegIntDecoder
+}
 
 decode(bytes, { tags })
 ```
@@ -395,7 +408,8 @@ decode(bytes, { tags })
 Implementation:
 
 ```js
-function bigIntDecoder (bytes) {
+function bigIntDecoder (decode) {
+  const bytes = decode()  // get the tagged byte content
   let bi = 0n
   for (let ii = 0; ii < bytes.length; ii++) {
     bi = (bi << 8n) + BigInt(bytes[ii])
@@ -403,8 +417,22 @@ function bigIntDecoder (bytes) {
   return bi
 }
 
-function bigNegIntDecoder (bytes) {
-  return -1n - bigIntDecoder(bytes)
+function bigNegIntDecoder (decode) {
+  const bytes = decode()
+  let bi = 0n
+  for (let ii = 0; ii < bytes.length; ii++) {
+    bi = (bi << 8n) + BigInt(bytes[ii])
+  }
+  return -1n - bi
+}
+```
+
+For tags that wrap CBOR maps and need to preserve non-string key types, use `decode.entries()`:
+
+```js
+// Tag 259: Map with any key type
+function mapDecoder (decode) {
+  return new Map(decode.entries())
 }
 ```
 
@@ -466,7 +494,7 @@ By default, cborg will always **encode** objects to the same bytes by applying s
 * Omitting support for tags (therefore omitting support for exotic object types).
 * Applying deterministic rules to `number` differentiation - if a fractional part is missing and it's within the safe integer boundary, it's encoded as an integer, otherwise it's encoded as a float.
 
-By default, cborg allows for some flexibility on **decode** of objects, which will present some challenges if users wish to impose strictness requirements at both serialization _and_ deserialization. Options that can be provided to `decode()` to impose some strictness requirements are:
+By default, cborg allows for some flexibility on **decode** of objects, which will present some challenges if users wish to impose strictness requirements at both serialisation _and_ deserialisation. Options that can be provided to `decode()` to impose some strictness requirements are:
 
 * `strict: true` to impose strict sizing rules for int, negative ints and lengths of lengthed objects
 * `allowNaN: false` and `allowInfinity` to prevent decoding of any value that would resolve to `NaN`, `Infinity` or `-Infinity`, using CBOR tokens or IEEE 754 representation—as long as your application can do without these symbols.
@@ -546,6 +574,182 @@ encoded (string): {"this":{"is":"JSON!","yay":true}}
 ## Advanced types and tags
 
 As demonstrated above, the ability to provide custom `typeEncoders` to `encode()`, `tags` and even a custom `tokenizer` to `decode()` allow for quite a bit of flexibility in manipulating both the encode and decode process. An advanced example that uses all of these features can be found in [example-bytestrings.js](./example-bytestrings.js) which demonstrates how one might implement [RFC 8746](https://www.rfc-editor.org/rfc/rfc8746.html) to allow typed arrays to round-trip through CBOR and retain their original types. Since cborg is designed to speak purely in terms of `Uint8Array`s, its default behaviour will squash all typed arrays down to their byte array forms and materialise them as plain `Uint8Arrays`. Where round-trip fidelity is important and CBOR tags are an option, this form of usage is an option.
+
+## Extended JavaScript types (`cborg/extended`)
+
+Need to serialise `Date`, `Map`, `Set`, `RegExp`, `BigInt`, `Error`, or `TypedArray`? The `cborg/extended` module provides encode/decode with built-in support for native JavaScript types that JSON can't handle.
+
+The type support is similar to the browser's **[structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm)**, the built-in deep-copy mechanism that handles these same types. `cborg/extended` provides similar type fidelity in a compact binary serialisation format.
+
+See [example-extended.js](./example-extended.js) for a runnable demo.
+
+```js
+import { encode, decode } from 'cborg/extended'
+
+const data = {
+  date: new Date(),
+  pattern: /foo.*bar/gi,
+  mapping: new Map([['key', 'value'], [42, 'number key']]),
+  collection: new Set([1, 2, 3]),
+  binary: new Uint16Array([1, 2, 3]),
+  bignum: 12345678901234567890n,
+  error: new TypeError('something went wrong')
+}
+
+const encoded = encode(data)
+const decoded = decode(encoded)
+
+// All types are preserved
+decoded.date instanceof Date           // true
+decoded.pattern instanceof RegExp      // true
+decoded.mapping instanceof Map         // true
+decoded.collection instanceof Set      // true
+decoded.binary instanceof Uint16Array  // true
+typeof decoded.bignum === 'bigint'     // true
+decoded.error instanceof TypeError     // true
+```
+
+### When to use `cborg/extended`
+
+Use `cborg/extended` instead of base `cborg` or JSON when you need:
+
+- **Date serialisation**: JSON requires manual `toISOString()`/`new Date()` conversion
+- **BigInt support**: JSON throws on BigInt; base cborg only preserves BigInts outside 64-bit range
+- **Map with non-string keys**: `new Map([[1, 'one'], [{}, 'object key']])` just works
+- **Set preservation**: Sets round-trip as Sets, not Arrays
+- **TypedArray types**: `Float32Array` stays `Float32Array`, not `Uint8Array`
+- **Error serialisation**: `Error`, `TypeError`, `RangeError`, etc. preserve type and message
+- **Negative zero**: `-0` round-trips correctly (base cborg encodes as `0`)
+- **Insertion order**: Map and object key order is preserved (not sorted)
+- **Binary efficiency**: ~30-50% smaller than JSON for typical data
+
+### Supported types
+
+| Type | CBOR Tag | Notes |
+|------|----------|-------|
+| `Date` | 1 | Epoch seconds as float (millisecond precision) |
+| `RegExp` | 21066 | Pattern and flags preserved |
+| `Set` | 258 | IANA registered finite set |
+| `Map` | 259 | Supports any key type |
+| `BigInt` | 2, 3 | Always tagged for round-trip fidelity |
+| `Error` | 27 | All standard error types (`TypeError`, `RangeError`, etc.) |
+| `-0` | *(float)* | Negative zero encoded as half-precision float |
+| `Uint8Array` | 64 | RFC 8746 |
+| `Uint8ClampedArray` | 68 | RFC 8746 |
+| `Int8Array` | 72 | RFC 8746 |
+| `Uint16Array` | 69 | RFC 8746 (little-endian) |
+| `Int16Array` | 77 | RFC 8746 (little-endian) |
+| `Uint32Array` | 70 | RFC 8746 (little-endian) |
+| `Int32Array` | 78 | RFC 8746 (little-endian) |
+| `Float32Array` | 85 | RFC 8746 (little-endian) |
+| `Float64Array` | 86 | RFC 8746 (little-endian) |
+| `BigUint64Array` | 71 | RFC 8746 (little-endian) |
+| `BigInt64Array` | 79 | RFC 8746 (little-endian) |
+
+### Type fidelity: objects vs Maps
+
+`cborg/extended` preserves the distinction between plain objects and `Map` instances:
+
+```js
+// Plain objects round-trip as plain objects
+const obj = { name: 'Alice', age: 30 }
+decode(encode(obj))  // { name: 'Alice', age: 30 }
+
+// Maps round-trip as Maps (including non-string keys)
+const map = new Map([[1, 'one'], ['two', 2]])
+decode(encode(map))  // Map { 1 => 'one', 'two' => 2 }
+
+// Mixed structures work correctly
+const data = {
+  users: new Map([['alice', { role: 'admin' }]])
+}
+const decoded = decode(encode(data))
+decoded.users instanceof Map  // true
+decoded.users.get('alice')    // { role: 'admin' } (plain object)
+```
+
+This works because `Map` instances are encoded with CBOR Tag 259, while plain objects use untagged CBOR maps. The decoder uses `decode.entries()` internally to preserve key types for tagged maps.
+
+### Interoperability and limitations
+
+The tags used by `cborg/extended` are standard CBOR tags registered with IANA:
+
+- Tags 1, 2, 3 (Date, BigInt): RFC 8949
+- Tag 27 (Error): IANA "object with class name and constructor arguments"
+- Tags 64-87 (TypedArrays): RFC 8746
+- Tags 258, 259 (Set, Map): IANA registry
+- Tag 21066 (RegExp): IANA registry
+
+**Important considerations:**
+
+- **Parser support varies**: CBOR parsers that don't recognise these tags will either error or return raw tagged values. Many minimal CBOR implementations only handle core types. Test interoperability with your specific target platforms.
+
+- **Not for content addressing**: `cborg/extended` prioritises JavaScript type fidelity over deterministic encoding. Map and object keys preserve insertion order (not sorted), floating-point dates lose sub-millisecond precision, and Set iteration order depends on insertion. The same data structure built differently may encode to different bytes. For content-addressed systems (IPLD, CIDs), use base `cborg` with `@ipld/dag-cbor` conventions instead.
+
+- **Implementation differences**: Even among parsers that support these tags, behaviour may differ. For example, Date precision (seconds vs milliseconds), RegExp flag handling, or TypedArray endianness assumptions. The CBOR specs allow flexibility that can cause subtle incompatibilities.
+
+- **JavaScript-centric**: Types like `RegExp` and JavaScript's specific TypedArray variants don't have equivalents in many languages. Data encoded with `cborg/extended` is best suited for JavaScript-to-JavaScript communication.
+
+## Selective type support (`cborg/taglib`)
+
+If you don't need all extended types, `cborg/taglib` exports individual encoders and decoders. Use this when you want to enable specific types without the full `cborg/extended` configuration, or when you need to customise behaviour.
+
+> **Tip:** See [lib/extended/extended.js](./lib/extended/extended.js) for how `cborg/extended` assembles the taglib components, use it as a template for your own configuration.
+
+```js
+import { encode, decode } from 'cborg'
+import {
+  dateEncoder,
+  dateDecoder,
+  bigIntEncoder,
+  bigIntDecoder,
+  bigNegIntDecoder,
+  TAG_DATE_EPOCH
+} from 'cborg/taglib'
+
+// Enable just Date and BigInt support
+const encoded = encode(data, {
+  typeEncoders: {
+    Date: dateEncoder,
+    bigint: bigIntEncoder
+  }
+})
+
+const decoded = decode(encoded, {
+  tags: {
+    [TAG_DATE_EPOCH]: dateDecoder,
+    2: bigIntDecoder,
+    3: bigNegIntDecoder
+  }
+})
+```
+
+### `cborg/extended` vs `cborg/taglib`
+
+| Use case | Module |
+|----------|--------|
+| Serialize all JS types, minimal config | `cborg/extended` |
+| Only need Date and BigInt | `cborg/taglib` with selective imports |
+| Custom encode/decode logic | `cborg/taglib` as building blocks |
+| Interop with IPLD/content-addressed systems | `cborg/taglib` with `bigIntEncoder` (not `structBigIntEncoder`) |
+
+### Available exports
+
+**Encoders:**
+- `dateEncoder`: Date as epoch float (Tag 1)
+- `regExpEncoder`: RegExp as [pattern, flags] (Tag 21066)
+- `setEncoder`: Set as tagged array (Tag 258)
+- `mapEncoder`: Map as tagged CBOR map (Tag 259)
+- `bigIntEncoder`: BigInt, only tags values outside 64-bit range (IPLD compatible)
+- `structBigIntEncoder`: BigInt, always tags (full round-trip as bigint)
+- TypedArray encoders: `uint8ArrayEncoder`, `uint8ClampedArrayEncoder`, `int8ArrayEncoder`, `uint16ArrayEncoder`, `int16ArrayEncoder`, `uint32ArrayEncoder`, `int32ArrayEncoder`, `float32ArrayEncoder`, `float64ArrayEncoder`, `bigUint64ArrayEncoder`, `bigInt64ArrayEncoder`
+
+**Decoders:**
+- `dateDecoder`, `regExpDecoder`, `setDecoder`, `mapDecoder`
+- `bigIntDecoder` (Tag 2), `bigNegIntDecoder` (Tag 3)
+- TypedArray decoders: `uint8ArrayDecoder`, `uint8ClampedArrayDecoder`, `int8ArrayDecoder`, `uint16ArrayDecoder`, `int16ArrayDecoder`, `uint32ArrayDecoder`, `int32ArrayDecoder`, `float32ArrayDecoder`, `float64ArrayDecoder`, `bigUint64ArrayDecoder`, `bigInt64ArrayDecoder`
+
+**Tag constants:** `TAG_DATE_STRING`, `TAG_DATE_EPOCH`, `TAG_BIGINT_POS`, `TAG_BIGINT_NEG`, `TAG_UINT8_ARRAY`, `TAG_UINT8_CLAMPED_ARRAY`, `TAG_INT8_ARRAY`, `TAG_UINT16_ARRAY_LE`, `TAG_INT16_ARRAY_LE`, `TAG_UINT32_ARRAY_LE`, `TAG_INT32_ARRAY_LE`, `TAG_FLOAT32_ARRAY_LE`, `TAG_FLOAT64_ARRAY_LE`, `TAG_BIGUINT64_ARRAY_LE`, `TAG_BIGINT64_ARRAY_LE`, `TAG_SET`, `TAG_MAP`, `TAG_REGEXP`
 
 ## License and Copyright
 

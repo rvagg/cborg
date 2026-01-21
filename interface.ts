@@ -29,7 +29,19 @@ export interface DecodeTokenizer {
   pos(): number,
 }
 
-export type TagDecoder = (inner: any) => any
+/**
+ * Control object passed to tag decoders, providing methods to decode the tagged content.
+ */
+export interface TagDecodeControl {
+  /** Decode the tagged content */
+  (): unknown
+  /** Decode CBOR map content as [key, value] entries array (preserves key types) */
+  entries(): Array<[unknown, unknown]>
+  /** @internal Track whether decode was called */
+  readonly _called?: boolean
+}
+
+export type TagDecoder = (decode: TagDecodeControl) => any
 
 export interface DecodeOptions {
   allowIndefinite?: boolean
@@ -42,7 +54,7 @@ export interface DecodeOptions {
   useMaps?: boolean
   rejectDuplicateMapKeys?: boolean
   retainStringBytes?: boolean
-  tags?: TagDecoder[],
+  tags?: { [tagNumber: number]: TagDecoder },
   tokenizer?: DecodeTokenizer
 }
 

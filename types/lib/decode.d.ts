@@ -1,6 +1,7 @@
 export type Token = import("./token.js").Token;
 export type DecodeOptions = import("../interface").DecodeOptions;
 export type DecodeTokenizer = import("../interface").DecodeTokenizer;
+export type TagDecodeControl = import("../interface").TagDecodeControl;
 /**
  * @implements {DecodeTokenizer}
  */
