@@ -97,17 +97,17 @@ describe('Bin', () => {
       assert.strictEqual(e.stderr,
 `Usage: cborg <command> <args>
 Valid commands:
-\tbin2diag [binary input]
+\tbin2diag [--width <width>] [binary input]
 \tbin2hex [binary input]
 \tbin2json [--pretty] [binary input]
 \tdiag2bin [diagnostic input]
 \tdiag2hex [diagnostic input]
 \tdiag2json [--pretty] [diagnostic input]
 \thex2bin [hex input]
-\thex2diag [hex input]
+\thex2diag [--width <width>] [hex input]
 \thex2json [--pretty] [hex input]
 \tjson2bin '[json input]'
-\tjson2diag '[json input]'
+\tjson2diag [--width <width>] '[json input]'
 \tjson2hex '[json input]'
 Input may either be supplied as an argument or piped via stdin
 `)
@@ -124,17 +124,17 @@ Input may either be supplied as an argument or piped via stdin
 `Unknown command: 'blip'
 Usage: cborg <command> <args>
 Valid commands:
-\tbin2diag [binary input]
+\tbin2diag [--width <width>] [binary input]
 \tbin2hex [binary input]
 \tbin2json [--pretty] [binary input]
 \tdiag2bin [diagnostic input]
 \tdiag2hex [diagnostic input]
 \tdiag2json [--pretty] [diagnostic input]
 \thex2bin [hex input]
-\thex2diag [hex input]
+\thex2diag [--width <width>] [hex input]
 \thex2json [--pretty] [hex input]
 \tjson2bin '[json input]'
-\tjson2diag '[json input]'
+\tjson2diag [--width <width>] '[json input]'
 \tjson2hex '[json input]'
 Input may either be supplied as an argument or piped via stdin
 `)
@@ -147,17 +147,17 @@ Input may either be supplied as an argument or piped via stdin
     assert.strictEqual(stderr,
 `Usage: cborg <command> <args>
 Valid commands:
-\tbin2diag [binary input]
+\tbin2diag [--width <width>] [binary input]
 \tbin2hex [binary input]
 \tbin2json [--pretty] [binary input]
 \tdiag2bin [diagnostic input]
 \tdiag2hex [diagnostic input]
 \tdiag2json [--pretty] [diagnostic input]
 \thex2bin [hex input]
-\thex2diag [hex input]
+\thex2diag [--width <width>] [hex input]
 \thex2json [--pretty] [hex input]
 \tjson2bin '[json input]'
-\tjson2diag '[json input]'
+\tjson2diag [--width <width>] '[json input]'
 \tjson2hex '[json input]'
 Input may either be supplied as an argument or piped via stdin
 `)
