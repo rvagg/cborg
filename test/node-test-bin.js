@@ -341,6 +341,23 @@ Input may either be supplied as an argument or piped via stdin
   })
 
   describe('diag length bytes', () => {
+    // issue #137 - array and map length bytes were missing for lengths >= 24
+    it('array with 24 elements', async () => {
+      // 98 18 = array(24), then 24 uint(1) values
+      const hex = '9818' + '01'.repeat(24)
+      const { stdout, stderr } = await execBin(`hex2diag ${hex}`)
+      assert.strictEqual(stderr, '')
+      assert.ok(stdout.startsWith('98 18                                             # array(24)\n'))
+    })
+
+    it('map with 24 entries', async () => {
+      // b8 18 = map(24), then 24 pairs of string('a')=uint(1)
+      const hex = 'b818' + '616101'.repeat(24)
+      const { stdout, stderr } = await execBin(`hex2diag ${hex}`)
+      assert.strictEqual(stderr, '')
+      assert.ok(stdout.startsWith('b8 18                                             # map(24)\n'))
+    })
+
     it('compact', async () => {
       const { stdout, stderr } = await execBin('json2diag', '"aaaaaaaaaaaaaaaaaaaaaaa"')
       assert.strictEqual(stderr, '')
