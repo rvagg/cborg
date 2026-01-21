@@ -1,3 +1,10 @@
+## [4.5.8](https://github.com/rvagg/cborg/compare/v4.5.7...v4.5.8) (2026-01-21)
+
+### Bug Fixes
+
+* **cli:** don't omit array length bytes in diagnostic output ([b8dacb6](https://github.com/rvagg/cborg/commit/b8dacb652c02566c7b64c2638b7bcb36bb519b6b))
+* **test:** add CLI tests to `npm test` ([b19bc87](https://github.com/rvagg/cborg/commit/b19bc87ea04691f9173a5b13284e21192e0f1e3c))
+
 ## [4.5.7](https://github.com/rvagg/cborg/compare/v4.5.6...v4.5.7) (2026-01-21)
 
 ## [4.5.6](https://github.com/rvagg/cborg/compare/v4.5.5...v4.5.6) (2026-01-21)
