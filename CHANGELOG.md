@@ -1,3 +1,5 @@
+## [4.5.6](https://github.com/rvagg/cborg/compare/v4.5.5...v4.5.6) (2026-01-21)
+
 ## [4.5.5](https://github.com/rvagg/cborg/compare/v4.5.4...v4.5.5) (2026-01-20)
 
 ### Trivial Changes
