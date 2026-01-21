@@ -13,8 +13,9 @@
     "build:types": "tsc --build",
     "prepublishOnly": "npm run build",
     "test:node": "c8 --check-coverage --exclude=test/** mocha test/test-*.js",
+    "test:node-bin": "mocha test/node-test-bin.js",
     "test:browser": "polendina --cleanup test/test-*.js",
-    "test": "npm run lint && npm run build && npm run test:node && npm run test:browser",
+    "test": "npm run lint && npm run build && npm run test:node && npm run test:node-bin && npm run test:browser",
     "test:ci": "npm run test",
     "coverage": "c8 --reporter=html --reporter=text mocha test/test-*.js && npx st -d coverage -p 8888"
   },
