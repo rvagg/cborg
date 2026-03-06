@@ -21,14 +21,16 @@ const fixedDest = new Uint8Array(1024)
 const tags = []
 const typeEncoders = {}
 
-tags[0] = function (obj) {
+tags[0] = function (decode) {
+  const obj = decode()
   if (typeof obj !== 'string') {
     throw new Error('expected string for tag 1')
   }
   return `0("${new Date(obj).toISOString().replace(/\.000Z$/, 'Z')}")`
 }
 
-tags[1] = function (obj) {
+tags[1] = function (decode) {
+  const obj = decode()
   if (typeof obj !== 'number') {
     throw new Error('expected number for tag 1')
   }
@@ -39,19 +41,25 @@ tags[2] = taglib.bigIntDecoder
 typeEncoders.bigint = taglib.bigIntEncoder
 tags[3] = taglib.bigNegIntDecoder
 
-tags[23] = function (obj) {
+tags[23] = function (decode) {
 // expected conversion to base16
+  const obj = decode()
   if (!(obj instanceof Uint8Array)) {
     throw new Error('expected byte array for tag 23')
   }
   return `23(h'${toHex(obj)}')`
 }
 
-tags[24] = function (obj) { // embedded cbor, oh my
-  return tags[23](obj).replace(/^23/, '24')
+tags[24] = function (decode) { // embedded cbor, oh my
+  const obj = decode()
+  if (!(obj instanceof Uint8Array)) {
+    throw new Error('expected byte array for tag 24')
+  }
+  return `24(h'${toHex(obj)}')`
 }
 
-tags[32] = function (obj) { // url
+tags[32] = function (decode) { // url
+  const obj = decode()
   if (typeof obj !== 'string') {
     throw new Error('expected string for tag 32')
   }

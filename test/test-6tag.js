@@ -17,7 +17,8 @@ const encodeIntoBytes = (data, dest, options) => {
 
 const fixedDest = new Uint8Array(1024)
 
-function Uint16ArrayDecoder (obj) {
+function Uint16ArrayDecoder (decode) {
+  const obj = decode()
   if (typeof obj !== 'string') {
     throw new Error('expected string for tag 23')
   }

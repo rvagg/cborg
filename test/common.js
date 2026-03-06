@@ -1,6 +1,7 @@
 import { Token, Type } from '../lib/token.js'
 
-export function dateDecoder (obj) {
+export function dateDecoder (decode) {
+  const obj = decode()
   if (typeof obj !== 'string') {
     throw new Error('expected string for tag 1')
   }
