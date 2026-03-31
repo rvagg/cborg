@@ -1,3 +1,47 @@
+## [5.0.0](https://github.com/rvagg/cborg/compare/v4.5.8...v5.0.0) (2026-03-31)
+
+### ⚠ BREAKING CHANGES
+
+* **extended:** Tag decoder signature changed from receiving the decoded
+value to receiving a decode control object. See migration guide below.
+
+Add new `cborg/extended` entry point providing encode/decode with built-in
+support for Date, RegExp, Set, Map, BigInt, Error, and all TypedArrays using
+standard CBOR tags. Type support is similar to the browser's structured
+clone algorithm.
+
+Key features:
+- Date (Tag 1), RegExp (Tag 21066), Set (Tag 258), Map (Tag 259)
+- BigInt always tagged (Tags 2/3) for round-trip fidelity
+- All TypedArrays via RFC 8746 tags (64-87)
+- Error types via Tag 27 (Error, TypeError, RangeError, etc.)
+- Negative zero (-0) round-trips correctly
+- Objects round-trip as objects, Maps round-trip as Maps
+- Map and object key insertion order preserved (not sorted)
+- Mixed structures like { myMap: new Map([[1, 'a']]) } work correctly
+
+The Map/object fidelity is achieved through a new tag decoder API that
+gives decoders control over how their content is decoded. Tag 259 (Map)
+uses `decode.entries()` to preserve key types regardless of the `useMaps`
+setting, while plain CBOR maps decode as objects.
+
+Extends `cborg/taglib` with encoders and decoders for all supported types
+(previously only BigInt). Moves taglib.js to lib/taglib.js for consistency
+(external API unchanged via package.json exports).
+
+Also fixes a bug in lib/7float.js where -0 lost its sign bit during
+half-precision float encoding (bitwise ops on floats convert to int32).
+
+### Features
+
+* **extended:** add cborg/extended module with full JavaScript type fidelity ([#168](https://github.com/rvagg/cborg/issues/168)) ([652730e](https://github.com/rvagg/cborg/commit/652730e5477e90cb95da2bd2b7bb56d171532d6e))
+
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 5.9.3 to 6.0.2 ([5382bfa](https://github.com/rvagg/cborg/commit/5382bfa267b8764047a4263d556e28c0a491c3d6))
+* **deps:** bump actions/setup-node from 6.2.0 to 6.3.0 ([#171](https://github.com/rvagg/cborg/issues/171)) ([a2525b9](https://github.com/rvagg/cborg/commit/a2525b94ff8ae217cb572572e22cd46233d5f8b9))
+* update deps and upgrade to typescript 6 ([463bdfd](https://github.com/rvagg/cborg/commit/463bdfdbe89702214f392b5b99693a26a0ce96a3))
+
 ## [4.5.8](https://github.com/rvagg/cborg/compare/v4.5.7...v4.5.8) (2026-01-21)
 
 ### Bug Fixes
