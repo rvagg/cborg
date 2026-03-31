@@ -59,7 +59,7 @@ export namespace encodeMap {
      */
     function encodedSize(token: Token): number;
 }
-export type ByteWriter = import("../interface").ByteWriter;
-export type DecodeOptions = import("../interface").DecodeOptions;
+export type ByteWriter = import("../interface.js").ByteWriter;
+export type DecodeOptions = import("../interface.js").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=5map.d.ts.map

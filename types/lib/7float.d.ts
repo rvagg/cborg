@@ -54,16 +54,16 @@ export namespace encodeFloat {
     let compareTokens: (tok1: Token, tok2: Token) => number;
 }
 /**
- * @typedef {import('../interface').ByteWriter} ByteWriter
- * @typedef {import('../interface').DecodeOptions} DecodeOptions
- * @typedef {import('../interface').EncodeOptions} EncodeOptions
+ * @typedef {import('../interface.js').ByteWriter} ByteWriter
+ * @typedef {import('../interface.js').DecodeOptions} DecodeOptions
+ * @typedef {import('../interface.js').EncodeOptions} EncodeOptions
  */
 export const MINOR_FALSE: 20;
 export const MINOR_TRUE: 21;
 export const MINOR_NULL: 22;
 export const MINOR_UNDEFINED: 23;
-export type ByteWriter = import("../interface").ByteWriter;
-export type DecodeOptions = import("../interface").DecodeOptions;
-export type EncodeOptions = import("../interface").EncodeOptions;
+export type ByteWriter = import("../interface.js").ByteWriter;
+export type DecodeOptions = import("../interface.js").DecodeOptions;
+export type EncodeOptions = import("../interface.js").EncodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=7float.d.ts.map

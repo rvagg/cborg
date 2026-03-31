@@ -1,1 +1,1 @@
-{"version":3,"file":"encode.d.ts","sourceRoot":"","sources":["../../../lib/json/encode.js"],"names":[],"mappings":"4BAMa,OAAO,iBAAiB,EAAE,aAAa;yBACvC,OAAO,iBAAiB,EAAE,UAAU;oBACpC,OAAO,UAAU,EAAE,KAAK;AAoSrC;;;;GAIG;AACH,6BAJW,GAAG,YACH,aAAa,GACX,UAAU,CAMtB"}
+{"version":3,"file":"encode.d.ts","sourceRoot":"","sources":["../../../lib/json/encode.js"],"names":[],"mappings":"4BAMa,OAAO,oBAAoB,EAAE,aAAa;yBAC1C,OAAO,oBAAoB,EAAE,UAAU;oBACvC,OAAO,aAAa,EAAE,KAAK;AAoSxC;;;;GAIG;AACH,6BAJW,GAAG,YACH,aAAa,GACX,UAAU,CAMtB"}

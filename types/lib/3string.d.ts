@@ -39,8 +39,8 @@ export function decodeString32(data: Uint8Array, pos: number, _minor: number, op
  */
 export function decodeString64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 export const encodeString: typeof encodeBytes;
-export type ByteWriter = import("../interface").ByteWriter;
-export type DecodeOptions = import("../interface").DecodeOptions;
+export type ByteWriter = import("../interface.js").ByteWriter;
+export type DecodeOptions = import("../interface.js").DecodeOptions;
 import { Token } from './token.js';
 import { encodeBytes } from './2bytes.js';
 //# sourceMappingURL=3string.d.ts.map

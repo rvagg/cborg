@@ -5,13 +5,13 @@ export const rfc8949EncodeOptions: EncodeOptions;
 export type TokenEx = Token & {
     _keyBytes?: Uint8Array;
 };
-export type EncodeOptions = import("../interface").EncodeOptions;
-export type OptionalTypeEncoder = import("../interface").OptionalTypeEncoder;
-export type Reference = import("../interface").Reference;
-export type StrictTypeEncoder = import("../interface").StrictTypeEncoder;
-export type TokenTypeEncoder = import("../interface").TokenTypeEncoder;
-export type TokenOrNestedTokens = import("../interface").TokenOrNestedTokens;
-export type ByteWriter = import("../interface").ByteWriter;
+export type EncodeOptions = import("../interface.js").EncodeOptions;
+export type OptionalTypeEncoder = import("../interface.js").OptionalTypeEncoder;
+export type Reference = import("../interface.js").Reference;
+export type StrictTypeEncoder = import("../interface.js").StrictTypeEncoder;
+export type TokenTypeEncoder = import("../interface.js").TokenTypeEncoder;
+export type TokenOrNestedTokens = import("../interface.js").TokenOrNestedTokens;
+export type ByteWriter = import("../interface.js").ByteWriter;
 /**
  * @param {any} obj
  * @param {EncodeOptions} [options]
@@ -56,7 +56,7 @@ export class Ref implements Reference {
      */
     constructor(obj: object | any[], parent: Reference | undefined);
     obj: object | any[];
-    parent: import("../interface").Reference | undefined;
+    parent: import("../interface.js").Reference | undefined;
     /**
      * @param {object|any[]} obj
      * @returns {boolean}

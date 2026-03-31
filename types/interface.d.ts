@@ -1,4 +1,4 @@
-import { Token } from './lib/token';
+import { Token } from './lib/token.js';
 export type TokenOrNestedTokens = Token | Token[] | TokenOrNestedTokens[];
 export interface Reference {
     parent: Reference | undefined;

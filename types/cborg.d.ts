@@ -1,19 +1,19 @@
 /**
  * There was originally just `TypeEncoder` so don't break types by renaming or not exporting
  */
-export type TagDecoder = import("./interface").TagDecoder;
+export type TagDecoder = import("./interface.js").TagDecoder;
 /**
  * Export the types that were present in the original manual cborg.d.ts
  */
-export type TypeEncoder = import("./interface").OptionalTypeEncoder;
+export type TypeEncoder = import("./interface.js").OptionalTypeEncoder;
 /**
  * Export the types that were present in the original manual cborg.d.ts
  */
-export type DecodeOptions = import("./interface").DecodeOptions;
+export type DecodeOptions = import("./interface.js").DecodeOptions;
 /**
  * Export the types that were present in the original manual cborg.d.ts
  */
-export type EncodeOptions = import("./interface").EncodeOptions;
+export type EncodeOptions = import("./interface.js").EncodeOptions;
 import { decode } from './lib/decode.js';
 import { decodeFirst } from './lib/decode.js';
 import { Tokeniser } from './lib/decode.js';

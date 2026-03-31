@@ -1,6 +1,6 @@
 /**
- * @typedef {import('../interface').ByteWriter} ByteWriter
- * @typedef {import('../interface').DecodeOptions} DecodeOptions
+ * @typedef {import('../interface.js').ByteWriter} ByteWriter
+ * @typedef {import('../interface.js').DecodeOptions} DecodeOptions
  */
 /**
  * @param {Uint8Array} data
@@ -52,7 +52,7 @@ export namespace encodeNegint {
      */
     function compareTokens(tok1: Token, tok2: Token): number;
 }
-export type ByteWriter = import("../interface").ByteWriter;
-export type DecodeOptions = import("../interface").DecodeOptions;
+export type ByteWriter = import("../interface.js").ByteWriter;
+export type DecodeOptions = import("../interface.js").DecodeOptions;
 import { Token } from './token.js';
 //# sourceMappingURL=1negint.d.ts.map

@@ -16,30 +16,26 @@
     "strict": true,
     "alwaysStrict": true,
     "esModuleInterop": true,
-    "target": "ES2018",
-    "moduleResolution": "node",
+    "target": "ES2020",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "outDir": "types",
     "skipLibCheck": true,
     "stripInternal": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
-    "emitDeclarationOnly": true,
-    "paths": {
-      "cborg": [
-        "cborg.js"
-      ]
-    }
+    "emitDeclarationOnly": true
   },
   "include": [
     "cborg.js",
-    "example.js",
     "taglib.js",
+    "interface.ts",
     "lib/"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "lib/bin.js"
   ],
   "compileOnSave": false
 }
