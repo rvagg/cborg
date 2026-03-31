@@ -1,6 +1,6 @@
-export type EncodeOptions = import("../../interface").EncodeOptions;
-export type ByteWriter = import("../../interface").ByteWriter;
-export type Token = import("../token").Token;
+export type EncodeOptions = import("../../interface.js").EncodeOptions;
+export type ByteWriter = import("../../interface.js").ByteWriter;
+export type Token = import("../token.js").Token;
 /**
  * @param {any} data
  * @param {EncodeOptions} [options]

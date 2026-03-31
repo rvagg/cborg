@@ -4,11 +4,11 @@ import { Token, Type } from './lib/token.js'
 
 /**
  * Export the types that were present in the original manual cborg.d.ts
- * @typedef {import('./interface').TagDecoder} TagDecoder
+ * @typedef {import('./interface.js').TagDecoder} TagDecoder
  * There was originally just `TypeEncoder` so don't break types by renaming or not exporting
- * @typedef {import('./interface').OptionalTypeEncoder} TypeEncoder
- * @typedef {import('./interface').DecodeOptions} DecodeOptions
- * @typedef {import('./interface').EncodeOptions} EncodeOptions
+ * @typedef {import('./interface.js').OptionalTypeEncoder} TypeEncoder
+ * @typedef {import('./interface.js').DecodeOptions} DecodeOptions
+ * @typedef {import('./interface.js').EncodeOptions} EncodeOptions
  */
 
 export {

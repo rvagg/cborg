@@ -1,7 +1,7 @@
 export type Token = import("./token.js").Token;
-export type DecodeOptions = import("../interface").DecodeOptions;
-export type DecodeTokenizer = import("../interface").DecodeTokenizer;
-export type TagDecodeControl = import("../interface").TagDecodeControl;
+export type DecodeOptions = import("../interface.js").DecodeOptions;
+export type DecodeTokenizer = import("../interface.js").DecodeTokenizer;
+export type TagDecodeControl = import("../interface.js").TagDecodeControl;
 /**
  * @implements {DecodeTokenizer}
  */
@@ -13,7 +13,7 @@ export class Tokeniser implements DecodeTokenizer {
     constructor(data: Uint8Array, options?: DecodeOptions);
     _pos: number;
     data: Uint8Array<ArrayBufferLike>;
-    options: import("../interface").DecodeOptions;
+    options: import("../interface.js").DecodeOptions;
     pos(): number;
     done(): boolean;
     next(): import("./token.js").Token;

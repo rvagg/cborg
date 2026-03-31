@@ -1,9 +1,9 @@
 /**
  * Decode a positive bignum from bytes (Tag 2)
- * @param {import('../interface').TagDecodeControl} decode
+ * @param {import('../interface.js').TagDecodeControl} decode
  * @returns {bigint}
  */
-export function bigIntDecoder(decode: import("../interface").TagDecodeControl): bigint;
+export function bigIntDecoder(decode: import("../interface.js").TagDecodeControl): bigint;
 /**
  * Encode a BigInt, only using tags for values outside 64-bit range (IPLD compatible)
  * @param {bigint} obj
@@ -18,10 +18,10 @@ export function bigIntEncoder(obj: bigint): Token[] | null;
 export function structBigIntEncoder(obj: bigint): Token[];
 /**
  * Decode a negative bignum from bytes (Tag 3)
- * @param {import('../interface').TagDecodeControl} decode
+ * @param {import('../interface.js').TagDecodeControl} decode
  * @returns {bigint}
  */
-export function bigNegIntDecoder(decode: import("../interface").TagDecodeControl): bigint;
+export function bigNegIntDecoder(decode: import("../interface.js").TagDecodeControl): bigint;
 /**
  * Encode a Date as Tag 1 (epoch seconds as float)
  * @param {Date} date
@@ -30,10 +30,10 @@ export function bigNegIntDecoder(decode: import("../interface").TagDecodeControl
 export function dateEncoder(date: Date): Token[];
 /**
  * Decode Tag 1 (epoch seconds) to a Date
- * @param {import('../interface').TagDecodeControl} decode
+ * @param {import('../interface.js').TagDecodeControl} decode
  * @returns {Date}
  */
-export function dateDecoder(decode: import("../interface").TagDecodeControl): Date;
+export function dateDecoder(decode: import("../interface.js").TagDecodeControl): Date;
 /**
  * Encode a RegExp as Tag 21066
  * @param {RegExp} re
@@ -42,43 +42,43 @@ export function dateDecoder(decode: import("../interface").TagDecodeControl): Da
 export function regExpEncoder(re: RegExp): Token[];
 /**
  * Decode Tag 21066 to a RegExp
- * @param {import('../interface').TagDecodeControl} decode
+ * @param {import('../interface.js').TagDecodeControl} decode
  * @returns {RegExp}
  */
-export function regExpDecoder(decode: import("../interface").TagDecodeControl): RegExp;
+export function regExpDecoder(decode: import("../interface.js").TagDecodeControl): RegExp;
 /**
  * Encode a Set as Tag 258 + array
  * This is a typeEncoder, receives (obj, typ, options, refStack)
  * @param {Set<any>} set
  * @param {string} _typ
- * @param {import('../interface').EncodeOptions} options
- * @param {import('../interface').Reference} [refStack]
- * @returns {import('../interface').TokenOrNestedTokens[]}
+ * @param {import('../interface.js').EncodeOptions} options
+ * @param {import('../interface.js').Reference} [refStack]
+ * @returns {import('../interface.js').TokenOrNestedTokens[]}
  */
-export function setEncoder(set: Set<any>, _typ: string, options: import("../interface").EncodeOptions, refStack?: import("../interface").Reference): import("../interface").TokenOrNestedTokens[];
+export function setEncoder(set: Set<any>, _typ: string, options: import("../interface.js").EncodeOptions, refStack?: import("../interface.js").Reference): import("../interface.js").TokenOrNestedTokens[];
 /**
  * Decode Tag 258 to a Set
- * @param {import('../interface').TagDecodeControl} decode
+ * @param {import('../interface.js').TagDecodeControl} decode
  * @returns {Set<any>}
  */
-export function setDecoder(decode: import("../interface").TagDecodeControl): Set<any>;
+export function setDecoder(decode: import("../interface.js").TagDecodeControl): Set<any>;
 /**
  * Encode a Map as Tag 259 + CBOR map
  * This is a typeEncoder, receives (obj, typ, options, refStack)
  * @param {Map<any, any>} map
  * @param {string} _typ
- * @param {import('../interface').EncodeOptions} options
- * @param {import('../interface').Reference} [refStack]
- * @returns {import('../interface').TokenOrNestedTokens[]}
+ * @param {import('../interface.js').EncodeOptions} options
+ * @param {import('../interface.js').Reference} [refStack]
+ * @returns {import('../interface.js').TokenOrNestedTokens[]}
  */
-export function mapEncoder(map: Map<any, any>, _typ: string, options: import("../interface").EncodeOptions, refStack?: import("../interface").Reference): import("../interface").TokenOrNestedTokens[];
+export function mapEncoder(map: Map<any, any>, _typ: string, options: import("../interface.js").EncodeOptions, refStack?: import("../interface.js").Reference): import("../interface.js").TokenOrNestedTokens[];
 /**
  * Decode Tag 259 to a Map
  * Uses decode.entries() to preserve key types (integers, etc.) regardless of useMaps setting
- * @param {import('../interface').TagDecodeControl} decode
+ * @param {import('../interface.js').TagDecodeControl} decode
  * @returns {Map<any, any>}
  */
-export function mapDecoder(decode: import("../interface").TagDecodeControl): Map<any, any>;
+export function mapDecoder(decode: import("../interface.js").TagDecodeControl): Map<any, any>;
 /**
  * Encode an Error as Tag 27: [className, message]
  * @param {Error} err
@@ -87,10 +87,10 @@ export function mapDecoder(decode: import("../interface").TagDecodeControl): Map
 export function errorEncoder(err: Error): Token[];
 /**
  * Decode Tag 27 to an Error (or Error subclass)
- * @param {import('../interface').TagDecodeControl} decode
+ * @param {import('../interface.js').TagDecodeControl} decode
  * @returns {Error}
  */
-export function errorDecoder(decode: import("../interface").TagDecodeControl): Error;
+export function errorDecoder(decode: import("../interface.js").TagDecodeControl): Error;
 /**
  * Encode a number, preserving -0 as a float
  * Use this as a typeEncoder for 'number' to preserve -0 fidelity
@@ -118,26 +118,26 @@ export const TAG_SET: 258;
 export const TAG_MAP: 259;
 export const TAG_REGEXP: 21066;
 export const uint8ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const uint8ArrayDecoder: (decode: import("../interface").TagDecodeControl) => Uint8Array<ArrayBuffer>;
+export const uint8ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => Uint8Array<ArrayBuffer>;
 export const uint8ClampedArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const uint8ClampedArrayDecoder: (decode: import("../interface").TagDecodeControl) => Uint8ClampedArray<ArrayBuffer>;
+export const uint8ClampedArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => Uint8ClampedArray<ArrayBuffer>;
 export const int8ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const int8ArrayDecoder: (decode: import("../interface").TagDecodeControl) => Int8Array<ArrayBuffer>;
+export const int8ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => Int8Array<ArrayBuffer>;
 export const uint16ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const uint16ArrayDecoder: (decode: import("../interface").TagDecodeControl) => Uint16Array<ArrayBuffer>;
+export const uint16ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => Uint16Array<ArrayBuffer>;
 export const uint32ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const uint32ArrayDecoder: (decode: import("../interface").TagDecodeControl) => Uint32Array<ArrayBuffer>;
+export const uint32ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => Uint32Array<ArrayBuffer>;
 export const bigUint64ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const bigUint64ArrayDecoder: (decode: import("../interface").TagDecodeControl) => BigUint64Array<ArrayBuffer>;
+export const bigUint64ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => BigUint64Array<ArrayBuffer>;
 export const int16ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const int16ArrayDecoder: (decode: import("../interface").TagDecodeControl) => Int16Array<ArrayBuffer>;
+export const int16ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => Int16Array<ArrayBuffer>;
 export const int32ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const int32ArrayDecoder: (decode: import("../interface").TagDecodeControl) => Int32Array<ArrayBuffer>;
+export const int32ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => Int32Array<ArrayBuffer>;
 export const bigInt64ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const bigInt64ArrayDecoder: (decode: import("../interface").TagDecodeControl) => BigInt64Array<ArrayBuffer>;
+export const bigInt64ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => BigInt64Array<ArrayBuffer>;
 export const float32ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const float32ArrayDecoder: (decode: import("../interface").TagDecodeControl) => Float32Array<ArrayBuffer>;
+export const float32ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => Float32Array<ArrayBuffer>;
 export const float64ArrayEncoder: (arr: ArrayBufferView) => Token[];
-export const float64ArrayDecoder: (decode: import("../interface").TagDecodeControl) => Float64Array<ArrayBuffer>;
+export const float64ArrayDecoder: (decode: import("../interface.js").TagDecodeControl) => Float64Array<ArrayBuffer>;
 import { Token } from '../cborg.js';
 //# sourceMappingURL=taglib.d.ts.map

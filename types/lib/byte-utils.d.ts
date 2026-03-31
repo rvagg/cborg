@@ -14,8 +14,11 @@ export function compare(b1: Uint8Array, b2: Uint8Array): number;
  * @returns {string}
  */
 export function decodeCodePointsArray(codePoints: number[]): string;
-export const useBuffer: boolean;
-export const fromString: ((string: string) => number[] | Buffer<ArrayBuffer>) | ((string: string) => number[] | Uint8Array<ArrayBuffer>);
+export const useBuffer: any;
+/**
+ * @param {string} string
+ */
+export function fromString(string: string): any;
 export function fromArray(arr: number[]): Uint8Array;
 /**
  * @param {Uint8Array} bytes

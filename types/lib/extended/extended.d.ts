@@ -22,8 +22,8 @@ export function encode(obj: any, options?: EncodeOptions): Uint8Array;
  * @returns {any}
  */
 export function decode(data: Uint8Array, options?: DecodeOptions): any;
-export type EncodeOptions = import("../../interface").EncodeOptions;
-export type DecodeOptions = import("../../interface").DecodeOptions;
+export type EncodeOptions = import("../../interface.js").EncodeOptions;
+export type DecodeOptions = import("../../interface.js").DecodeOptions;
 import { TAG_DATE_EPOCH } from '../taglib.js';
 import { TAG_BIGINT_POS } from '../taglib.js';
 import { TAG_BIGINT_NEG } from '../taglib.js';
