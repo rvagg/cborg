@@ -1,3 +1,9 @@
+## [5.0.1](https://github.com/rvagg/cborg/compare/v5.0.0...v5.0.1) (2026-04-02)
+
+### Bug Fixes
+
+* **types:** re-export TagDecodeControl off main export ([0d9f25a](https://github.com/rvagg/cborg/commit/0d9f25aadb1491e69f6c343d12537ac08ec1b41e))
+
 ## [5.0.0](https://github.com/rvagg/cborg/compare/v4.5.8...v5.0.0) (2026-03-31)
 
 ### ⚠ BREAKING CHANGES
