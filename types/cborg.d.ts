@@ -1,4 +1,8 @@
 /**
+ * Export the types that were present in the original manual cborg.d.ts
+ */
+export type TagDecodeControl = import("./interface.js").TagDecodeControl;
+/**
  * There was originally just `TypeEncoder` so don't break types by renaming or not exporting
  */
 export type TagDecoder = import("./interface.js").TagDecoder;
