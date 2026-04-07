@@ -6,8 +6,6 @@
 
 **cborg** is also fast, and is suitable for the browser (is `Uint8Array` native) and Node.js.
 
-**cborg** supports CBOR tags, but does not ship with them enabled by default. If you want tags, you need to plug them in to the encoder and decoder.
-
 * [Example](#example)
 * [CLI](#cli)
   * [`cborg bin2diag [binary input]`](#cborg-bin2diag-binary-input)
@@ -30,6 +28,7 @@
     * [Options](#options-1)
   * [`decodeFirst(data[, options])`](#decodefirstdata-options)
   * [`encodedLength(data[, options])`](#encodedlengthdata-options)
+  * [`Tagged`](#tagged)
   * [Type encoders](#type-encoders)
   * [Tag decoders](#tag-decoders)
 * [Decoding with a custom tokeniser](#decoding-with-a-custom-tokeniser)
@@ -325,17 +324,81 @@ Calculate the byte length of the given data when encoded as CBOR with the option
 
 A `tokensToLength()` function is available which deals directly with a tokenized form of the object, but this only recommended for advanced users.
 
+### `Tagged`
+
+For applications that need to wrap a value in an application-specific CBOR tag (COSE envelopes, dCBOR application tags, custom protocols) without the ceremony of registering a `typeEncoders` entry and a matching tag decoder, cborg exports a `Tagged` wrapper class. `Tagged` is symmetric: pass it to `encode()` to emit a tag, and use `Tagged.decoder(tag)` or `Tagged.preserve(...tags)` on the decode side to round-trip the tag without losing it.
+
+```js
+import { encode, decode, Tagged } from 'cborg'
+
+// Encode: wrap any value in a tag
+const bytes = encode(new Tagged(1234, 'hello'))
+
+// Decode: preserve the tag through decode
+const decoded = decode(bytes, { tags: Tagged.preserve(1234) })
+decoded instanceof Tagged   // true
+decoded.tag                 // 1234
+decoded.value               // 'hello'
+```
+
+`Tagged.value` can be anything cborg can encode, including arrays, maps, other `Tagged` instances, or values handled by your own `typeEncoders` — cborg recurses into it with the same encode pipeline.
+
+For finer-grained control on decode, use `Tagged.decoder(tag)` directly to mix preserved tags with other decoders:
+
+```js
+import { decode, Tagged } from 'cborg'
+
+const value = decode(bytes, {
+  tags: {
+    16: Tagged.decoder(16),         // preserve tag 16 as Tagged
+    96: Tagged.decoder(96),         // preserve tag 96 as Tagged
+    42: cidDecoder                  // a custom decoder for tag 42
+  }
+})
+```
+
+When to prefer `Tagged` over a custom `typeEncoders` entry:
+
+- You have a one-off or application-specific tag and don't want to define a JS class for it.
+- You want to inspect the tag number on the decode side rather than collapsing it into a JS type.
+- Your downstream code already speaks `{ tag, value }`.
+
+When to prefer a `typeEncoders` entry instead:
+
+- You're systematically mapping a JS type to a tag (e.g. `CID` → tag 42, `Date` → tag 1) and want it to apply automatically wherever that type appears.
+- You need a tighter binary representation than the default recursive encoding (e.g. flatten the value to a `bytes` token rather than a nested CBOR structure).
+
+The default `Tagged` behaviour is itself implemented as a `typeEncoders` entry under the type name `'Tagged'`. You can override it by supplying your own `typeEncoders.Tagged` and returning `null` from it to fall through to the default for cases your override doesn't want to handle.
+
 ### Type encoders
 
 The `typeEncoders` property to the `options` argument to `encode()` allows you to add additional functionality to cborg, or override existing functionality.
 
 When converting JavaScript objects, types are differentiated using the method and naming used by [@sindresorhus/is](https://github.com/sindresorhus/is) _(a custom implementation is used internally for performance reasons)_ and an internal set of type encoders are used to convert objects to their appropriate CBOR form. Supported types are: `null`, `undefined`, `number`, `bigint`, `string`, `boolean`, `Array`, `Object`, `Map`, `Buffer`, `ArrayBuffer`, `DataView`, `Uint8Array` and all other `TypedArray`s (their underlying byte array is encoded, so they will all round-trip as a `Uint8Array` since the type information is lost). Any object that doesn't match a type in this list will cause an error to be thrown during decode. e.g. `encode(new Date())` will throw an error because there is no internal `Date` type encoder.
 
-The `typeEncoders` option is an object whose property names match to @sindresorhus/is type names. When this option is provided and a property exists for any given object's type, the function provided as the value to that property is called with the object as an argument.
+The `typeEncoders` option is an object whose property names match to @sindresorhus/is type names. When this option is provided and a property exists for any given object's type, the function is called with the signature `(obj, typ, options, refStack)`:
+
+* `obj` - the value being encoded
+* `typ` - the resolved type name (the same string used as the property key)
+* `options` - the full encode options object, useful for recursive encoding (see below)
+* `refStack` - an internal circular-reference tracker, opaque to user code, that should be threaded through any recursive call
 
 If a type encoder function returns `null`, the default encoder, if any, is used instead.
 
-If a type encoder function returns an array, cborg will expect it to contain zero or more `Token` objects that will be encoded to binary form.
+If a type encoder function returns an array, cborg will expect it to contain zero or more `Token` objects (or nested arrays thereof) that will be encoded to binary form. To **recursively encode a nested JavaScript value** as part of your tokens (so that `typeEncoders` for the nested value still apply), import `objectToTokens` from `cborg` and call `objectToTokens(value, options, refStack)` from inside your encoder. This is how the built-in `Tagged` encoder, `mapEncoder`, and `setEncoder` recurse into their contents:
+
+```js
+import { Token, Type, objectToTokens } from 'cborg'
+
+function myWrapperEncoder (obj, _typ, options, refStack) {
+  return [
+    new Token(Type.tag, 1234),
+    objectToTokens(obj.inner, options, refStack)
+  ]
+}
+```
+
+For tag encoders that flatten their content to a leaf type (e.g. encode a `BigInt` as a `Type.bytes` token under tag 2), you don't need to recurse - just return the flat token sequence directly, as the `bigIntEncoder` example below does.
 
 `Token`s map directly to CBOR entities. Each one has a `Type` and a `value`. A type encoder is responsible for turning a JavaScript object into a set of tags.
 
