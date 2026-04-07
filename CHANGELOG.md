@@ -1,3 +1,9 @@
+## [5.1.0](https://github.com/rvagg/cborg/compare/v5.0.1...v5.1.0) (2026-04-07)
+
+### Features
+
+* add Tagged class for one-off tag emission and round-trip preservation ([#174](https://github.com/rvagg/cborg/issues/174)) ([e2e7c20](https://github.com/rvagg/cborg/commit/e2e7c207e79d7131e3e941772f1d70ce1363b94f))
+
 ## [5.0.1](https://github.com/rvagg/cborg/compare/v5.0.0...v5.0.1) (2026-04-02)
 
 ### Bug Fixes
