@@ -1,5 +1,6 @@
-import { encode, encodeInto, rfc8949EncodeOptions } from './lib/encode.js'
+import { encode, encodeInto, objectToTokens, rfc8949EncodeOptions } from './lib/encode.js'
 import { decode, decodeFirst, Tokeniser, tokensToObject } from './lib/decode.js'
+import { Tagged } from './lib/tagged.js'
 import { Token, Type } from './lib/token.js'
 
 /**
@@ -19,7 +20,9 @@ export {
   tokensToObject,
   encode,
   encodeInto,
+  objectToTokens,
   rfc8949EncodeOptions,
+  Tagged,
   Token,
   Type
 }
