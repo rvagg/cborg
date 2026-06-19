@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:rvagg/cborg.git"
+    "url": "git+https://github.com/rvagg/cborg.git"
   },
   "keywords": [
     "cbor"
