@@ -1,3 +1,9 @@
+## [5.1.2](https://github.com/rvagg/cborg/compare/v5.1.1...v5.1.2) (2026-06-22)
+
+### Trivial Changes
+
+* remove c8 support ([#179](https://github.com/rvagg/cborg/issues/179)) ([47e43b3](https://github.com/rvagg/cborg/commit/47e43b3d419ceb84f4abdd1b73a378a9530c200a))
+
 ## [5.1.1](https://github.com/rvagg/cborg/compare/v5.1.0...v5.1.1) (2026-04-28)
 
 ### Trivial Changes
