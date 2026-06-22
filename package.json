@@ -12,12 +12,11 @@
     "build": "npm run build:types",
     "build:types": "tsc --build",
     "prepublishOnly": "npm run build",
-    "test:node": "c8 --check-coverage --exclude=test/** mocha test/test-*.js",
+    "test:node": "mocha test/test-*.js",
     "test:node-bin": "mocha test/node-test-bin.js",
     "test:browser": "polendina --cleanup test/test-*.js",
     "test": "npm run lint && npm run build && npm run test:node && npm run test:node-bin && npm run test:browser",
-    "test:ci": "npm run test",
-    "coverage": "c8 --reporter=html --reporter=text mocha test/test-*.js && npx st -d coverage -p 8888"
+    "test:ci": "npm run test"
   },
   "repository": {
     "type": "git",
@@ -38,7 +37,6 @@
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",
     "@types/node": "^25.5.0",
-    "c8": "^11.0.0",
     "chai": "^6.2.2",
     "conventional-changelog-conventionalcommits": "^9.3.0",
     "ipld-garbage": "^5.0.0",
