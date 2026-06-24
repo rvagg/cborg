@@ -1,3 +1,9 @@
+## [5.1.4](https://github.com/rvagg/cborg/compare/v5.1.3...v5.1.4) (2026-06-24)
+
+### Bug Fixes
+
+* emit shortest-form floats in rfc8949EncodeOptions (RFC 8949 4.2.1) ([#180](https://github.com/rvagg/cborg/issues/180)) ([183f644](https://github.com/rvagg/cborg/commit/183f644c7c54279b6e3acb9248fb6c644ddf95ef))
+
 ## [5.1.3](https://github.com/rvagg/cborg/compare/v5.1.2...v5.1.3) (2026-06-22)
 
 ### Trivial Changes
