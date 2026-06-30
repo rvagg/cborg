@@ -1,3 +1,9 @@
+## [5.1.5](https://github.com/rvagg/cborg/compare/v5.1.4...v5.1.5) (2026-06-30)
+
+### Trivial Changes
+
+* **deps-dev:** bump @types/node from 25.9.4 to 26.0.1 ([#181](https://github.com/rvagg/cborg/issues/181)) ([db98a8f](https://github.com/rvagg/cborg/commit/db98a8fe14c67ce548c3a5375c10043f5dc8caf6))
+
 ## [5.1.4](https://github.com/rvagg/cborg/compare/v5.1.3...v5.1.4) (2026-06-24)
 
 ### Bug Fixes
