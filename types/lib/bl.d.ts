@@ -8,44 +8,47 @@ export class Bl {
     cursor: number;
     /** @type {number} */
     maxCursor: number;
-    /** @type {(Uint8Array|number[])[]} */
-    chunks: (Uint8Array | number[])[];
-    /** @type {Uint8Array|number[]|null} */
-    _initReuseChunk: Uint8Array | number[] | null;
+    /** @type {(ByteView|number[])[]} */
+    chunks: (ByteView | number[])[];
+    /** @type {ByteView|number[]|null} */
+    _initReuseChunk: ByteView | number[] | null;
     reset(): void;
     /**
-     * @param {Uint8Array|number[]} bytes
+     * @param {ByteView|number[]} bytes
      */
-    push(bytes: Uint8Array | number[]): void;
+    push(bytes: ByteView | number[]): void;
     /**
      * @param {boolean} [reset]
-     * @returns {Uint8Array}
+     * @returns {AllocatedByteView}
      */
-    toBytes(reset?: boolean): Uint8Array;
+    toBytes(reset?: boolean): AllocatedByteView;
 }
 /**
  * U8Bl is a buffer list that writes directly to a user-provided Uint8Array.
  * It provides the same interface as Bl but writes to a fixed destination.
+ * @template {ArrayBufferLike} T
  */
-export class U8Bl {
+export class U8Bl<T extends ArrayBufferLike> {
     /**
-     * @param {Uint8Array} dest
+     * @param {Uint8Array<T>} dest
      */
-    constructor(dest: Uint8Array);
-    dest: Uint8Array<ArrayBufferLike>;
+    constructor(dest: Uint8Array<T>);
+    dest: Uint8Array<T>;
     /** @type {number} */
     cursor: number;
-    /** @type {Uint8Array[]} */
-    chunks: Uint8Array[];
+    /** @type {Array<Uint8Array<T>>} */
+    chunks: Array<Uint8Array<T>>;
     reset(): void;
     /**
-     * @param {Uint8Array|number[]} bytes
+     * @param {ByteView|number[]} bytes
      */
-    push(bytes: Uint8Array | number[]): void;
+    push(bytes: ByteView | number[]): void;
     /**
      * @param {boolean} [reset]
-     * @returns {Uint8Array}
+     * @returns {Uint8Array<T>}
      */
-    toBytes(reset?: boolean): Uint8Array;
+    toBytes(reset?: boolean): Uint8Array<T>;
 }
+export type ByteView = import("../interface.js").ByteView;
+export type AllocatedByteView = import("../interface.js").AllocatedByteView;
 //# sourceMappingURL=bl.d.ts.map

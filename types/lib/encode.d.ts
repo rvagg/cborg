@@ -3,7 +3,7 @@ export function makeCborEncoders(): TokenTypeEncoder[];
 /** @type {EncodeOptions} */
 export const rfc8949EncodeOptions: EncodeOptions;
 export type TokenEx = Token & {
-    _keyBytes?: Uint8Array;
+    _keyBytes?: AllocatedByteView;
 };
 export type EncodeOptions = import("../interface.js").EncodeOptions;
 export type OptionalTypeEncoder = import("../interface.js").OptionalTypeEncoder;
@@ -12,6 +12,8 @@ export type StrictTypeEncoder = import("../interface.js").StrictTypeEncoder;
 export type TokenTypeEncoder = import("../interface.js").TokenTypeEncoder;
 export type TokenOrNestedTokens = import("../interface.js").TokenOrNestedTokens;
 export type ByteWriter = import("../interface.js").ByteWriter;
+export type ByteView = import("../interface.js").ByteView;
+export type AllocatedByteView = import("../interface.js").AllocatedByteView;
 /**
  * @param {any} obj
  * @param {EncodeOptions} [options]
@@ -22,24 +24,35 @@ export function objectToTokens(obj: any, options?: EncodeOptions, refStack?: Ref
 /**
  * @param {any} data
  * @param {EncodeOptions} [options]
- * @returns {Uint8Array}
+ * @returns {AllocatedByteView}
  */
-export function encode(data: any, options?: EncodeOptions): Uint8Array;
+export function encode(data: any, options?: EncodeOptions): AllocatedByteView;
 /**
+ * @template {ArrayBufferLike} T
+ * @overload
  * @param {any} data
  * @param {TokenTypeEncoder[]} encoders
  * @param {EncodeOptions} options
- * @param {Uint8Array} [destination]
- * @returns {Uint8Array}
+ * @param {Uint8Array<T>} destination
+ * @returns {Uint8Array<T>}
  */
-export function encodeCustom(data: any, encoders: TokenTypeEncoder[], options: EncodeOptions, destination?: Uint8Array): Uint8Array;
+export function encodeCustom<T extends ArrayBufferLike>(data: any, encoders: TokenTypeEncoder[], options: EncodeOptions, destination: Uint8Array<T>): Uint8Array<T>;
 /**
+ * @overload
  * @param {any} data
- * @param {Uint8Array} destination
+ * @param {TokenTypeEncoder[]} encoders
+ * @param {EncodeOptions} options
+ * @returns {AllocatedByteView}
+ */
+export function encodeCustom(data: any, encoders: TokenTypeEncoder[], options: EncodeOptions): AllocatedByteView;
+/**
+ * @template {ArrayBufferLike} T
+ * @param {any} data
+ * @param {Uint8Array<T>} destination
  * @param {EncodeOptions} [options]
  * @returns {{ written: number }}
  */
-export function encodeInto(data: any, destination: Uint8Array, options?: EncodeOptions): {
+export function encodeInto<T extends ArrayBufferLike>(data: any, destination: Uint8Array<T>, options?: EncodeOptions): {
     written: number;
 };
 /** @implements {Reference} */

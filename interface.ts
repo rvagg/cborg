@@ -1,5 +1,9 @@
 import { Token } from './lib/token.js'
 
+export type ByteView<T extends ArrayBufferLike = ArrayBufferLike> = Uint8Array<T>
+
+export type AllocatedByteView = Uint8Array<ArrayBuffer>
+
 export type TokenOrNestedTokens = Token | Token[] | TokenOrNestedTokens[]
 
 export interface Reference {
@@ -21,7 +25,7 @@ export type TokenTypeEncoder = {
 
 export type MapSorter = (e1: (Token | Token[])[], e2: (Token | Token[])[]) => number
 
-export type QuickEncodeToken = (token: Token) => Uint8Array | undefined
+export type QuickEncodeToken = (token: Token) => AllocatedByteView | undefined
 
 export interface DecodeTokenizer {
   done(): boolean,
@@ -72,8 +76,8 @@ export interface EncodeOptions {
 }
 
 export interface ByteWriter {
-  chunks: (Uint8Array | number[])[];
+  chunks: (ByteView | number[])[];
   reset(): void;
-  push(bytes: Uint8Array | number[]): void;
-  toBytes(reset?: boolean | undefined): Uint8Array;
+  push(bytes: ByteView | number[]): void;
+  toBytes(reset?: boolean | undefined): ByteView;
 }
