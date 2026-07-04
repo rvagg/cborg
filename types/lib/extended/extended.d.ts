@@ -11,9 +11,9 @@
  *
  * @param {any} obj - Value to encode
  * @param {EncodeOptions} [options] - Additional options (merged with extended defaults)
- * @returns {Uint8Array}
+ * @returns {AllocatedByteView}
  */
-export function encode(obj: any, options?: EncodeOptions): Uint8Array;
+export function encode(obj: any, options?: EncodeOptions): AllocatedByteView;
 /**
  * Decode CBOR to a value with extended JavaScript type support.
  *
@@ -24,6 +24,7 @@ export function encode(obj: any, options?: EncodeOptions): Uint8Array;
 export function decode(data: Uint8Array, options?: DecodeOptions): any;
 export type EncodeOptions = import("../../interface.js").EncodeOptions;
 export type DecodeOptions = import("../../interface.js").DecodeOptions;
+export type AllocatedByteView = import("../../interface.js").AllocatedByteView;
 import { TAG_DATE_EPOCH } from '../taglib.js';
 import { TAG_BIGINT_POS } from '../taglib.js';
 import { TAG_BIGINT_NEG } from '../taglib.js';

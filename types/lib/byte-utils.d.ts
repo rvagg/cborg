@@ -1,8 +1,8 @@
 /**
- * @param {Uint8Array|number[]} buf
- * @returns {Uint8Array}
+ * @param {ByteView|number[]} buf
+ * @returns {ByteView}
  */
-export function asU8A(buf: Uint8Array | number[]): Uint8Array;
+export function asU8A(buf: ByteView | number[]): ByteView;
 /**
  * @param {Uint8Array} b1
  * @param {Uint8Array} b2
@@ -19,7 +19,7 @@ export const useBuffer: any;
  * @param {string} string
  */
 export function fromString(string: string): any;
-export function fromArray(arr: number[]): Uint8Array;
+export function fromArray(arr: number[]): AllocatedByteView;
 /**
  * @param {Uint8Array} bytes
  * @param {number} start
@@ -27,24 +27,26 @@ export function fromArray(arr: number[]): Uint8Array;
  */
 export function slice(bytes: Uint8Array, start: number, end: number): Uint8Array<ArrayBuffer>;
 /**
- * @param {Uint8Array[]} chunks
+ * @param {ByteView[]} chunks
  * @param {number} length
- * @returns {Uint8Array}
+ * @returns {AllocatedByteView}
  */
-export function concat(chunks: Uint8Array[], length: number): Uint8Array;
+export function concat(chunks: ByteView[], length: number): AllocatedByteView;
 /**
  * @param {number} size
- * @returns {Uint8Array}
+ * @returns {AllocatedByteView}
  */
-export function alloc(size: number): Uint8Array;
+export function alloc(size: number): AllocatedByteView;
 /**
  * @param {Uint8Array} d
  * @returns {string}
  */
 export function toHex(d: Uint8Array): string;
 /**
- * @param {string|Uint8Array} hex
- * @returns {Uint8Array}
+ * @param {string|ByteView} hex
+ * @returns {ByteView}
  */
-export function fromHex(hex: string | Uint8Array): Uint8Array;
+export function fromHex(hex: string | ByteView): ByteView;
+export type ByteView = import("../interface.js").ByteView;
+export type AllocatedByteView = import("../interface.js").AllocatedByteView;
 //# sourceMappingURL=byte-utils.d.ts.map
