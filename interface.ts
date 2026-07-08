@@ -18,12 +18,12 @@ export type StrictTypeEncoder = (data: any, typ: string, options: EncodeOptions,
 
 export type TokenTypeEncoder = {
   (writer: ByteWriter, token: Token, options?: EncodeOptions): void;
-  compareTokens(t1: Token, t2: Token): number;
+  compareTokens(t1: Token, t2: Token, options?: EncodeOptions): number;
   // TODO: make this non-optional as a breaking change and remove the throw in length.js
   encodedSize?(token: Token, options?: EncodeOptions): number;
 }
 
-export type MapSorter = (e1: (Token | Token[])[], e2: (Token | Token[])[]) => number
+export type MapSorter = (e1: (Token | Token[])[], e2: (Token | Token[])[], options?: EncodeOptions) => number
 
 export type QuickEncodeToken = (token: Token) => AllocatedByteView | undefined
 

@@ -287,6 +287,51 @@ describe('map', () => {
       assert.strictEqual(toHex(encode(new Map([[{ a: 1, b: 1 }, 1], [{ a: 1 }, 2]]))), 'a2a161610102a261610161620101')
     })
 
+    it('sorts simple value map keys', () => {
+      // false (0xf4), true (0xf5), null (0xf6), undefined (0xf7)
+      assert.strictEqual(toHex(encode(new Map([[true, 1], [false, 2]]))), 'a2f402f501')
+      assert.strictEqual(toHex(encode(new Map([[false, 2], [true, 1]]))), 'a2f402f501')
+      assert.strictEqual(toHex(encode(new Map([[undefined, 1], [null, 2], [true, 3], [false, 4]]))), 'a4f404f503f602f701')
+      assert.strictEqual(toHex(encode(new Map([[false, 4], [true, 3], [null, 2], [undefined, 1]]))), 'a4f404f503f602f701')
+    })
+
+    it('sorts float and simple value map keys', () => {
+      // simple values sort before floats
+      assert.strictEqual(toHex(encode(new Map([[1.5, 'a'], [true, 'b']]))), 'a2f56162f93e006161')
+      assert.strictEqual(toHex(encode(new Map([[true, 'b'], [1.5, 'a']]))), 'a2f56162f93e006161')
+    })
+
+    it('sorts float map keys by encoded bytes, not numeric value', () => {
+      // +1.5 (f93e00) sorts before -1.5 (f9be00) even though -1.5 is the smaller
+      // number: RFC 7049 3.9 orders by the encoded bytes, not the value
+      assert.strictEqual(toHex(encode(new Map([[-1.5, 'a'], [1.5, 'b']]))), 'a2f93e006162f9be006161')
+      assert.strictEqual(toHex(encode(new Map([[1.5, 'b'], [-1.5, 'a']]))), 'a2f93e006162f9be006161')
+    })
+
+    it('sorts float map keys of different widths shortest-first', () => {
+      // Infinity is a 3-byte float16 (f97c00), 1.1 a 9-byte float64
+      // (fb3ff199999999999a): shorter encoding sorts first regardless of value
+      assert.strictEqual(toHex(encode(new Map([[1.1, 'a'], [Infinity, 'b']]))), 'a2f97c006162fb3ff199999999999a6161')
+      assert.strictEqual(toHex(encode(new Map([[Infinity, 'b'], [1.1, 'a']]))), 'a2f97c006162fb3ff199999999999a6161')
+    })
+
+    it('sorts NaN float map keys deterministically', () => {
+      // NaN compares false against every number, so ordering must not fall back
+      // to insertion order; 1.5 (f93e00) sorts before NaN (f97e00) by bytes
+      assert.strictEqual(toHex(encode(new Map([[NaN, 'a'], [1.5, 'b']]))), 'a2f93e006162f97e006161')
+      assert.strictEqual(toHex(encode(new Map([[1.5, 'b'], [NaN, 'a']]))), 'a2f93e006162f97e006161')
+    })
+
+    it('sorts float map keys honouring the float64 option', () => {
+      // default: 1.5 is a 3-byte float16, sorts before the 9-byte 1.1
+      assert.strictEqual(toHex(encode(new Map([[1.5, 'b'], [1.1, 'a']]))), 'a2f93e006162fb3ff199999999999a6161')
+      // float64: both encode to 9 bytes, so bytewise order applies and 1.1
+      // (fb3ff1…) now sorts before 1.5 (fb3ff8…) — the sort follows the bytes
+      // that are actually written
+      assert.strictEqual(toHex(encode(new Map([[1.5, 'b'], [1.1, 'a']]), { float64: true })), 'a2fb3ff199999999999a6161fb3ff80000000000006162')
+      assert.strictEqual(toHex(encode(new Map([[1.1, 'a'], [1.5, 'b']]), { float64: true })), 'a2fb3ff199999999999a6161fb3ff80000000000006162')
+    })
+
     // TODO: tag keys .. but why would you do this!?
   })
 })

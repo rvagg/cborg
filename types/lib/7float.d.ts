@@ -59,6 +59,6 @@ export declare function decodeFloat64(data: Uint8Array, pos: number, _minor: num
 export declare function encodeFloat(writer: ByteWriter, token: Token, options: EncodeOptions): void;
 export declare namespace encodeFloat {
     var encodedSize: (token: Token, options: EncodeOptions) => number;
-    var compareTokens: (tok1: Token, tok2: Token) => number;
+    var compareTokens: (tok1: Token, tok2: Token, options?: EncodeOptions) => number;
 }
 //# sourceMappingURL=7float.d.ts.map

@@ -11,10 +11,10 @@ export type OptionalTypeEncoder = (data: any, typ: string, options: EncodeOption
 export type StrictTypeEncoder = (data: any, typ: string, options: EncodeOptions, refStack?: Reference) => TokenOrNestedTokens;
 export type TokenTypeEncoder = {
     (writer: ByteWriter, token: Token, options?: EncodeOptions): void;
-    compareTokens(t1: Token, t2: Token): number;
+    compareTokens(t1: Token, t2: Token, options?: EncodeOptions): number;
     encodedSize?(token: Token, options?: EncodeOptions): number;
 };
-export type MapSorter = (e1: (Token | Token[])[], e2: (Token | Token[])[]) => number;
+export type MapSorter = (e1: (Token | Token[])[], e2: (Token | Token[])[], options?: EncodeOptions) => number;
 export type QuickEncodeToken = (token: Token) => AllocatedByteView | undefined;
 export interface DecodeTokenizer {
     done(): boolean;
