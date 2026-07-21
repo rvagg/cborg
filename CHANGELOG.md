@@ -1,3 +1,5 @@
+## [5.1.8](https://github.com/rvagg/cborg/compare/v5.1.7...v5.1.8) (2026-07-21)
+
 ## [5.1.7](https://github.com/rvagg/cborg/compare/v5.1.6...v5.1.7) (2026-07-04)
 
 ## [5.1.6](https://github.com/rvagg/cborg/compare/v5.1.5...v5.1.6) (2026-07-02)
