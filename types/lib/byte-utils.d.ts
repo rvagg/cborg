@@ -1,52 +1,32 @@
+export declare const useBuffer: any;
+export type ByteView = import('../interface.js').ByteView;
+export type AllocatedByteView = import('../interface.js').AllocatedByteView;
 /**
  * @param {ByteView|number[]} buf
  * @returns {ByteView}
  */
-export function asU8A(buf: ByteView | number[]): ByteView;
+export declare function asU8A(buf: ByteView | number[]): ByteView;
+export declare const fromString: (string: string) => any;
+/**
+ * Buffer variant not fast enough for what we need
+ * @param {number[]} arr
+ * @returns {AllocatedByteView}
+ */
+export declare const fromArray: (arr: number[]) => AllocatedByteView;
+export declare const slice: (bytes: Uint8Array, start: number, end: number) => Uint8Array<ArrayBuffer>;
+export declare const concat: (chunks: ByteView[], length: number) => AllocatedByteView;
+export declare const alloc: (size: number) => AllocatedByteView;
+export declare const toHex: (d: Uint8Array) => string;
+export declare const fromHex: (hex: string | ByteView) => ByteView;
 /**
  * @param {Uint8Array} b1
  * @param {Uint8Array} b2
  * @returns {number}
  */
-export function compare(b1: Uint8Array, b2: Uint8Array): number;
+export declare function compare(b1: Uint8Array, b2: Uint8Array): number;
 /**
  * @param {number[]} codePoints
  * @returns {string}
  */
-export function decodeCodePointsArray(codePoints: number[]): string;
-export const useBuffer: any;
-/**
- * @param {string} string
- */
-export function fromString(string: string): any;
-export function fromArray(arr: number[]): AllocatedByteView;
-/**
- * @param {Uint8Array} bytes
- * @param {number} start
- * @param {number} end
- */
-export function slice(bytes: Uint8Array, start: number, end: number): Uint8Array<ArrayBuffer>;
-/**
- * @param {ByteView[]} chunks
- * @param {number} length
- * @returns {AllocatedByteView}
- */
-export function concat(chunks: ByteView[], length: number): AllocatedByteView;
-/**
- * @param {number} size
- * @returns {AllocatedByteView}
- */
-export function alloc(size: number): AllocatedByteView;
-/**
- * @param {Uint8Array} d
- * @returns {string}
- */
-export function toHex(d: Uint8Array): string;
-/**
- * @param {string|ByteView} hex
- * @returns {ByteView}
- */
-export function fromHex(hex: string | ByteView): ByteView;
-export type ByteView = import("../interface.js").ByteView;
-export type AllocatedByteView = import("../interface.js").AllocatedByteView;
+export declare function decodeCodePointsArray(codePoints: number[]): string;
 //# sourceMappingURL=byte-utils.d.ts.map

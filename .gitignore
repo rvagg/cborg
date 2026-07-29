@@ -4,3 +4,4 @@ coverage/
 c/
 dist/
 package-lock.json
+types/tsconfig.tsbuildinfo

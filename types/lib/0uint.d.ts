@@ -1,3 +1,7 @@
+import { Token } from './token.js';
+export declare const uintBoundaries: (number | bigint)[];
+export type ByteWriter = import('../interface.js').ByteWriter;
+export type DecodeOptions = import('../interface.js').DecodeOptions;
 /**
  * @typedef {import('../interface.js').ByteWriter} ByteWriter
  * @typedef {import('../interface.js').DecodeOptions} DecodeOptions
@@ -8,28 +12,28 @@
  * @param {DecodeOptions} options
  * @returns {number}
  */
-export function readUint8(data: Uint8Array, offset: number, options: DecodeOptions): number;
+export declare function readUint8(data: Uint8Array, offset: number, options: DecodeOptions): number;
 /**
  * @param {Uint8Array} data
  * @param {number} offset
  * @param {DecodeOptions} options
  * @returns {number}
  */
-export function readUint16(data: Uint8Array, offset: number, options: DecodeOptions): number;
+export declare function readUint16(data: Uint8Array, offset: number, options: DecodeOptions): number;
 /**
  * @param {Uint8Array} data
  * @param {number} offset
  * @param {DecodeOptions} options
  * @returns {number}
  */
-export function readUint32(data: Uint8Array, offset: number, options: DecodeOptions): number;
+export declare function readUint32(data: Uint8Array, offset: number, options: DecodeOptions): number;
 /**
  * @param {Uint8Array} data
  * @param {number} offset
  * @param {DecodeOptions} options
  * @returns {number|bigint}
  */
-export function readUint64(data: Uint8Array, offset: number, options: DecodeOptions): number | bigint;
+export declare function readUint64(data: Uint8Array, offset: number, options: DecodeOptions): number | bigint;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -37,7 +41,7 @@ export function readUint64(data: Uint8Array, offset: number, options: DecodeOpti
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeUint8(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeUint8(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -45,7 +49,7 @@ export function decodeUint8(data: Uint8Array, pos: number, _minor: number, optio
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeUint16(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeUint16(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -53,7 +57,7 @@ export function decodeUint16(data: Uint8Array, pos: number, _minor: number, opti
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeUint32(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeUint32(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -61,40 +65,23 @@ export function decodeUint32(data: Uint8Array, pos: number, _minor: number, opti
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeUint64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeUint64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {ByteWriter} writer
  * @param {Token} token
  */
-export function encodeUint(writer: ByteWriter, token: Token): void;
-export namespace encodeUint {
-    /**
-     * @param {Token} token
-     * @returns {number}
-     */
-    function encodedSize(token: Token): number;
-    /**
-     * @param {Token} tok1
-     * @param {Token} tok2
-     * @returns {number}
-     */
-    function compareTokens(tok1: Token, tok2: Token): number;
+export declare function encodeUint(writer: ByteWriter, token: Token): void;
+export declare namespace encodeUint {
+    var encodedSize: (token: Token) => number;
+    var compareTokens: (tok1: Token, tok2: Token) => number;
 }
 /**
  * @param {ByteWriter} writer
  * @param {number} major
  * @param {number|bigint} uint
  */
-export function encodeUintValue(writer: ByteWriter, major: number, uint: number | bigint): void;
-export namespace encodeUintValue {
-    /**
-     * @param {number} uint
-     * @returns {number}
-     */
-    function encodedSize(uint: number): number;
+export declare function encodeUintValue(writer: ByteWriter, major: number, uint: number | bigint): void;
+export declare namespace encodeUintValue {
+    var encodedSize: (uint: number) => number;
 }
-export const uintBoundaries: (number | bigint)[];
-export type ByteWriter = import("../interface.js").ByteWriter;
-export type DecodeOptions = import("../interface.js").DecodeOptions;
-import { Token } from './token.js';
 //# sourceMappingURL=0uint.d.ts.map

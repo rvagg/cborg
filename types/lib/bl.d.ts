@@ -1,8 +1,22 @@
-export class Bl {
-    /**
-     * @param {number} [chunkSize]
-     */
-    constructor(chunkSize?: number);
+/**
+ * Bl is a list of byte chunks, similar to https://github.com/rvagg/bl but for
+ * writing rather than reading.
+ * A Bl object accepts set() operations for individual bytes and copyTo() for
+ * inserting byte arrays. These write operations don't automatically increment
+ * the internal cursor so its "length" won't be changed. Instead, increment()
+ * must be called to extend its length to cover the inserted data.
+ * The toBytes() call will convert all internal memory to a single Uint8Array of
+ * the correct length, truncating any data that is stored but hasn't been
+ * included by an increment().
+ * get() can retrieve a single byte.
+ * All operations (except toBytes()) take an "offset" argument that will perform
+ * the write at the offset _from the current cursor_. For most operations this
+ * will be `0` to write at the current cursor position but it can be ahead of
+ * the current cursor. Negative offsets probably work but are untested.
+ */
+export type ByteView = import('../interface.js').ByteView;
+export type AllocatedByteView = import('../interface.js').AllocatedByteView;
+export declare class Bl {
     chunkSize: number;
     /** @type {number} */
     cursor: number;
@@ -12,6 +26,10 @@ export class Bl {
     chunks: (ByteView | number[])[];
     /** @type {ByteView|number[]|null} */
     _initReuseChunk: ByteView | number[] | null;
+    /**
+     * @param {number} [chunkSize]
+     */
+    constructor(chunkSize?: number);
     reset(): void;
     /**
      * @param {ByteView|number[]} bytes
@@ -28,16 +46,16 @@ export class Bl {
  * It provides the same interface as Bl but writes to a fixed destination.
  * @template {ArrayBufferLike} T
  */
-export class U8Bl<T extends ArrayBufferLike> {
-    /**
-     * @param {Uint8Array<T>} dest
-     */
-    constructor(dest: Uint8Array<T>);
+export declare class U8Bl<T extends ArrayBufferLike> {
     dest: Uint8Array<T>;
     /** @type {number} */
     cursor: number;
     /** @type {Array<Uint8Array<T>>} */
     chunks: Array<Uint8Array<T>>;
+    /**
+     * @param {Uint8Array<T>} dest
+     */
+    constructor(dest: Uint8Array<T>);
     reset(): void;
     /**
      * @param {ByteView|number[]} bytes
@@ -49,6 +67,4 @@ export class U8Bl<T extends ArrayBufferLike> {
      */
     toBytes(reset?: boolean): Uint8Array<T>;
 }
-export type ByteView = import("../interface.js").ByteView;
-export type AllocatedByteView = import("../interface.js").AllocatedByteView;
 //# sourceMappingURL=bl.d.ts.map

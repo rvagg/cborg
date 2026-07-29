@@ -1,3 +1,6 @@
+import { Token } from './token.js';
+export type ByteWriter = import('../interface.js').ByteWriter;
+export type DecodeOptions = import('../interface.js').DecodeOptions;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -5,7 +8,7 @@
  * @param {DecodeOptions} _options
  * @returns {Token}
  */
-export function decodeMapCompact(data: Uint8Array, pos: number, minor: number, _options: DecodeOptions): Token;
+export declare function decodeMapCompact(data: Uint8Array, pos: number, minor: number, _options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -13,7 +16,7 @@ export function decodeMapCompact(data: Uint8Array, pos: number, minor: number, _
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeMap8(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeMap8(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -21,7 +24,7 @@ export function decodeMap8(data: Uint8Array, pos: number, _minor: number, option
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeMap16(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeMap16(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -29,7 +32,7 @@ export function decodeMap16(data: Uint8Array, pos: number, _minor: number, optio
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeMap32(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeMap32(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -37,7 +40,7 @@ export function decodeMap32(data: Uint8Array, pos: number, _minor: number, optio
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeMap64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeMap64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -45,21 +48,14 @@ export function decodeMap64(data: Uint8Array, pos: number, _minor: number, optio
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeMapIndefinite(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeMapIndefinite(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {ByteWriter} writer
  * @param {Token} token
  */
-export function encodeMap(writer: ByteWriter, token: Token): void;
-export namespace encodeMap {
-    let compareTokens: (tok1: Token, tok2: Token) => number;
-    /**
-     * @param {Token} token
-     * @returns {number}
-     */
-    function encodedSize(token: Token): number;
+export declare function encodeMap(writer: ByteWriter, token: Token): void;
+export declare namespace encodeMap {
+    var compareTokens: (tok1: Token, tok2: Token) => number;
+    var encodedSize: (token: Token) => number;
 }
-export type ByteWriter = import("../interface.js").ByteWriter;
-export type DecodeOptions = import("../interface.js").DecodeOptions;
-import { Token } from './token.js';
 //# sourceMappingURL=5map.d.ts.map

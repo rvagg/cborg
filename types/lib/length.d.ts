@@ -1,3 +1,6 @@
+export type EncodeOptions = import('../interface.js').EncodeOptions;
+export type TokenTypeEncoder = import('../interface.js').TokenTypeEncoder;
+export type TokenOrNestedTokens = import('../interface.js').TokenOrNestedTokens;
 /**
  * Calculate the byte length of the given data when encoded as CBOR with the
  * options provided.
@@ -9,7 +12,7 @@
  * @param {EncodeOptions} [options]
  * @returns {number}
  */
-export function encodedLength(data: any, options?: EncodeOptions): number;
+export declare function encodedLength(data: any, options?: EncodeOptions): number;
 /**
  * Calculate the byte length of the data as represented by the given tokens when
  * encoded as CBOR with the options provided.
@@ -20,8 +23,5 @@ export function encodedLength(data: any, options?: EncodeOptions): number;
  * @param {TokenTypeEncoder[]} [encoders]
  * @param {EncodeOptions} [options]
  */
-export function tokensToLength(tokens: TokenOrNestedTokens, encoders?: TokenTypeEncoder[], options?: EncodeOptions): number;
-export type EncodeOptions = import("../interface.js").EncodeOptions;
-export type TokenTypeEncoder = import("../interface.js").TokenTypeEncoder;
-export type TokenOrNestedTokens = import("../interface.js").TokenOrNestedTokens;
+export declare function tokensToLength(tokens: TokenOrNestedTokens, encoders?: TokenTypeEncoder[], options?: EncodeOptions): number;
 //# sourceMappingURL=length.d.ts.map
