@@ -32,6 +32,10 @@ export declare class Bl {
     constructor(chunkSize?: number);
     reset(): void;
     /**
+     * @param {number} byte
+     */
+    pushByte(byte: number): void;
+    /**
      * @param {ByteView|number[]} bytes
      */
     push(bytes: ByteView | number[]): void;
@@ -57,6 +61,10 @@ export declare class U8Bl<T extends ArrayBufferLike> {
      */
     constructor(dest: Uint8Array<T>);
     reset(): void;
+    /**
+     * @param {number} byte
+     */
+    pushByte(byte: number): void;
     /**
      * @param {ByteView|number[]} bytes
      */
