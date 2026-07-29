@@ -1,6 +1,6 @@
 {
   "name": "cborg",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "Fast CBOR with a focus on strictness",
   "main": "cborg.js",
   "type": "module",
