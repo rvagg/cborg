@@ -1,3 +1,9 @@
+## [6.1.1](https://github.com/rvagg/cborg/compare/v6.1.0...v6.1.1) (2026-07-29)
+
+### Trivial Changes
+
+* backfill release notes, downgrade busted doc generator ([#192](https://github.com/rvagg/cborg/issues/192)) ([824ba52](https://github.com/rvagg/cborg/commit/824ba52200bb50ae316b503343d56f485e66f1fa))
+
 ## [6.1.0](https://github.com/rvagg/cborg/compare/v6.0.0...v6.1.0) (2026-07-29)
 
 ### Features
