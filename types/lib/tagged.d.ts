@@ -2,6 +2,8 @@
  * @typedef {import('../interface.js').TagDecodeControl} TagDecodeControl
  * @typedef {(decode: TagDecodeControl) => Tagged} TaggedTagDecoder
  */
+export type TagDecodeControl = import('../interface.js').TagDecodeControl;
+export type TaggedTagDecoder = (decode: TagDecodeControl) => Tagged;
 /**
  * A wrapper class for representing a CBOR tag with an arbitrary nested value.
  *
@@ -18,7 +20,14 @@
  * For systematic mapping of a JS type to a tag (e.g. CID -> tag 42), prefer
  * a dedicated `typeEncoders` entry instead.
  */
-export class Tagged {
+export declare class Tagged {
+    tag: number;
+    value: any;
+    /**
+     * @param {number} tag - CBOR tag number, a non-negative integer
+     * @param {any} value - The value to be tagged; encoded recursively
+     */
+    constructor(tag: number, value: any);
     /**
      * Build a tag decoder for use in `decode()`'s `tags` option that returns the
      * decoded content wrapped in a `Tagged` instance, preserving the tag number
@@ -48,14 +57,5 @@ export class Tagged {
     static preserve(...tagNumbers: number[]): {
         [tagNumber: number]: TaggedTagDecoder;
     };
-    /**
-     * @param {number} tag - CBOR tag number, a non-negative integer
-     * @param {any} value - The value to be tagged; encoded recursively
-     */
-    constructor(tag: number, value: any);
-    tag: number;
-    value: any;
 }
-export type TagDecodeControl = import("../interface.js").TagDecodeControl;
-export type TaggedTagDecoder = (decode: TagDecodeControl) => Tagged;
 //# sourceMappingURL=tagged.d.ts.map

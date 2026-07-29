@@ -1,4 +1,20 @@
-export class Type {
+declare class Type {
+    major: number;
+    majorEncoded: number;
+    name: string;
+    terminal: boolean;
+    /**
+     * @param {number} major
+     * @param {string} name
+     * @param {boolean} terminal
+     */
+    constructor(major: number, name: string, terminal: boolean);
+    toString(): string;
+    /**
+     * @param {Type} typ
+     * @returns {number}
+     */
+    compare(typ: Type): number;
     /**
      * Check equality between two Type instances. Safe to use across different
      * copies of the Type class (e.g., when bundlers duplicate the module).
@@ -8,49 +24,28 @@ export class Type {
      * @returns {boolean}
      */
     static equals(a: Type, b: Type): boolean;
-    /**
-     * @param {number} major
-     * @param {string} name
-     * @param {boolean} terminal
-     */
-    constructor(major: number, name: string, terminal: boolean);
-    major: number;
-    majorEncoded: number;
-    name: string;
-    terminal: boolean;
-    toString(): string;
-    /**
-     * @param {Type} typ
-     * @returns {number}
-     */
-    compare(typ: Type): number;
 }
-export namespace Type {
-    export let uint: Type;
-    export let negint: Type;
-    export let bytes: Type;
-    export let string: Type;
-    export let array: Type;
-    export let map: Type;
-    export let tag: Type;
-    export let float: Type;
-    let _false: Type;
-    export { _false as false };
-    let _true: Type;
-    export { _true as true };
-    let _null: Type;
-    export { _null as null };
-    export let undefined: Type;
-    let _break: Type;
-    export { _break as break };
+declare namespace Type {
+    export var uint: Type;
+    export var negint: Type;
+    export var bytes: Type;
+    export var string: Type;
+    export var array: Type;
+    export var map: Type;
+    export var tag: Type;
+    export var float: Type;
+    var _a: Type;
+    export { _a as false };
+    export var _b: Type;
+    export { _b as true };
+    export var _c: Type;
+    export { _c as null };
+    export var _d: Type;
+    export { _d as undefined };
+    export var _e: Type;
+    export { _e as break };
 }
-export class Token {
-    /**
-     * @param {Type} type
-     * @param {any} [value]
-     * @param {number} [encodedLength]
-     */
-    constructor(type: Type, value?: any, encodedLength?: number);
+declare class Token {
     type: Type;
     value: any;
     encodedLength: number | undefined;
@@ -58,6 +53,13 @@ export class Token {
     encodedBytes: Uint8Array | undefined;
     /** @type {Uint8Array|undefined} */
     byteValue: Uint8Array | undefined;
+    /**
+     * @param {Type} type
+     * @param {any} [value]
+     * @param {number} [encodedLength]
+     */
+    constructor(type: Type, value?: any, encodedLength?: number);
     toString(): string;
 }
+export { Type, Token };
 //# sourceMappingURL=token.d.ts.map

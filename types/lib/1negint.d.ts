@@ -1,3 +1,6 @@
+import { Token } from './token.js';
+export type ByteWriter = import('../interface.js').ByteWriter;
+export type DecodeOptions = import('../interface.js').DecodeOptions;
 /**
  * @typedef {import('../interface.js').ByteWriter} ByteWriter
  * @typedef {import('../interface.js').DecodeOptions} DecodeOptions
@@ -9,7 +12,7 @@
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeNegint8(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeNegint8(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -17,7 +20,7 @@ export function decodeNegint8(data: Uint8Array, pos: number, _minor: number, opt
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeNegint16(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeNegint16(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -25,7 +28,7 @@ export function decodeNegint16(data: Uint8Array, pos: number, _minor: number, op
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeNegint32(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeNegint32(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {Uint8Array} data
  * @param {number} pos
@@ -33,26 +36,14 @@ export function decodeNegint32(data: Uint8Array, pos: number, _minor: number, op
  * @param {DecodeOptions} options
  * @returns {Token}
  */
-export function decodeNegint64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
+export declare function decodeNegint64(data: Uint8Array, pos: number, _minor: number, options: DecodeOptions): Token;
 /**
  * @param {ByteWriter} writer
  * @param {Token} token
  */
-export function encodeNegint(writer: ByteWriter, token: Token): void;
-export namespace encodeNegint {
-    /**
-     * @param {Token} token
-     * @returns {number}
-     */
-    function encodedSize(token: Token): number;
-    /**
-     * @param {Token} tok1
-     * @param {Token} tok2
-     * @returns {number}
-     */
-    function compareTokens(tok1: Token, tok2: Token): number;
+export declare function encodeNegint(writer: ByteWriter, token: Token): void;
+export declare namespace encodeNegint {
+    var encodedSize: (token: Token) => number;
+    var compareTokens: (tok1: Token, tok2: Token) => number;
 }
-export type ByteWriter = import("../interface.js").ByteWriter;
-export type DecodeOptions = import("../interface.js").DecodeOptions;
-import { Token } from './token.js';
 //# sourceMappingURL=1negint.d.ts.map
