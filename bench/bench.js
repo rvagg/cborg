@@ -50,10 +50,11 @@ function cidEncoder (obj) {
 /**
  * CID decoder for CBOR tag 42.
  *
- * @param {Uint8Array} bytes
+ * @param {()=>any} decode
  * @returns {BenchCID}
  */
-function cidDecoder (bytes) {
+function cidDecoder (decode) {
+  const bytes = decode()
   if (bytes[0] !== 0) {
     throw new Error('Invalid CID for CBOR tag 42; expected leading 0x00')
   }
