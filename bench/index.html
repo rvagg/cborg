@@ -119,7 +119,8 @@
       ]
     }
 
-    function cidDecoder(bytes) {
+    function cidDecoder(decode) {
+      const bytes = decode()
       if (bytes[0] !== 0) {
         throw new Error('Invalid CID for CBOR tag 42; expected leading 0x00')
       }
