@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import * as chai from 'chai'
-import { Bl } from '../lib/bl.js'
+import { Bl, U8Bl } from '../lib/bl.js'
 
 const { assert } = chai
 
@@ -33,5 +33,25 @@ describe('Internal bytes list', () => {
         assert.deepEqual([...bl.toBytes()], expected)
       })
     }
+  })
+
+  describe('pushByte', () => {
+    it('interleaves individual and grouped writes', () => {
+      const bl = new Bl(4)
+      bl.pushByte(1)
+      bl.push([2, 3])
+      bl.pushByte(4)
+      bl.pushByte(5)
+      assert.deepEqual([...bl.toBytes()], [1, 2, 3, 4, 5])
+    })
+
+    it('writes into a fixed destination', () => {
+      const destination = new Uint8Array(2)
+      const bl = new U8Bl(destination)
+      bl.pushByte(1)
+      bl.pushByte(2)
+      assert.deepEqual([...bl.toBytes()], [1, 2])
+      assert.throws(() => bl.pushByte(3), /write out of bounds/)
+    })
   })
 })
