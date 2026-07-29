@@ -61,4 +61,8 @@ export declare namespace encodeFloat {
     var encodedSize: (token: Token, options: EncodeOptions) => number;
     var compareTokens: (tok1: Token, tok2: Token, options?: EncodeOptions) => number;
 }
+export type TokenEx = Token & {
+    _keyBytes?: Uint8Array;
+    _keyBytesFloat64?: Uint8Array;
+};
 //# sourceMappingURL=7float.d.ts.map
