@@ -1,18 +1,70 @@
 ## [6.1.0](https://github.com/rvagg/cborg/compare/v6.0.0...v6.1.0) (2026-07-29)
 
+### Features
+
+* **encode:** extend direct encoding through deterministic maps ([f511096](https://github.com/rvagg/cborg/commit/f511096022e081b01cea3582bcd3c587725e1cbc))
+* **encode:** require single-byte writer support ([e2bd5e6](https://github.com/rvagg/cborg/commit/e2bd5e6e77f05040d965d4e5efef33e92120f7b8))
+
+### Bug Fixes
+
+* **bench:** update CID decoder for tag control API ([1d9de36](https://github.com/rvagg/cborg/commit/1d9de3636c5a2cf7e2fe6c8248c98a3a0640eaa1))
+
+### Performance Improvements
+
+* **decode:** streamline tag decode controls ([77c3c55](https://github.com/rvagg/cborg/commit/77c3c551138ac97b8fa19d3a0a49299d77528b65))
+
 ## [6.0.0](https://github.com/rvagg/cborg/compare/v5.1.11...v6.0.0) (2026-07-29)
+
+### ⚠ BREAKING CHANGES
+
+* **encode:** Map encodings containing simple-value or floating-point keys may change byte
+order. Hashes, signatures, and identifiers derived from affected encodings
+will therefore change.
+
+### Bug Fixes
+
+* **encode:** canonically sort major type 7 map keys ([f40a683](https://github.com/rvagg/cborg/commit/f40a6830d4fc8e403fb614eab9dd4f8e3f9378e0))
+
+### Performance Improvements
+
+* **encode:** cache major type 7 map key bytes ([e440ae2](https://github.com/rvagg/cborg/commit/e440ae299dc5af7b062a130f2c9f5af8036ac63e))
 
 ## [5.1.11](https://github.com/rvagg/cborg/compare/v5.1.10...v5.1.11) (2026-07-29)
 
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 6.0.3 to 7.0.2 ([4891d10](https://github.com/rvagg/cborg/commit/4891d10a75dfebde3ecb88ed3715bd9694dd1b03))
+* fixes for ts@7 ([652c826](https://github.com/rvagg/cborg/commit/652c826944588587b57045a14550beafd0baa1c7))
+
 ## [5.1.10](https://github.com/rvagg/cborg/compare/v5.1.9...v5.1.10) (2026-07-29)
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/changelog from 6.0.3 to 7.0.0 ([#190](https://github.com/rvagg/cborg/issues/190)) ([021978c](https://github.com/rvagg/cborg/commit/021978c0f606ecb7c15626b1aedecb8078e94270))
 
 ## [5.1.9](https://github.com/rvagg/cborg/compare/v5.1.8...v5.1.9) (2026-07-29)
 
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/git from 10.0.1 to 11.0.0 ([#189](https://github.com/rvagg/cborg/issues/189)) ([5f2eb1c](https://github.com/rvagg/cborg/commit/5f2eb1c7617386ed5abcfd0989ff29034d362d69))
+
 ## [5.1.8](https://github.com/rvagg/cborg/compare/v5.1.7...v5.1.8) (2026-07-21)
+
+### Trivial Changes
+
+* **deps:** bump actions/setup-node from 6.4.0 to 7.0.0 ([#188](https://github.com/rvagg/cborg/issues/188)) ([dee61a6](https://github.com/rvagg/cborg/commit/dee61a6b50b365d286662985c211f82dcb07b188))
 
 ## [5.1.7](https://github.com/rvagg/cborg/compare/v5.1.6...v5.1.7) (2026-07-04)
 
+### Bug Fixes
+
+* **types:** preserve byte view backing types in encode APIs ([#184](https://github.com/rvagg/cborg/issues/184)) ([4f4d6e3](https://github.com/rvagg/cborg/commit/4f4d6e32520b0c778eb4e05e144bfb76eff10ac9))
+
 ## [5.1.6](https://github.com/rvagg/cborg/compare/v5.1.5...v5.1.6) (2026-07-02)
+
+### Trivial Changes
+
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#182](https://github.com/rvagg/cborg/issues/182)) ([e3c84bf](https://github.com/rvagg/cborg/commit/e3c84bffb80337732eb9b3e99b642f0601a1c5f4))
 
 ## [5.1.5](https://github.com/rvagg/cborg/compare/v5.1.4...v5.1.5) (2026-06-30)
 
@@ -109,9 +161,21 @@ half-precision float encoding (bitwise ops on floats convert to int32).
 
 ## [4.5.7](https://github.com/rvagg/cborg/compare/v4.5.6...v4.5.7) (2026-01-21)
 
+### Performance Improvements
+
+* **encode:** tune string encoding thresholds for Node.js and browser ([#166](https://github.com/rvagg/cborg/issues/166)) ([ef1e62d](https://github.com/rvagg/cborg/commit/ef1e62dce4ade7290b6bb4c6376d59bb96784e85))
+
 ## [4.5.6](https://github.com/rvagg/cborg/compare/v4.5.5...v4.5.6) (2026-01-21)
 
+### Performance Improvements
+
+* **decode:** eliminate isBuffer checks in decode path ([#165](https://github.com/rvagg/cborg/issues/165)) ([c893934](https://github.com/rvagg/cborg/commit/c8939346091a0b26771a190700fcc0cb25b791d6))
+
 ## [4.5.5](https://github.com/rvagg/cborg/compare/v4.5.4...v4.5.5) (2026-01-20)
+
+### Performance Improvements
+
+* **decode:** use TextDecoder with ASCII fast-path for string decoding ([2e69f0e](https://github.com/rvagg/cborg/commit/2e69f0e0d57ed6be92b98af42b21009bfd2287e5))
 
 ### Trivial Changes
 
@@ -119,11 +183,27 @@ half-precision float encoding (bitwise ops on floats convert to int32).
 
 ## [4.5.4](https://github.com/rvagg/cborg/compare/v4.5.3...v4.5.4) (2026-01-20)
 
+### Performance Improvements
+
+* **encode:** bypass token creation for primitives and arrays ([#163](https://github.com/rvagg/cborg/issues/163)) ([d79b602](https://github.com/rvagg/cborg/commit/d79b602737449e8bd9aa7e46ddea0dabae21d95c))
+
 ## [4.5.3](https://github.com/rvagg/cborg/compare/v4.5.2...v4.5.3) (2026-01-20)
+
+### Performance Improvements
+
+* tune utf8 fast-path for smaller strings ([#162](https://github.com/rvagg/cborg/issues/162)) ([3c895ff](https://github.com/rvagg/cborg/commit/3c895ffe62a6dac694ad9059443eefc9ea5d957f))
 
 ## [4.5.2](https://github.com/rvagg/cborg/compare/v4.5.1...v4.5.2) (2026-01-20)
 
+### Performance Improvements
+
+* Object.hasOwn instead of `in` (~4% decode improvement) ([#161](https://github.com/rvagg/cborg/issues/161)) ([f8d5d56](https://github.com/rvagg/cborg/commit/f8d5d56579e8ccff2cd342d628fcf1b030bd3df3))
+
 ## [4.5.1](https://github.com/rvagg/cborg/compare/v4.5.0...v4.5.1) (2026-01-20)
+
+### Performance Improvements
+
+* **encode:** improve object type detection perf (~15% encode improvement) ([#160](https://github.com/rvagg/cborg/issues/160)) ([da5da42](https://github.com/rvagg/cborg/commit/da5da42002af9618e27e87cbace47cb2e88c1c05))
 
 ## [4.5.0](https://github.com/rvagg/cborg/compare/v4.4.1...v4.5.0) (2026-01-20)
 
@@ -131,6 +211,10 @@ half-precision float encoding (bitwise ops on floats convert to int32).
 
 * add encodeInto() for BYO buffer encoding ([a577843](https://github.com/rvagg/cborg/commit/a5778432faa44be491ce2fdd814eceddd1979d77))
 * **bench:** add realistic IPLD workload benchmarks ([07d9618](https://github.com/rvagg/cborg/commit/07d9618f1a86262d59690ff00e268db0ad0c6d4a))
+
+### Code Refactoring
+
+* rename internal Bl interface to ByteWriter ([213c72c](https://github.com/rvagg/cborg/commit/213c72cce95aff3eb694931965ccfb52bf5560eb))
 
 ## [4.4.1](https://github.com/rvagg/cborg/compare/v4.4.0...v4.4.1) (2026-01-19)
 
@@ -400,6 +484,10 @@ half-precision float encoding (bitwise ops on floats convert to int32).
 * **deps-dev:** bump @semantic-release/npm from 10.0.6 to 11.0.0 ([9b07df9](https://github.com/rvagg/cborg/commit/9b07df9d1b4c7dbc3bf41020179fa23010598a46))
 
 ## [4.0.1](https://github.com/rvagg/cborg/compare/v4.0.0...v4.0.1) (2023-09-12)
+
+### Performance Improvements
+
+* faster utf8ToBytes ([#94](https://github.com/rvagg/cborg/issues/94)) ([a7e62cb](https://github.com/rvagg/cborg/commit/a7e62cbc3fbb8e514e0211e52949923f46c63cc5))
 
 ## [4.0.0](https://github.com/rvagg/cborg/compare/v3.0.0...v4.0.0) (2023-09-12)
 
