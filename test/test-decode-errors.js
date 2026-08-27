@@ -64,10 +64,10 @@ describe('decode errors', () => {
   })
 
   it('__proto__ map key decodes as an own property without polluting the prototype', () => {
-    // {"__proto__": 1}
-    const obj = decode(fromHex('a1695f5f70726f746f5f5f01'))
+    // {"__proto__": {"naughty": "obj"}}
+    const obj = decode(fromHex('a1695f5f70726f746f5f5fa1676e617567687479636f626a'))
     assert.ok(Object.hasOwn(obj, '__proto__'), 'has own __proto__ property')
-    assert.strictEqual(obj.__proto__, 1) // eslint-disable-line no-proto
+    assert.deepStrictEqual(obj.__proto__, { naughty: 'obj' }) // eslint-disable-line no-proto
     assert.strictEqual(Object.getPrototypeOf(obj), Object.prototype, 'prototype is unchanged')
     assert.deepStrictEqual(Object.keys(obj), ['__proto__'])
   })
