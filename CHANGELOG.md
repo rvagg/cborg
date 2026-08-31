@@ -1,3 +1,9 @@
+## [6.1.2](https://github.com/rvagg/cborg/compare/v6.1.1...v6.1.2) (2026-08-31)
+
+### Bug Fixes
+
+* **decode:** preserve __proto__ map keys as own properties ([#185](https://github.com/rvagg/cborg/issues/185)) ([a45b66f](https://github.com/rvagg/cborg/commit/a45b66f32ed9b4753c96f10e59b640d1e890f709))
+
 ## [6.1.1](https://github.com/rvagg/cborg/compare/v6.1.0...v6.1.1) (2026-07-29)
 
 ### Trivial Changes
