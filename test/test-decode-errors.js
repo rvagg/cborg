@@ -62,4 +62,18 @@ describe('decode errors', () => {
     assert.throws(() => decode(fromHex('a3636261720363666f6f0163666f6f02'), { rejectDuplicateMapKeys: true }), /CBOR decode error: found repeat map key "foo"/)
     assert.throws(() => decode(fromHex('a3636261720363666f6f0163666f6f02'), { useMaps: true, rejectDuplicateMapKeys: true }), /CBOR decode error: found repeat map key "foo"/)
   })
+
+  it('__proto__ map key decodes as an own property without polluting the prototype', () => {
+    // {"__proto__": {"naughty": "obj"}}
+    const obj = decode(fromHex('a1695f5f70726f746f5f5fa1676e617567687479636f626a'))
+    assert.ok(Object.hasOwn(obj, '__proto__'), 'has own __proto__ property')
+    assert.deepStrictEqual(obj.__proto__, { naughty: 'obj' }) // eslint-disable-line no-proto
+    assert.strictEqual(Object.getPrototypeOf(obj), Object.prototype, 'prototype is unchanged')
+    assert.deepStrictEqual(Object.keys(obj), ['__proto__'])
+  })
+
+  it('rejectDuplicateMapKeys enabled on duplicate __proto__ keys', () => {
+    // {"__proto__": 1, "__proto__": 2}
+    assert.throws(() => decode(fromHex('a2695f5f70726f746f5f5f01695f5f70726f746f5f5f02'), { rejectDuplicateMapKeys: true }), /CBOR decode error: found repeat map key "__proto__"/)
+  })
 })
