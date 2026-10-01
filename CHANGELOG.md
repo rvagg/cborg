@@ -1,3 +1,9 @@
+## [6.1.3](https://github.com/rvagg/cborg/compare/v6.1.2...v6.1.3) (2026-10-01)
+
+### Trivial Changes
+
+* **deps-dev:** bump mocha from 11.8.0 to 12.0.2 ([#200](https://github.com/rvagg/cborg/issues/200)) ([1f0925d](https://github.com/rvagg/cborg/commit/1f0925d124b7228666bf4b6095a16a0adcb3006e))
+
 ## [6.1.2](https://github.com/rvagg/cborg/compare/v6.1.1...v6.1.2) (2026-08-31)
 
 ### Bug Fixes
