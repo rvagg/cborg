@@ -1,3 +1,9 @@
+## [6.1.4](https://github.com/rvagg/cborg/compare/v6.1.3...v6.1.4) (2026-10-19)
+
+### Trivial Changes
+
+* **deps:** bump actions/setup-node from 7.0.0 to 7.1.0 ([#204](https://github.com/rvagg/cborg/issues/204)) ([e9dc43f](https://github.com/rvagg/cborg/commit/e9dc43f56b4b387c007bf1a6b87d7f2d985c4a9e))
+
 ## [6.1.3](https://github.com/rvagg/cborg/compare/v6.1.2...v6.1.3) (2026-10-01)
 
 ### Trivial Changes
