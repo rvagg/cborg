@@ -1,3 +1,9 @@
+## [6.1.5](https://github.com/rvagg/cborg/compare/v6.1.4...v6.1.5) (2026-10-24)
+
+### Trivial Changes
+
+* add agent context docs ([#205](https://github.com/rvagg/cborg/issues/205)) ([02bf530](https://github.com/rvagg/cborg/commit/02bf5305271420fa2324a66fd79b5a4e28242f29))
+
 ## [6.1.4](https://github.com/rvagg/cborg/compare/v6.1.3...v6.1.4) (2026-10-19)
 
 ### Trivial Changes
