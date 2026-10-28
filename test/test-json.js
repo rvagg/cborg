@@ -340,3 +340,16 @@ describe('json non-finite and float formatting', () => {
     assert.deepStrictEqual(decode(toBytes('[1.5,-0.5]'), opts), [1.5, -0.5])
   })
 })
+
+describe('json U+FEFF (BOM)', () => {
+  const BOM = '\uFEFF'
+
+  it('keeps BOM in strings and keys', () => {
+    for (const str of [BOM, `${BOM}abc`, `a${BOM}b`, `${BOM}${'a'.repeat(100)}`]) {
+      assert.strictEqual(decode(toBytes(JSON.stringify(str))), str)
+      assert.deepStrictEqual(decode(encode(str)), str)
+    }
+    const obj = decode(toBytes(`{"k":1,"${BOM}k":2}`))
+    assert.deepStrictEqual(obj, { k: 1, [`${BOM}k`]: 2 })
+  })
+})
