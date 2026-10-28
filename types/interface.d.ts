@@ -42,6 +42,11 @@ export interface DecodeOptions {
     useMaps?: boolean;
     rejectDuplicateMapKeys?: boolean;
     retainStringBytes?: boolean;
+    /**
+     * Maximum nesting of arrays, maps and tags, where the outermost container
+     * is depth 1. Exceeding it throws. Defaults to 256, `Infinity` disables.
+     */
+    maxDepth?: number;
     tags?: {
         [tagNumber: number]: TagDecoder;
     };
