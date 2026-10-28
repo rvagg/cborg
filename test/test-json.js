@@ -258,3 +258,44 @@ describe('json number limits', () => {
     assert.strictEqual(decode(toBytes('1e999')), Infinity)
   })
 })
+
+describe('json non-finite and float formatting', () => {
+  const str = (v) => new TextDecoder().decode(encode(v))
+
+  it('rejects NaN, Infinity and -Infinity', () => {
+    const err = /CBOR encode error: unsupported type: (NaN|Infinity|-Infinity)/
+    for (const n of [NaN, Infinity, -Infinity]) {
+      assert.throws(() => encode(n), err)
+      assert.throws(() => encode([1, n]), err)
+      assert.throws(() => encode({ a: n }), err)
+      assert.throws(() => encode({ a: [{ b: n }] }), err)
+      assert.throws(() => encode(new Map([['a', n]])), err)
+    }
+  })
+
+  it('encodes finite floats unchanged', () => {
+    const cases = [
+      [0, '0'],
+      [-0, '0'],
+      [1.5, '1.5'],
+      [1e21, '1e+21'],
+      [5e-324, '5e-324'],
+      [Number.MAX_VALUE, '1.7976931348623157e+308'],
+      [2 ** 53 - 1, '9007199254740991'],
+      [2 ** 53, '9007199254740992.0'],
+      [-1.0, '-1'],
+      [[1.5, 2], '[1.5,2]']
+    ]
+    for (const [v, expected] of cases) {
+      assert.strictEqual(str(v), expected)
+    }
+  })
+
+  it('decode rejects NaN and Infinity literals under dag-json-like flags', () => {
+    const opts = { allowNaN: false, allowInfinity: false }
+    for (const lit of ['NaN', 'Infinity', '-Infinity', '{"a":NaN}', '[Infinity]']) {
+      assert.throws(() => decode(toBytes(lit), opts), /CBOR decode error/)
+    }
+    assert.deepStrictEqual(decode(toBytes('[1.5,-0.5]'), opts), [1.5, -0.5])
+  })
+})
