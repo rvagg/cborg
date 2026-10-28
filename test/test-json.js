@@ -254,8 +254,49 @@ describe('json number limits', () => {
     assert.strictEqual(decode(toBytes(nines(309)), { allowBigInt: true }), BigInt(nines(309)))
   })
 
-  it('floats beyond the Number range are left alone', () => {
+  it('floats beyond the Number range are left alone by default', () => {
     assert.strictEqual(decode(toBytes('1e999')), Infinity)
+    assert.strictEqual(decode(toBytes('-1e999')), -Infinity)
+  })
+
+  describe('allowInfinity', () => {
+    const overflows = ['1e999', '-1e999', '1E999', '1e+999', '[1e999]', '{"a":1e999}', '[1.5e999]']
+    const notSupported = /CBOR decode error.*Infinity values are not supported/
+    const dagJson = {
+      strict: true,
+      rejectDuplicateMapKeys: true,
+      allowIndefinite: false,
+      allowNaN: false,
+      allowInfinity: false,
+      allowBigInt: true,
+      coerceUndefinedToNull: true
+    }
+
+    for (const str of overflows) {
+      it(`${str} throws with allowInfinity: false`, () => {
+        assert.throws(() => decode(toBytes(str), { allowInfinity: false }), notSupported)
+      })
+
+      it(`${str} decodes with allowInfinity: true or unset`, () => {
+        assert.doesNotThrow(() => decode(toBytes(str), { allowInfinity: true }))
+        assert.doesNotThrow(() => decode(toBytes(str), {}))
+        assert.doesNotThrow(() => decode(toBytes(str)))
+      })
+
+      it(`${str} throws under the dag-json option profile`, () => {
+        assert.throws(() => decode(toBytes(str), dagJson), notSupported)
+      })
+    }
+
+    it('underflow and extremes stay valid', () => {
+      for (const opts of [{ allowInfinity: false }, dagJson]) {
+        assert.strictEqual(decode(toBytes('1e-999'), opts), 0)
+        assert.strictEqual(decode(toBytes('5e-324'), opts), 5e-324)
+        assert.strictEqual(decode(toBytes('1.7976931348623157e308'), opts), Number.MAX_VALUE)
+        assert.strictEqual(decode(toBytes('-0'), opts), 0)
+        assert.strictEqual(decode(toBytes('0.5e1'), opts), 5)
+      }
+    })
   })
 })
 
