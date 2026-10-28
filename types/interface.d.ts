@@ -25,7 +25,12 @@ export interface DecodeTokenizer {
  * Control object passed to tag decoders, providing methods to decode the tagged content.
  */
 export interface TagDecodeControl {
-    /** Decode the tagged content */
+    /**
+     * Decode the tagged content. The returned value is owned by the tag decoder,
+     * which may retain it or build on it without copying. Byte strings from the
+     * default tokenizer are a fresh copy, and a custom tokenizer must not return
+     * a buffer that it reuses or changes later.
+     */
     (): unknown;
     /** Decode CBOR map content as [key, value] entries array (preserves key types) */
     entries(): Array<[unknown, unknown]>;
