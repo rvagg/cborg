@@ -4,6 +4,13 @@
 
 * add agent context docs ([#205](https://github.com/rvagg/cborg/issues/205)) ([02bf530](https://github.com/rvagg/cborg/commit/02bf5305271420fa2324a66fd79b5a4e28242f29))
 
+## [6.1.6](https://github.com/rvagg/cborg/compare/v6.1.5...v6.1.6) (2026-10-28)
+
+
+### Trivial Changes
+
+* replace shared workflows and harden release automation ([#206](https://github.com/rvagg/cborg/issues/206)) ([d311602](https://github.com/rvagg/cborg/commit/d311602a7f83d059e49adc09e66ca89832cb7709))
+
 ## [6.1.4](https://github.com/rvagg/cborg/compare/v6.1.3...v6.1.4) (2026-10-19)
 
 ### Trivial Changes
