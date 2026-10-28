@@ -711,6 +711,41 @@ describe('cborg/extended', () => {
       assert.strictEqual(result.error.message, 'failed')
       assert.strictEqual(result.code, 500)
     })
+
+    describe('class names', () => {
+      /**
+       * @param {string} name
+       * @param {string} message
+       */
+      const tag27 = (name, message) => {
+        const text = (/** @type {string} */ s) => [0x60 + s.length, ...new TextEncoder().encode(s)]
+        return Uint8Array.from([0xd8, 0x1b, 0x82, ...text(name), ...text(message)])
+      }
+
+      for (const name of ['__proto__', 'constructor', 'toString', 'hasOwnProperty']) {
+        it(`falls back to Error for inherited name ${name}`, () => {
+          const result = decode(tag27(name, 'msg'))
+          assert.ok(result instanceof Error)
+          assert.strictEqual(Object.getPrototypeOf(result), Error.prototype)
+          assert.strictEqual(result.name, 'Error')
+          assert.strictEqual(result.message, 'msg')
+        })
+      }
+
+      it('decodes a known name', () => {
+        const result = decode(tag27('TypeError', 'msg'))
+        assert.ok(result instanceof TypeError)
+        assert.strictEqual(result.name, 'TypeError')
+        assert.strictEqual(result.message, 'msg')
+      })
+
+      it('falls back to Error for an unknown name', () => {
+        const result = decode(tag27('MyCustomError', 'msg'))
+        assert.strictEqual(Object.getPrototypeOf(result), Error.prototype)
+        assert.strictEqual(result.name, 'Error')
+        assert.strictEqual(result.message, 'msg')
+      })
+    })
   })
 
   describe('negative zero', () => {
