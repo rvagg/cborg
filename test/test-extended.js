@@ -3,7 +3,7 @@
 import * as chai from 'chai'
 import { encode, decode } from '../lib/extended/extended.js'
 import { encode as cborgEncode } from '../cborg.js'
-import { fromHex } from '../lib/byte-utils.js'
+import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
 
@@ -32,6 +32,22 @@ describe('cborg/extended', () => {
       const d = new Date(-86400000) // 1 day before epoch
       const result = decode(encode(d))
       assert.strictEqual(result.getTime(), d.getTime())
+    })
+
+    it('round-trips an Invalid Date', () => {
+      const bytes = encode(new Date(NaN))
+      assert.strictEqual(toHex(bytes), 'c1f97e00')
+      const result = decode(bytes)
+      assert.ok(result instanceof Date)
+      assert.ok(Number.isNaN(result.getTime()))
+    })
+
+    it('numbers outside the Date range decode as an Invalid Date', () => {
+      for (const hex of ['c1f97c00', 'c1f9fc00', 'c11b0000080000000000', 'c1fb7fefffffffffffff']) {
+        const result = decode(fromHex(hex))
+        assert.ok(result instanceof Date, hex)
+        assert.ok(Number.isNaN(result.getTime()), hex)
+      }
     })
   })
 
@@ -801,12 +817,7 @@ describe('cborg/extended', () => {
         string: 'c16161',
         boolean: 'c1f5',
         array: 'c180',
-        bigint: 'c1c24101',
-        NaN: 'c1f97e00',
-        Infinity: 'c1f97c00',
-        '-Infinity': 'c1f9fc00',
-        'seconds beyond Date range': 'c11b0000080000000000',
-        'float beyond Date range': 'c1fb7fefffffffffffff'
+        bigint: 'c1c24101'
       },
       'Set (tag 258)': {
         integer: 'd9010201',

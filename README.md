@@ -458,6 +458,8 @@ Tag decoder functions receive a `decode` control object with two methods:
 - `decode()`: decode the tagged content and return it
 - `decode.entries()`: for map content, returns `[[key, value], ...]` preserving key types
 
+The value returned by `decode()` is owned by the tag decoder, which may keep it or build on it without copying, for example by wrapping a byte string's buffer in a typed array. Byte strings from the default tokenizer are a fresh copy. A custom `tokenizer` must not return a buffer that it reuses or changes later.
+
 This example is available from the cborg taglib as `bigIntDecoder` and `bigNegIntDecoder` (`import { bigIntDecoder, bigNegIntDecoder } from 'cborg/taglib'`) and implements CBOR tags 2 and 3 (bigint and negative bigint). This function would be registered using an options parameter:
 
 ```js
@@ -711,7 +713,9 @@ Use `cborg/extended` instead of base `cborg` or JSON when you need:
 | `BigUint64Array` | 71 | RFC 8746 (little-endian) |
 | `BigInt64Array` | 79 | RFC 8746 (little-endian) |
 
-Tag content of the wrong shape (a `Date` that is not a finite in-range number, a `Set` that is not an array, an invalid `RegExp`, a typed array whose byte length is not a multiple of its element size, and so on) throws a `CBOR decode error`.
+Tag content of the wrong shape (a `Date` tag whose content is not a number, a `Set` that is not an array, an invalid `RegExp`, a typed array whose byte length is not a multiple of its element size, and so on) throws a `CBOR decode error`.
+
+Date tags containing `NaN`, infinities or numbers outside the JavaScript `Date` range decode to an Invalid Date.
 
 ### Type fidelity: objects vs Maps
 
