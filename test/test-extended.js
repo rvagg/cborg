@@ -3,6 +3,7 @@
 import * as chai from 'chai'
 import { encode, decode } from '../lib/extended/extended.js'
 import { encode as cborgEncode } from '../cborg.js'
+import { fromHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
 
@@ -395,13 +396,13 @@ describe('cborg/extended', () => {
     it('rejects a byte length that is not a multiple of the element size', () => {
       // tag 86 (Float64Array LE), 7 byte string
       const bad = Uint8Array.from([0xd8, 0x56, 0x47, 1, 2, 3, 4, 5, 6, 7])
-      assert.throws(() => decode(bad), RangeError)
+      assert.throws(() => decode(bad), /CBOR decode error: typed array byte length 7/)
       if (typeof Buffer !== 'undefined') {
-        assert.throws(() => decode(Buffer.from(bad)), RangeError)
+        assert.throws(() => decode(Buffer.from(bad)), /CBOR decode error: typed array byte length 7/)
       }
       const big = new Uint8Array(32)
       big.set(bad, 5)
-      assert.throws(() => decode(big.subarray(5, 5 + bad.length)), RangeError)
+      assert.throws(() => decode(big.subarray(5, 5 + bad.length)), /CBOR decode error: typed array byte length 7/)
     })
   })
 
@@ -775,6 +776,135 @@ describe('cborg/extended', () => {
       assert.ok(Object.is(result[0], -0))
       assert.ok(Object.is(result[1], 0))
       assert.ok(Object.is(result[2], -0))
+    })
+  })
+
+  describe('malformed tag content', () => {
+    const prefix = 'CBOR decode error:'
+
+    /** @param {string} hex */
+    function assertRejects (hex) {
+      let err
+      try {
+        decode(fromHex(hex))
+      } catch (e) {
+        err = e
+      }
+      assert.ok(err, `expected ${hex} to throw`)
+      assert.strictEqual(err.constructor, Error, `${hex} threw ${err.constructor.name}: ${err.message}`)
+      assert.ok(err.message.startsWith(prefix), `${hex}: ${err.message}`)
+    }
+
+    const vectors = {
+      'Date (tag 1)': {
+        null: 'c1f6',
+        string: 'c16161',
+        boolean: 'c1f5',
+        array: 'c180',
+        bigint: 'c1c24101',
+        NaN: 'c1f97e00',
+        Infinity: 'c1f97c00',
+        '-Infinity': 'c1f9fc00',
+        'seconds beyond Date range': 'c11b0000080000000000',
+        'float beyond Date range': 'c1fb7fefffffffffffff'
+      },
+      'Set (tag 258)': {
+        integer: 'd9010201',
+        string: 'd90102616162',
+        map: 'd90102a0',
+        null: 'd90102f6'
+      },
+      'RegExp (tag 21066)': {
+        integer: 'd9524a01',
+        'empty array': 'd9524a80',
+        'three elements': 'd9524a83616161626163',
+        'non-string source': 'd9524a8101',
+        'non-string flags': 'd9524a82616101',
+        'invalid pattern': 'd9524a8161' + '28',
+        'invalid flags': 'd9524a826161617a',
+        'invalid pattern, string form': 'd9524a6128'
+      },
+      'TypedArray (tags 64..86)': {
+        'integer content': 'd84001',
+        'string content': 'd8406161',
+        'array content': 'd84080',
+        'uint16 odd length': 'd84543010203',
+        'uint32 length 3': 'd84643010203',
+        'bigint64 length 4': 'd84f4401020304',
+        'float32 length 1': 'd855' + '4101',
+        'float64 length 7': 'd856' + '470102030405' + '0607'
+      },
+      'BigInt (tags 2, 3)': {
+        'positive string': 'c26161',
+        'negative string': 'c36161',
+        'positive integer': 'c201',
+        'negative array': 'c380'
+      },
+      'Error (tag 27)': {
+        integer: 'd81b01',
+        string: 'd81b6161',
+        'empty array': 'd81b80',
+        'one element': 'd81b816161',
+        'non-string className': 'd81b82016161',
+        'non-string message': 'd81b82616101',
+        'null message': 'd81b826161f6'
+      },
+      'Map (tag 259)': {
+        array: 'd9010380',
+        integer: 'd9010301'
+      }
+    }
+
+    for (const [group, cases] of Object.entries(vectors)) {
+      describe(group, () => {
+        for (const [name, hex] of Object.entries(cases)) {
+          it(`rejects ${name}`, () => assertRejects(hex))
+        }
+      })
+    }
+
+    describe('valid boundaries', () => {
+      it('Date', () => {
+        assert.strictEqual(decode(fromHex('c100')).getTime(), 0)
+        assert.strictEqual(decode(fromHex('c120')).getTime(), -1000)
+        assert.strictEqual(decode(fromHex('c1fb3fe0000000000000')).getTime(), 500)
+        assert.strictEqual(decode(fromHex('c1fb8000000000000000')).getTime(), 0)
+      })
+
+      it('RegExp with and without flags', () => {
+        const a = decode(fromHex('d9524a6161'))
+        assert.strictEqual(a.source, 'a')
+        assert.strictEqual(a.flags, '')
+        const b = decode(fromHex('d9524a816161'))
+        assert.strictEqual(b.source, 'a')
+        const c = decode(fromHex('d9524a826161' + '6167'))
+        assert.strictEqual(c.source, 'a')
+        assert.strictEqual(c.flags, 'g')
+      })
+
+      it('empty Set', () => {
+        const s = decode(fromHex('d9010280'))
+        assert.ok(s instanceof Set)
+        assert.strictEqual(s.size, 0)
+      })
+
+      it('empty typed arrays', () => {
+        for (const [hex, Ctor] of [['d84040', Uint8Array], ['d84540', Uint16Array], ['d85640', Float64Array], ['d84f40', BigInt64Array]]) {
+          const a = decode(fromHex(hex))
+          assert.ok(a instanceof Ctor)
+          assert.strictEqual(a.length, 0)
+        }
+      })
+
+      it('empty BigInt content', () => {
+        assert.strictEqual(decode(fromHex('c240')), 0n)
+        assert.strictEqual(decode(fromHex('c340')), -1n)
+      })
+
+      it('Error with extra element', () => {
+        const e = decode(fromHex('d81b8365457272' + '6f72' + '61' + '6d' + 'a0'))
+        assert.ok(e instanceof Error)
+      })
     })
   })
 })

@@ -710,6 +710,8 @@ Use `cborg/extended` instead of base `cborg` or JSON when you need:
 | `BigUint64Array` | 71 | RFC 8746 (little-endian) |
 | `BigInt64Array` | 79 | RFC 8746 (little-endian) |
 
+Tag content of the wrong shape (a `Date` that is not a finite in-range number, a `Set` that is not an array, an invalid `RegExp`, a typed array whose byte length is not a multiple of its element size, and so on) throws a `CBOR decode error`.
+
 ### Type fidelity: objects vs Maps
 
 `cborg/extended` preserves the distinction between plain objects and `Map` instances:
