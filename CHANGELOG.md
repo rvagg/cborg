@@ -4,6 +4,35 @@
 
 * add agent context docs ([#205](https://github.com/rvagg/cborg/issues/205)) ([02bf530](https://github.com/rvagg/cborg/commit/02bf5305271420fa2324a66fd79b5a4e28242f29))
 
+## [6.2.0](https://github.com/rvagg/cborg/compare/v6.1.6...v6.2.0) (2026-10-28)
+
+
+### Features
+
+* **decode:** add strictUtf8 option to reject invalid UTF-8 in text strings ([#223](https://github.com/rvagg/cborg/issues/223)) ([8af2c22](https://github.com/rvagg/cborg/commit/8af2c22d80ee9ef6b88102cee1222675e80b5744))
+
+
+### Bug Fixes
+
+* **cli:** bound diagnostic indentation and always advance string snippets ([#217](https://github.com/rvagg/cborg/issues/217)) ([d942fc8](https://github.com/rvagg/cborg/commit/d942fc8834b6da60bd53c3766a0554b852fc739e))
+* **cli:** escape control characters in diagnostic text and reject odd-length hex ([#218](https://github.com/rvagg/cborg/issues/218)) ([2263bfa](https://github.com/rvagg/cborg/commit/2263bfad4b0ae72d7eb2ab69414a5b70d18e9860))
+* **decode:** keep leading U+FEFF in decoded text strings ([#222](https://github.com/rvagg/cborg/issues/222)) ([e1607cc](https://github.com/rvagg/cborg/commit/e1607cc83562f1ca3c04340e9cce8e91346ece54))
+* **decode:** reject break as map value and truncated tag entries ([#221](https://github.com/rvagg/cborg/issues/221)) ([c7a4b0a](https://github.com/rvagg/cborg/commit/c7a4b0a7d8ee2e8b999c4e1e72c913d960ced90b))
+* **encode:** detect Uint8Array from other realms ([#216](https://github.com/rvagg/cborg/issues/216)) ([1c03371](https://github.com/rvagg/cborg/commit/1c03371b939d2096019f8dfdd704c5a5d0d87e04))
+* **encode:** keep outer output intact when encode() is re-entered ([#219](https://github.com/rvagg/cborg/issues/219)) ([0271a56](https://github.com/rvagg/cborg/commit/0271a5616c435827391b1a8ad868a23309bb41b6))
+* **extended:** accept foreign-realm bytes and round-trip Invalid Dates ([#224](https://github.com/rvagg/cborg/issues/224)) ([a225bfd](https://github.com/rvagg/cborg/commit/a225bfd0c0b4160dcd161e9e80763f3df544f33d))
+* **extended:** ignore inherited names in tag 27 error decoding ([#212](https://github.com/rvagg/cborg/issues/212)) ([acc00a1](https://github.com/rvagg/cborg/commit/acc00a1546efce5e3879ecbe6161617f7c100eab))
+* **extended:** validate tag content shape in taglib decoders ([#214](https://github.com/rvagg/cborg/issues/214)) ([13f9139](https://github.com/rvagg/cborg/commit/13f9139155987ce2f4a6ae511487d0fdffa77e4e))
+* **json:** reject non-finite numbers on encode ([#215](https://github.com/rvagg/cborg/issues/215)) ([d4a6a81](https://github.com/rvagg/cborg/commit/d4a6a813d11172af8d8cd58419463f5354cc015f))
+* **json:** reject number literals over 1000 characters ([#210](https://github.com/rvagg/cborg/issues/210)) ([6eca4e5](https://github.com/rvagg/cborg/commit/6eca4e5faddb07afd95fbbe20700caac4356eb81))
+* **json:** reject overflowing number literals when allowInfinity is false ([#220](https://github.com/rvagg/cborg/issues/220)) ([1b0f77c](https://github.com/rvagg/cborg/commit/1b0f77c7532555fdb94a8338c6df730af0ce750f))
+
+
+### Performance Improvements
+
+* **extended:** convert large bignums in linear time ([#209](https://github.com/rvagg/cborg/issues/209)) ([db5f2e8](https://github.com/rvagg/cborg/commit/db5f2e80b78a10362b22f94284fa68764f2340ae))
+* **extended:** skip second copy when decoding typed arrays ([#208](https://github.com/rvagg/cborg/issues/208)) ([b4a33ea](https://github.com/rvagg/cborg/commit/b4a33ea83ece57252e1daf0b1b4b1134b7bab4fd))
+
 ## [6.1.6](https://github.com/rvagg/cborg/compare/v6.1.5...v6.1.6) (2026-10-28)
 
 
