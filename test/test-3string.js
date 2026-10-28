@@ -4,6 +4,7 @@ import * as chai from 'chai'
 
 import { decode, encode, encodeInto } from '../cborg.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
+import { tokensToDiagnostic } from '../lib/diagnostic.js'
 
 const { assert } = chai
 
@@ -160,5 +161,46 @@ describe('string', () => {
         )
       })
     }
+  })
+})
+
+describe('string U+FEFF (BOM)', () => {
+  const BOM = '\uFEFF'
+  const cases = {
+    'BOM only': BOM,
+    'short leading': `${BOM}abc`,
+    'short middle': `a${BOM}bc`,
+    'short trailing': `abc${BOM}`,
+    'two leading': `${BOM}${BOM}abc`,
+    'long leading': `${BOM}${'a'.repeat(100)}`,
+    'long non-ascii leading': `${BOM}${'\u00e9'.repeat(100)}`,
+    'long middle': `${'a'.repeat(50)}${BOM}${'a'.repeat(50)}`
+  }
+
+  for (const [name, str] of Object.entries(cases)) {
+    it(`round-trips ${name}`, () => {
+      assert.strictEqual(decode(encode(str)), str)
+      assert.deepStrictEqual(decode(encode([str, { [str]: str }])), [str, { [str]: str }])
+    })
+  }
+
+  it('decodes the BOM bytes', () => {
+    assert.strictEqual(decode(fromHex('63efbbbf')), BOM)
+    assert.strictEqual(decode(fromHex('66efbbbf616263')), `${BOM}abc`)
+  })
+
+  it('keeps BOM-prefixed map keys distinct', () => {
+    const bytes = encode({ k: 1, [`${BOM}k`]: 2 })
+    for (const opts of [undefined, { rejectDuplicateMapKeys: true }]) {
+      const out = decode(bytes, opts)
+      assert.deepStrictEqual(Object.keys(out).sort(), ['k', `${BOM}k`].sort())
+      assert.strictEqual(out.k, 1)
+      assert.strictEqual(out[`${BOM}k`], 2)
+    }
+  })
+
+  it('shows a leading BOM in diagnostic output', () => {
+    const out = [...tokensToDiagnostic(encode(`${BOM}abc`))].join('\n')
+    assert.include(out, `"${BOM}abc"`)
   })
 })
