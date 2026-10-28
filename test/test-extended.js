@@ -342,6 +342,67 @@ describe('cborg/extended', () => {
       assert.strictEqual(result.length, 5)
       assert.deepStrictEqual([...result], [1, 2, 3, 4, 5])
     })
+
+    describe('decoded memory is not shared with the input', () => {
+      const cases = [
+        ['Uint8Array', new Uint8Array([1, 2, 3, 4, 5])],
+        ['Uint8ClampedArray', new Uint8ClampedArray([1, 2, 3, 4, 5])],
+        ['Int16Array', new Int16Array([-1, 2, 300, -4])],
+        ['Float64Array', new Float64Array([1.5, -2.5, Math.PI])]
+      ]
+
+      /** @param {Uint8Array} bytes */
+      const inputs = (bytes) => {
+        // a subarray with a non-zero offset into a larger buffer
+        const big = new Uint8Array(bytes.length + 16)
+        big.fill(0xff)
+        big.set(bytes, 7)
+        const out = {
+          'plain Uint8Array': bytes,
+          'offset subarray': big.subarray(7, 7 + bytes.length)
+        }
+        if (typeof Buffer !== 'undefined') {
+          out.Buffer = Buffer.from(bytes)
+        }
+        return out
+      }
+
+      for (const [name, arr] of cases) {
+        for (const [kind, input] of Object.entries(inputs(encode(arr)))) {
+          it(`${name} from ${kind}`, () => {
+            const before = Uint8Array.from(input)
+            const result = decode(input)
+            assert.ok(result instanceof arr.constructor)
+            assert.deepStrictEqual([...result], [...arr])
+            assert.strictEqual(result.byteOffset, 0)
+            assert.strictEqual(result.buffer.byteLength, arr.byteLength)
+            assert.notStrictEqual(result.buffer, input.buffer)
+
+            // decoded -> input
+            new Uint8Array(result.buffer).fill(0)
+            assert.deepStrictEqual(Uint8Array.from(input), before)
+
+            // input -> decoded
+            const again = decode(input)
+            const snapshot = [...again]
+            input.fill(0)
+            assert.deepStrictEqual([...again], snapshot)
+          })
+        }
+      }
+    })
+
+    it('rejects a byte length that is not a multiple of the element size', () => {
+      // tag 86 (Float64Array LE), 7 byte string
+      const bad = Uint8Array.from([0xd8, 0x56, 0x47, 1, 2, 3, 4, 5, 6, 7])
+      assert.throws(() => decode(bad), RangeError)
+      if (typeof Buffer !== 'undefined') {
+        assert.throws(() => decode(Buffer.from(bad)), RangeError)
+      }
+      const big = new Uint8Array(32)
+      big.set(bad, 5)
+      assert.throws(() => decode(big.subarray(5, 5 + bad.length)), RangeError)
+    })
   })
 
   describe('nested structures', () => {
