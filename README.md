@@ -274,8 +274,18 @@ Decode valid CBOR bytes from a `Uint8Array` (or `Buffer`) and return a JavaScrip
 * `useMaps` (boolean, default `false`): when decoding major 5 (map) entries, use a `Map` rather than a plain `Object`. This will nest for any encountered map. During encode, a `Map` will be interpreted as an `Object` and will round-trip as such unless `useMaps` is supplied, in which case, all `Map`s and `Object`s will round-trip as `Map`s. There is no way to retain the distinction during round-trip without using a custom tag.
 * `rejectDuplicateMapKeys` (boolean, default `false`): when the decoder encounters duplicate keys for the same map, an error will be thrown when this option is set. This is an additional _strictness_ option, disallowing data-hiding and reducing the number of same-data different-bytes possibilities where it matters.
 * `retainStringBytes` (boolean, default `false`): when decoding strings, retain the original bytes on the `Token` object as `byteValue`. Since it is possible to encode non-UTF-8 characters in strings in CBOR, and JavaScript doesn't properly handle non-UTF-8 in its conversion from bytes (`TextEncoder` or `Buffer`), this can result in a loss of data (and an inability to round-trip). Where this is important, a token stream should be consumed instead of a plain `decode()` and the `byteValue` property on string tokens can be inspected (see [lib/diagnostic.js](lib/diagnostic.js) for an example of its use.)
+* `maxDepth` (number, default `256`): the maximum nesting of arrays, maps and tags. Exceeding it throws. Set to `Infinity` to disable. See [Nesting depth](#nesting-depth).
 * `tags` (array): a mapping of tag number to tag decoder function. By default no tags are supported. See [Tag decoders](#tag-decoders).
 * `tokenizer` (object): an object with two methods, `next()` which returns a `Token`, `done()` which returns a `boolean` and `pos()` which returns the current byte position being decoded. Can be used to implement custom input decoding. See the source code for examples. (Note en-US spelling "tokenizer" used throughout exported methods and types, which may be confused with "tokeniser" used in these docs).
+
+#### Nesting depth
+
+Each array, map and tag adds one level, and scalars add none. The outermost container is depth 1, so `[[1]]` is depth 2, and a tag wrapping an array is also depth 2. Content nested more deeply than `maxDepth` throws instead of exhausting the call stack. This applies to indefinite length containers, tag content (including `decode.entries()`), custom tokenizers and `cborg/json`.
+
+```js
+decode(bytes, { maxDepth: 4 }) // allows [[[[1]]]], rejects [[[[[1]]]]]
+decode(bytes, { maxDepth: Infinity }) // no limit, deep input may overflow the stack
+```
 
 ### `decodeFirst(data[, options])`
 
