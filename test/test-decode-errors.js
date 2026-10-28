@@ -2,8 +2,9 @@
 
 import * as chai from 'chai'
 
-import { decode } from '../cborg.js'
+import { decode, Tokenizer } from '../cborg.js'
 import { fromHex } from '../lib/byte-utils.js'
+import { mapDecoder } from '../lib/taglib.js'
 
 const { assert } = chai
 
@@ -35,6 +36,33 @@ describe('decode errors', () => {
   it('break in lengthed map', () => {
     // 0xff (break) in the middle
     assert.throws(() => decode(fromHex('a2616f01ff740f')), /unexpected break to lengthed map/)
+  })
+
+  it('break as map value', () => {
+    const msg = /^CBOR decode error.*unexpected break to map value/
+    for (const hex of ['a16161ff', 'bf6161ffff']) {
+      for (const useMaps of [false, true]) {
+        assert.throws(() => decode(fromHex(hex), { useMaps }), msg, `${hex} useMaps=${useMaps}`)
+      }
+    }
+    // via decode.entries()
+    for (const hex of ['d90103a16161ff', 'd90103bf6161ffff']) {
+      assert.throws(() => decode(fromHex(hex), { tags: { 259: mapDecoder } }), msg, hex)
+    }
+  })
+
+  it('tag entries() with missing content', () => {
+    assert.throws(() => decode(fromHex('d90103'), { tags: { 259: mapDecoder } }), /^CBOR decode error.*tag content missing/)
+  })
+
+  it('tokenizer next() past the end of data', () => {
+    for (const data of [new Uint8Array(0), Uint8Array.from([0x01])]) {
+      const tokenizer = new Tokenizer(data, {})
+      if (data.length) {
+        tokenizer.next()
+      }
+      assert.throws(() => tokenizer.next(), /^CBOR decode error.*not enough data/)
+    }
   })
 
   it('not enough array entries', () => {
