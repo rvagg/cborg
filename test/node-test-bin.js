@@ -163,6 +163,22 @@ Input may either be supplied as an argument or piped via stdin
 `)
   })
 
+  it('hex2diag | diag2hex round-trips text containing newline, hex and comment marker', async () => {
+    const hex = '66780a38302023'
+    const { stdout: diag } = await execBin('hex2diag', hex)
+    const { stdout } = await execBin('diag2hex', diag)
+    assert.strictEqual(stdout, `${hex}\n`)
+  })
+
+  it('diag2hex rejects odd-length hex', async () => {
+    try {
+      await execBin('diag2hex abc')
+      assert.fail('should have errored')
+    } catch (e) {
+      assert.include(e.stderr, 'odd number of hex digits')
+    }
+  })
+
   it('bin2diag (stdin)', async () => {
     const { stdout, stderr } = await execBin('bin2diag', fixture1Bin)
     assert.strictEqual(stderr, '')
