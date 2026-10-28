@@ -5,3 +5,4 @@ c/
 dist/
 package-lock.json
 types/tsconfig.tsbuildinfo
+__pycache__/

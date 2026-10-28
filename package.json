@@ -28,21 +28,13 @@
   "author": "Rod <rod@vagg.org> (http://r.va.gg/)",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@semantic-release/changelog": "^7.0.0",
-    "@semantic-release/commit-analyzer": "^13.0.1",
-    "@semantic-release/git": "^11.0.0",
-    "@semantic-release/github": "^12.0.6",
-    "@semantic-release/npm": "^13.1.5",
-    "@semantic-release/release-notes-generator": "^14.1.0",
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",
     "@types/node": "^26.0.1",
     "chai": "^6.2.2",
-    "conventional-changelog-conventionalcommits": "^9.3.1",
     "ipld-garbage": "^5.0.0",
     "mocha": "^12.0.2",
     "polendina": "^3.2.20",
-    "semantic-release": "^25.0.3",
     "standard": "^17.1.2",
     "typescript": "^7.0.2"
   },
@@ -87,110 +79,5 @@
         "types/*"
       ]
     }
-  },
-  "release": {
-    "branches": [
-      "master"
-    ],
-    "plugins": [
-      [
-        "@semantic-release/commit-analyzer",
-        {
-          "preset": "conventionalcommits",
-          "releaseRules": [
-            {
-              "breaking": true,
-              "release": "major"
-            },
-            {
-              "revert": true,
-              "release": "patch"
-            },
-            {
-              "type": "feat",
-              "release": "minor"
-            },
-            {
-              "type": "fix",
-              "release": "patch"
-            },
-            {
-              "type": "chore",
-              "release": "patch"
-            },
-            {
-              "type": "docs",
-              "release": "patch"
-            },
-            {
-              "type": "test",
-              "release": "patch"
-            },
-            {
-              "scope": "no-release",
-              "release": false
-            }
-          ]
-        }
-      ],
-      [
-        "@semantic-release/release-notes-generator",
-        {
-          "preset": "conventionalcommits",
-          "presetConfig": {
-            "types": [
-              {
-                "type": "feat",
-                "section": "Features"
-              },
-              {
-                "type": "fix",
-                "section": "Bug Fixes"
-              },
-              {
-                "type": "perf",
-                "section": "Performance Improvements"
-              },
-              {
-                "type": "revert",
-                "section": "Reverts"
-              },
-              {
-                "type": "refactor",
-                "section": "Code Refactoring"
-              },
-              {
-                "type": "test",
-                "section": "Tests"
-              },
-              {
-                "type": "build",
-                "section": "Trivial Changes"
-              },
-              {
-                "type": "ci",
-                "section": "Trivial Changes"
-              },
-              {
-                "type": "chore",
-                "section": "Trivial Changes"
-              },
-              {
-                "type": "docs",
-                "section": "Trivial Changes"
-              },
-              {
-                "type": "style",
-                "section": "Trivial Changes"
-              }
-            ]
-          }
-        }
-      ],
-      "@semantic-release/changelog",
-      "@semantic-release/npm",
-      "@semantic-release/github",
-      "@semantic-release/git"
-    ]
   }
 }

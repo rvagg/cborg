@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'rvagg/cborg' && github.ref_type == 'tag' && github.actor == 'rvagg'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout approved tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate release metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF#refs/tags/}"
+          [[ "$GITHUB_REF" == "refs/tags/$tag" && "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$(git rev-parse "$GITHUB_REF^{commit}")" == "$GITHUB_SHA" ]]
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/master
+          node --input-type=module -e 'import fs from "node:fs"; const tag = process.argv[1]; const pkg = JSON.parse(fs.readFileSync("package.json")); const manifest = JSON.parse(fs.readFileSync(".github/release-please-manifest.json")); if (pkg.name !== "cborg" || pkg.version !== tag.slice(1) || manifest["."] !== tag.slice(1)) process.exit(1)' "$tag"
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: npm install --no-progress
+      - name: Build
+        run: npm run build
+      - name: Test
+        shell: bash
+        run: |
+          npm config set script-shell bash
+          npm run test:ci
+      - name: Pack release tarball
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF#refs/tags/}"
+          archive="cborg-${tag#v}.tgz"
+          mkdir release-files
+          npm pack --ignore-scripts --pack-destination release-files
+          test -f "release-files/$archive"
+      - name: Retain release files
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-files-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-files
+          if-no-files-found: error
+          retention-days: 7
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Publish release with Waxseal
+        uses: rvagg/waxseal@9df237e616424c229c46eb19fc831de8b3ffd138 # v0.1.0

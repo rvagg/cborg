@@ -1,0 +1,58 @@
+name: Prepare release candidate
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: release-please-master
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare release candidate
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ github.token }}
+          target-branch: master
+          config-file: .github/release-please-config.json
+          manifest-file: .github/release-please-manifest.json
+          skip-github-release: true
+      - name: Dispatch candidate CI
+        if: steps.release.outputs.prs_created == 'true'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          RELEASE_PLEASE_PRS: ${{ steps.release.outputs.prs }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const prs = JSON.parse(process.env.RELEASE_PLEASE_PRS ?? '[]');
+            if (prs.length !== 1) {
+              core.setFailed(`expected one release candidate PR, got ${prs.length}`);
+              return;
+            }
+            const candidate = prs[0];
+            if (!Number.isInteger(candidate.number) || typeof candidate.headBranchName !== 'string' || candidate.headBranchName.length === 0 || candidate.baseBranchName !== 'master') {
+              core.setFailed('release-please returned an invalid candidate PR');
+              return;
+            }
+            const {data: pull} = await github.rest.pulls.get({owner: context.repo.owner, repo: context.repo.repo, pull_number: candidate.number});
+            const repository = `${context.repo.owner}/${context.repo.repo}`;
+            if (pull.state !== 'open' || pull.base.ref !== 'master' || pull.head.ref !== candidate.headBranchName || pull.head.repo?.full_name !== repository || (typeof candidate.sha === 'string' && candidate.sha !== pull.head.sha)) {
+              core.setFailed('release candidate identity changed before CI dispatch');
+              return;
+            }
+            const expectedHeadSHA = pull.head.sha;
+            await github.rest.actions.createWorkflowDispatch({owner: context.repo.owner, repo: context.repo.repo, workflow_id: 'test-and-release.yml', ref: pull.head.ref, inputs: {expected_head_sha: expectedHeadSHA}});
+            core.notice(`dispatched CI for candidate #${pull.number} at ${expectedHeadSHA}`);

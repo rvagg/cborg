@@ -1,5 +1,20 @@
-name: Test & Maybe Release
-on: [push, pull_request]
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      expected_head_sha:
+        description: Candidate commit SHA
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
 jobs:
   test:
     strategy:
@@ -9,47 +24,29 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout Repository
+      - name: Validate dispatched revision
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        shell: bash
+        env:
+          EXPECTED_HEAD_SHA: ${{ inputs.expected_head_sha }}
+          ACTUAL_HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$EXPECTED_HEAD_SHA" = "$ACTUAL_HEAD_SHA"
+      - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node }}
-      - name: Install Dependencies
-        run: |
-          npm install --no-progress
+      - name: Install dependencies
+        run: npm install --no-progress
       - name: Run tests
+        shell: bash
         run: |
           npm config set script-shell bash
           npm run test:ci
-  release:
-    name: Release
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-      id-token: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: lts/*
-      - name: Install dependencies
-        run: |
-          npm install --no-progress --no-package-lock --no-save
-      - name: Build
-        run: |
-          npm run build
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
-        run: npx semantic-release
-
