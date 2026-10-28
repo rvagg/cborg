@@ -2,10 +2,6 @@ import { Token } from '../token.js';
 export type DecodeOptions = import('../../interface.js').DecodeOptions;
 export type DecodeTokenizer = import('../../interface.js').DecodeTokenizer;
 /**
- * @typedef {import('../../interface.js').DecodeOptions} DecodeOptions
- * @typedef {import('../../interface.js').DecodeTokenizer} DecodeTokenizer
- */
-/**
  * @implements {DecodeTokenizer}
  */
 declare class Tokenizer implements DecodeTokenizer {

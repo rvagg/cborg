@@ -217,3 +217,44 @@ describe('json basics', () => {
     assert.strictEqual(buf.length, 0)
   })
 })
+
+describe('json number limits', () => {
+  const ones = (n) => '1'.repeat(n)
+  const numErr = /CBOR decode error.*number/
+
+  it('literals of 1000 characters decode, 1001 throw', () => {
+    const opts = { allowBigInt: true }
+    assert.doesNotThrow(() => decode(toBytes(ones(1000)), opts))
+    assert.throws(() => decode(toBytes(ones(1001)), opts), numErr)
+    assert.doesNotThrow(() => decode(toBytes('-' + ones(999)), opts))
+    assert.throws(() => decode(toBytes('-' + ones(1000)), opts), numErr)
+    for (const o of [undefined, opts]) {
+      assert.doesNotThrow(() => decode(toBytes('1.' + ones(998)), o))
+      assert.throws(() => decode(toBytes('1.' + ones(999)), o), numErr)
+      assert.doesNotThrow(() => decode(toBytes('1e' + ones(998)), o))
+      assert.throws(() => decode(toBytes('1e' + ones(999)), o), numErr)
+    }
+  })
+
+  it('huge literals throw a decode error', () => {
+    assert.throws(() => decode(toBytes(ones(200000))), numErr)
+    assert.throws(() => decode(toBytes(ones(200000)), { allowBigInt: true }), numErr)
+  })
+
+  it('a 1000 digit integer is an exact BigInt with allowBigInt', () => {
+    assert.strictEqual(decode(toBytes(ones(1000)), { allowBigInt: true }), BigInt(ones(1000)))
+  })
+
+  it('integers too large for a Number throw without allowBigInt', () => {
+    const nines = (n) => '9'.repeat(n)
+    const tooLarge = /CBOR decode error.*too large/
+    assert.strictEqual(decode(toBytes(nines(308))), parseFloat(nines(308)))
+    assert.throws(() => decode(toBytes(nines(309))), tooLarge)
+    assert.throws(() => decode(toBytes('-' + nines(309))), tooLarge)
+    assert.strictEqual(decode(toBytes(nines(309)), { allowBigInt: true }), BigInt(nines(309)))
+  })
+
+  it('floats beyond the Number range are left alone', () => {
+    assert.strictEqual(decode(toBytes('1e999')), Infinity)
+  })
+})
