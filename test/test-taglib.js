@@ -184,6 +184,121 @@ describe('taglib', () => {
       })
     })
 
+    describe('byte-level vectors and scaling', () => {
+      // byte-by-byte reference implementations
+      function refDecode (bytes) {
+        let bi = 0n
+        for (let i = 0; i < bytes.length; i++) bi = (bi << 8n) + BigInt(bytes[i])
+        return bi
+      }
+
+      function refEncode (bi) {
+        const buf = []
+        while (bi > 0) {
+          buf.unshift(Number(bi & 0xffn))
+          bi >>= 8n
+        }
+        return Uint8Array.from(buf.length ? buf : [0])
+      }
+
+      function randomBytes (n) {
+        const b = new Uint8Array(n)
+        for (let i = 0; i < n; i++) b[i] = Math.floor(Math.random() * 256)
+        return b
+      }
+
+      const vectors = [
+        ['empty', [], 0n],
+        ['zero', [0], 0n],
+        ['leading zeros', [0, 0, 0, 1], 1n],
+        ['leading zeros then max', [0, 0xff], 255n],
+        ['1 byte', [0xff], 255n],
+        ['8 bytes', [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff], 18446744073709551615n],
+        ['9 bytes', [1, 0, 0, 0, 0, 0, 0, 0, 0], 18446744073709551616n],
+        ['9 bytes max', new Array(9).fill(0xff), (1n << 72n) - 1n]
+      ]
+
+      for (const [name, bytes, expected] of vectors) {
+        it(`tag 2 decodes ${name}`, () => {
+          assert.strictEqual(bigIntDecoder(mockDecode(Uint8Array.from(bytes))), expected)
+        })
+
+        it(`tag 3 decodes ${name}`, () => {
+          assert.strictEqual(bigNegIntDecoder(mockDecode(Uint8Array.from(bytes))), -1n - expected)
+        })
+      }
+
+      it('decodes a view with a non-zero byteOffset', () => {
+        const backing = new Uint8Array([0xaa, 0xbb, 1, 2, 3, 0xcc])
+        const view = backing.subarray(2, 5)
+        assert.strictEqual(bigIntDecoder(mockDecode(view)), 0x010203n)
+        assert.strictEqual(bigNegIntDecoder(mockDecode(view)), -1n - 0x010203n)
+      })
+
+      it('encodes minimal bytes at byte boundaries', () => {
+        const encoded = (n) => [...structBigIntEncoder(n)[1].value]
+        assert.deepStrictEqual(encoded(0n), [0])
+        assert.deepStrictEqual(encoded(1n), [1])
+        assert.deepStrictEqual(encoded(255n), [255])
+        assert.deepStrictEqual(encoded(256n), [1, 0])
+        assert.deepStrictEqual(encoded(15n), [0x0f])
+        assert.deepStrictEqual(encoded(0x1000n), [0x10, 0])
+        assert.deepStrictEqual(encoded(0xfffn), [0x0f, 0xff])
+        assert.deepStrictEqual(encoded((1n << 64n) - 1n), new Array(8).fill(0xff))
+        assert.deepStrictEqual(encoded(1n << 64n), [1, 0, 0, 0, 0, 0, 0, 0, 0])
+        assert.deepStrictEqual(encoded(-1n), [0])
+        assert.deepStrictEqual(encoded(-256n), [0xff])
+        assert.deepStrictEqual(encoded(-257n), [1, 0])
+      })
+
+      it('matches the reference for random sizes', () => {
+        const sizes = [1, 2, 3, 7, 8, 9, 15, 16, 17, 31, 32, 33, 100, 1000, 4097]
+        for (const size of sizes) {
+          for (let round = 0; round < 3; round++) {
+            const bytes = randomBytes(size)
+            if (round === 1) bytes[0] = 0xff
+            if (round === 2) bytes[0] = 1
+            const pos = bigIntDecoder(mockDecode(bytes))
+            assert.strictEqual(pos, refDecode(bytes), `decode ${size}`)
+            const neg = bigNegIntDecoder(mockDecode(bytes))
+            assert.strictEqual(neg, -1n - refDecode(bytes), `decode neg ${size}`)
+            assert.deepStrictEqual(structBigIntEncoder(pos)[1].value, refEncode(pos), `encode ${size}`)
+            assert.deepStrictEqual(structBigIntEncoder(neg)[1].value, refEncode(-1n - neg), `encode neg ${size}`)
+          }
+        }
+      })
+
+      it('matches the reference for random small values', () => {
+        for (let i = 0; i < 2000; i++) {
+          const n = BigInt(Math.floor(Math.random() * 2 ** 32)) * BigInt(Math.floor(Math.random() * 2 ** 32))
+          assert.deepStrictEqual(structBigIntEncoder(n)[1].value, refEncode(n))
+          assert.deepStrictEqual(structBigIntEncoder(-n - 1n)[1].value, refEncode(n))
+        }
+      })
+
+      it('bigIntEncoder matches the reference outside 64 bits', () => {
+        for (const n of [1n << 64n, (1n << 80n) + 5n, 1n << 1000n]) {
+          assert.deepStrictEqual(bigIntEncoder(n)[1].value, refEncode(n))
+          assert.deepStrictEqual(bigIntEncoder(-n - 1n)[1].value, refEncode(n))
+        }
+      })
+
+      it('decodes and encodes large values quickly', function () {
+        this.timeout(10000)
+        const bytes = randomBytes(1 << 18)
+        bytes[0] |= 1
+        let start = Date.now()
+        const pos = bigIntDecoder(mockDecode(bytes))
+        const neg = bigNegIntDecoder(mockDecode(bytes))
+        assert.isBelow(Date.now() - start, 2000, 'decode')
+        start = Date.now()
+        const out = structBigIntEncoder(pos)[1].value
+        assert.isBelow(Date.now() - start, 2000, 'encode')
+        assert.deepStrictEqual(out, bytes)
+        assert.deepStrictEqual(structBigIntEncoder(neg)[1].value, bytes)
+      })
+    })
+
     describe('round-trip via encode/decode', () => {
       const opts = {
         typeEncoders: { bigint: structBigIntEncoder },
