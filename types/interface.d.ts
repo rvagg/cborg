@@ -42,6 +42,7 @@ export interface DecodeOptions {
     useMaps?: boolean;
     rejectDuplicateMapKeys?: boolean;
     retainStringBytes?: boolean;
+    strictUtf8?: boolean;
     tags?: {
         [tagNumber: number]: TagDecoder;
     };
