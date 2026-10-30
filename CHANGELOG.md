@@ -4,6 +4,15 @@
 
 * add agent context docs ([#205](https://github.com/rvagg/cborg/issues/205)) ([02bf530](https://github.com/rvagg/cborg/commit/02bf5305271420fa2324a66fd79b5a4e28242f29))
 
+## [6.2.1](https://github.com/rvagg/cborg/compare/v6.2.0...v6.2.1) (2026-10-30)
+
+
+### Trivial Changes
+
+* **ci:** upgrade waxseal to v0.1.1 ([#226](https://github.com/rvagg/cborg/issues/226)) ([1293bf7](https://github.com/rvagg/cborg/commit/1293bf7ee09e433447ed14e6dd25f89daed4813a))
+* **ci:** upgrade waxseal to v0.2.0 ([#228](https://github.com/rvagg/cborg/issues/228)) ([6c906d8](https://github.com/rvagg/cborg/commit/6c906d87ba21a693cd27e1e03320908f7b40ed92))
+* **deps:** bump actions/upload-artifact from 7.0.1 to 7.0.2 ([#225](https://github.com/rvagg/cborg/issues/225)) ([211541a](https://github.com/rvagg/cborg/commit/211541ad0cef87c22c9b55b5e54e8476957b124c))
+
 ## [6.2.0](https://github.com/rvagg/cborg/compare/v6.1.6...v6.2.0) (2026-10-28)
 
 
