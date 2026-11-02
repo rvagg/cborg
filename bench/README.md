@@ -33,11 +33,11 @@ Open `bench/index.html` in a browser. Select mode, suite, and duration, then cli
 
 ```bash
 # Save results to a file
-node bench/bench.js --json > bench/baselines/before-change.json
+node bench/bench.js --json=bench/baselines/before-change.json
 
 # Or with a version/date identifier
-node bench/bench.js --json > bench/baselines/v4.4.0.json
-node bench/bench.js --json > bench/baselines/$(date +%Y%m%d).json
+node bench/bench.js --json=bench/baselines/v4.4.0.json
+node bench/bench.js --json=bench/baselines/$(date +%Y%m%d).json
 ```
 
 ### Compare against baseline
@@ -52,7 +52,7 @@ This shows percentage differences for each benchmark.
 
 1. Capture baseline before making changes:
    ```bash
-   node bench/bench.js --json > bench/baselines/before.json
+   node bench/bench.js --json=bench/baselines/before.json
    ```
 
 2. Make your changes to cborg
@@ -64,7 +64,7 @@ This shows percentage differences for each benchmark.
 
 4. Optionally save the new results:
    ```bash
-   node bench/bench.js --json > bench/baselines/after.json
+   node bench/bench.js --json=bench/baselines/after.json
    ```
 
 ## Benchmark Modes
