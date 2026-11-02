@@ -82,8 +82,10 @@ mode, `encodedLength()` and map key sorting share one code path.
 `encode()` and `encodeInto()` take a direct path that skips token
 allocation when it can. It falls back to tokens for custom encoders, maps
 that need sorting and anything simpler to express as tokens.
-`addBreakTokens: true` disables it. The direct path must produce bytes
-identical to the token path, and both paths stay tested.
+Plain objects with only short ASCII keys and the default map sorter sort
+their keys without tokens. `addBreakTokens: true` disables the direct path.
+The direct path must produce bytes identical to the token path, and both
+paths stay tested.
 
 Modules:
 
