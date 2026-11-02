@@ -91,7 +91,7 @@ Modules:
 - `lib/0uint.js` through `lib/7float.js`, one per CBOR major type, mirrored
   by `test/test-0uint.js` through `test/test-7float.js`.
 - `lib/token.js` `Token` and `Type`. `lib/jump.js` decoder jump tables.
-  `lib/bl.js` byte writers. `lib/is.js` type detection. `lib/byte-utils.js`
+  `lib/writer.js` byte writers. `lib/is.js` type detection. `lib/byte-utils.js`
   byte, hex and UTF-8 helpers.
 - `lib/tagged.js` one-off tag wrapper. `lib/taglib.js` reusable tag encoders
   and decoders. `lib/extended/` structured-clone-style fidelity.
@@ -143,7 +143,7 @@ Contracts that are easy to get wrong:
 4. For anything under `lib/` on the encode or decode path, benchmark:
 
    ```bash
-   node bench/bench.js --json > /tmp/before.json   # on master
+   node bench/bench.js --json=/tmp/before.json     # on master
    node bench/bench.js --compare=/tmp/before.json  # on your branch
    ```
 

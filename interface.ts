@@ -82,9 +82,10 @@ export interface EncodeOptions {
 }
 
 export interface ByteWriter {
-  chunks: (ByteView | number[])[];
   reset(): void;
   pushByte(byte: number): void;
   push(bytes: ByteView | number[]): void;
+  pushArr(bytes: number[]): void;
+  pushBytes(bytes: ByteView): void;
   toBytes(reset?: boolean | undefined): ByteView;
 }
