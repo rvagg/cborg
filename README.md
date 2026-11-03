@@ -22,10 +22,8 @@
   * [`cborg json2hex '[json string]'`](#cborg-json2hex-json-string)
 * [API](#api)
   * [`encode(object[, options])`](#encodeobject-options)
-    * [Options](#options)
   * [`encodeInto(data, destination[, options])`](#encodeintodata-destination-options)
   * [`decode(data[, options])`](#decodedata-options)
-    * [Options](#options-1)
   * [`decodeFirst(data[, options])`](#decodefirstdata-options)
   * [`encodedLength(data[, options])`](#encodedlengthdata-options)
   * [`Tagged`](#tagged)
@@ -42,10 +40,12 @@
   * [When to use `cborg/extended`](#when-to-use-cborgextended)
   * [Supported types](#supported-types)
   * [Type fidelity: objects vs Maps](#type-fidelity-objects-vs-maps)
-  * [Interoperability](#interoperability)
+  * [Interoperability and limitations](#interoperability-and-limitations)
 * [Selective type support (`cborg/taglib`)](#selective-type-support-cborgtaglib)
   * [`cborg/extended` vs `cborg/taglib`](#cborgextended-vs-cborgtaglib)
   * [Available exports](#available-exports)
+* [Security considerations](#security-considerations)
+* [Releases](#releases)
 * [License and Copyright](#license-and-copyright)
 
 ## Example
@@ -821,6 +821,22 @@ const decoded = decode(encoded, {
 - TypedArray decoders: `uint8ArrayDecoder`, `uint8ClampedArrayDecoder`, `int8ArrayDecoder`, `uint16ArrayDecoder`, `int16ArrayDecoder`, `uint32ArrayDecoder`, `int32ArrayDecoder`, `float32ArrayDecoder`, `float64ArrayDecoder`, `bigUint64ArrayDecoder`, `bigInt64ArrayDecoder`
 
 **Tag constants:** `TAG_DATE_STRING`, `TAG_DATE_EPOCH`, `TAG_BIGINT_POS`, `TAG_BIGINT_NEG`, `TAG_UINT8_ARRAY`, `TAG_UINT8_CLAMPED_ARRAY`, `TAG_INT8_ARRAY`, `TAG_UINT16_ARRAY_LE`, `TAG_INT16_ARRAY_LE`, `TAG_UINT32_ARRAY_LE`, `TAG_INT32_ARRAY_LE`, `TAG_FLOAT32_ARRAY_LE`, `TAG_FLOAT64_ARRAY_LE`, `TAG_BIGUINT64_ARRAY_LE`, `TAG_BIGINT64_ARRAY_LE`, `TAG_SET`, `TAG_MAP`, `TAG_REGEXP`
+
+## Security considerations
+
+cborg is built to decode bytes you don't trust. If hostile input can make `cborg` or `cborg/json` misbehave in a way not described below, that is considered a security bug.
+
+**Strictness is opt-in.** The defaults accept sloppy data. For untrusted input, consider setting the strictness options that match your format: `strict`, `rejectDuplicateMapKeys`, `strictUtf8`, `allowIndefinite: false`, `allowNaN: false` and `allowInfinity: false`. `strict` does not enforce float width or map key order, so check those yourself if you need canonical bytes.
+
+**Nesting depth.** Decoding recurses. Deeply nested input ends in a `RangeError` from the JavaScript engine, not a crash, but the depth where it happens varies by runtime. Bound the size of untrusted input or catch the error.
+
+**Encoding untrusted graphs.** Encoding walks every reference. Twenty levels of `[o, o]` encode to 4 MB, as they would with `JSON.stringify()`. Circular references throw. Bound the size and depth of anything an attacker can influence.
+
+**`cborg/extended` and `cborg/taglib`.** These are opt-in and reach further: they build `RegExp`, `Date`, typed array, bignum and `Error` values from decoded data. Never execute, or use as a pattern, a `RegExp` decoded from untrusted input. Tag decoders cannot see decode options, so float arrays and `Date` accept `NaN` and `Infinity` whatever `allowNaN` and `allowInfinity` say, and a `Set` silently collapses duplicates. Use the base entry point where dag-cbor strictness matters.
+
+**The CLI** is a debugging tool and not designed as a security boundary, but problems in it are still worth reporting.
+
+Report vulnerabilities privately, as described in [SECURITY.md](.github/SECURITY.md).
 
 ## Releases
 
