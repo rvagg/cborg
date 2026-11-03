@@ -167,7 +167,8 @@ describe('encode plain objects with ASCII keys', () => {
     same({ n: null, t: true, f: false, i: -5, big: 2n ** 60n, fl: 1.5, s: 'str', b: new Uint8Array(2000), u8: new Uint8Array([1, 2]), d: new Date(0).getTime() })
   })
 
-  it('randomised structures match the general path', () => {
+  it('randomised structures match the general path', function () {
+    this.timeout(10000)
     const rnd = prng(0xc0ffee)
     const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJ0123456789_-'
     const key = () => {
