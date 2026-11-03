@@ -245,7 +245,7 @@ const { written } = encodeInto({ hello: 'world' }, destination)
 const encoded = destination.subarray(0, written)
 ```
 
-If the destination buffer is too small to hold the encoded data, an error will be thrown. Use `encodedLength()` to pre-calculate the required size if needed.
+A `TypeError` is thrown if `destination` is not a `Uint8Array`. If the destination buffer is too small to hold the encoded data, an error will be thrown. Use `encodedLength()` to pre-calculate the required size if needed.
 
 The same encoding rules and options as [`encode()`](#encodeobject-options) apply.
 
@@ -596,6 +596,7 @@ Currently, there are two areas that cborg cannot impose strictness requirements 
 There are a number of forms where an object will not round-trip precisely, if this matters for an application, care should be taken, or certain types should be disallowed entirely during encode.
 
 * All `TypedArray`s will decode as `Uint8Array`s, unless a custom tag is used.
+* A `Map` whose keys encode to the same bytes, e.g. `1` and `1n`, throws on encode rather than emitting a map with duplicate keys.
 * Both `Map` and `Object` will be encoded as a CBOR `map`, as will any other object that inherits from `Object` that can't be differentiated by the [@sindresorhus/is](https://github.com/sindresorhus/is) algorithm. They will all decode as `Object` by default, or `Map` if `useMaps` is set to `true`. e.g. `{ foo: new Map() }` will round-trip to `{ foo: {} }` by default.
 
 ## JSON mode

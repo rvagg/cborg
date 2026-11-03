@@ -3,7 +3,7 @@
 import * as chai from 'chai'
 import { garbage } from 'ipld-garbage'
 import { uintBoundaries } from '../lib/0uint.js'
-import { encode } from '../cborg.js'
+import { encode, encodeInto } from '../cborg.js'
 import { encodedLength } from '../lib/length.js'
 import { dateEncoder } from './common.js'
 
@@ -61,5 +61,28 @@ describe('encodedLength', () => {
       const gbg = garbage(1 << 20, { weights: { CID: 0 } })
       verifyLength(gbg)
     }
+  })
+
+  describe('BigInt range', () => {
+    const tooBig = [2n ** 64n, -(2n ** 64n) - 1n, 2n ** 70n, -(2n ** 70n)]
+    const inRange = [2n ** 64n - 1n, -(2n ** 64n)]
+    const rangeErr = /^CBOR encode error: encountered BigInt larger than allowable range$/
+
+    it('encode, encodedLength and encodeInto agree on out of range values', () => {
+      for (const v of tooBig) {
+        assert.throws(() => encode(v), rangeErr, `encode ${v}`)
+        assert.throws(() => encodedLength(v), rangeErr, `encodedLength ${v}`)
+        assert.throws(() => encodeInto(v, new Uint8Array(16)), rangeErr, `encodeInto ${v}`)
+        assert.throws(() => encodedLength([v]), rangeErr, `encodedLength [${v}]`)
+      }
+    })
+
+    it('boundary values agree', () => {
+      for (const v of inRange) {
+        assert.strictEqual(encodedLength(v), 9)
+        assert.strictEqual(encode(v).length, 9)
+        assert.strictEqual(encodeInto(v, new Uint8Array(16)).written, 9)
+      }
+    })
   })
 })
