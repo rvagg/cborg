@@ -205,7 +205,7 @@ describe('string U+FEFF (BOM)', () => {
   })
 })
 
-describe('strictUtf8', () => {
+describe('rejectInvalidUtf8', () => {
   const BOM = '﻿'
   const dagCborLike = {
     strict: true,
@@ -215,7 +215,7 @@ describe('strictUtf8', () => {
     allowInfinity: false,
     coerceUndefinedToNull: true,
     allowBigInt: true,
-    strictUtf8: true
+    rejectInvalidUtf8: true
   }
   const longInvalid = '78' + '28' + '61'.repeat(39) + 'ff' // 40 bytes
   const invalid = {
@@ -233,13 +233,13 @@ describe('strictUtf8', () => {
 
   for (const [name, hex] of Object.entries(invalid)) {
     it(`rejects ${name}`, () => {
-      assert.throws(() => decode(fromHex(hex), { strictUtf8: true }), /CBOR decode error:.*UTF-8/)
+      assert.throws(() => decode(fromHex(hex), { rejectInvalidUtf8: true }), /CBOR decode error:.*UTF-8/)
       assert.throws(() => decode(fromHex(hex), dagCborLike), /CBOR decode error:.*UTF-8/)
     })
 
     it(`still decodes ${name} with replacement by default`, () => {
       assert.doesNotThrow(() => decode(fromHex(hex)))
-      assert.doesNotThrow(() => decode(fromHex(hex), { strictUtf8: false }))
+      assert.doesNotThrow(() => decode(fromHex(hex), { rejectInvalidUtf8: false }))
       assert.doesNotThrow(() => decode(fromHex(hex), { strict: true }))
     })
   }
@@ -253,8 +253,13 @@ describe('strictUtf8', () => {
 
   it('distinguishes the wire forms that collide by default', () => {
     for (const hex of ['a162c32801', 'a162ff2801']) {
-      assert.throws(() => decode(fromHex(hex), { strictUtf8: true }), /UTF-8/)
+      assert.throws(() => decode(fromHex(hex), { rejectInvalidUtf8: true }), /UTF-8/)
     }
+  })
+
+  it('ignores the removed strictUtf8 name', () => {
+    // @ts-expect-error strictUtf8 is no longer an option
+    assert.strictEqual(decode(fromHex('61ff'), { strictUtf8: true }), '\ufffd')
   })
 
   it('decodes valid text identically', () => {
@@ -266,20 +271,20 @@ describe('strictUtf8', () => {
     ]
     for (const str of strs) {
       const bytes = encode(str)
-      assert.strictEqual(decode(bytes, { strictUtf8: true }), str)
+      assert.strictEqual(decode(bytes, { rejectInvalidUtf8: true }), str)
       assert.strictEqual(decode(bytes, dagCborLike), str)
       const nested = [str, { [str]: [str] }]
-      assert.deepStrictEqual(decode(encode(nested), { strictUtf8: true }), nested)
+      assert.deepStrictEqual(decode(encode(nested), { rejectInvalidUtf8: true }), nested)
     }
   })
 
   it('accepts ASCII', () => {
     for (const str of ['abc', 'a'.repeat(31), 'a'.repeat(32), 'a'.repeat(1000)]) {
-      assert.strictEqual(decode(encode(str), { strictUtf8: true }), str)
+      assert.strictEqual(decode(encode(str), { rejectInvalidUtf8: true }), str)
     }
   })
 
   it('rejects with retainStringBytes set', () => {
-    assert.throws(() => decode(fromHex('62c328'), { strictUtf8: true, retainStringBytes: true }), /UTF-8/)
+    assert.throws(() => decode(fromHex('62c328'), { rejectInvalidUtf8: true, retainStringBytes: true }), /UTF-8/)
   })
 })

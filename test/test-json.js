@@ -354,7 +354,7 @@ describe('json U+FEFF (BOM)', () => {
   })
 })
 
-describe('json strictUtf8', () => {
+describe('json rejectInvalidUtf8', () => {
   const bytes = (...parts) => Uint8Array.from(parts.flatMap((p) => typeof p === 'string' ? [...toBytes(p)] : p))
   const q = 0x22
   const invalid = {
@@ -373,9 +373,9 @@ describe('json strictUtf8', () => {
         bytes('["x",', q, seq, 'a', q, ']'),
         bytes('{', q, seq, 'a', q, ':1}')
       ]) {
-        assert.throws(() => decode(data, { strictUtf8: true }), /CBOR decode error:.*UTF-8/)
+        assert.throws(() => decode(data, { rejectInvalidUtf8: true }), /CBOR decode error:.*UTF-8/)
         assert.doesNotThrow(() => decode(data))
-        assert.doesNotThrow(() => decode(data, { strictUtf8: false }))
+        assert.doesNotThrow(() => decode(data, { rejectInvalidUtf8: false }))
       }
     })
   }
@@ -387,8 +387,8 @@ describe('json strictUtf8', () => {
   it('decodes valid text identically', () => {
     for (const str of ['abc', 'café', '日本語', '😀', '﻿abc', 'é'.repeat(100)]) {
       const data = toBytes(JSON.stringify(str))
-      assert.strictEqual(decode(data, { strictUtf8: true }), str)
-      assert.deepStrictEqual(decode(toBytes(JSON.stringify({ [str]: [str] })), { strictUtf8: true }), { [str]: [str] })
+      assert.strictEqual(decode(data, { rejectInvalidUtf8: true }), str)
+      assert.deepStrictEqual(decode(toBytes(JSON.stringify({ [str]: [str] })), { rejectInvalidUtf8: true }), { [str]: [str] })
     }
   })
 })
