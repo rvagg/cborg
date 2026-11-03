@@ -4,6 +4,7 @@ import * as chai from 'chai'
 
 import { decode, encode, encodeInto } from '../cborg.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
+import { encodedLength } from '../lib/length.js'
 
 const { assert } = chai
 
@@ -137,5 +138,19 @@ describe('float', () => {
         assert.throws(() => decode(fromHex(fixture.data), { allowNaN: false }), /NaN/)
       }
     })
+  })
+
+  describe('break tokens', () => {
+    // addBreakTokens appends a break token after each container so token
+    // consumers can see where it ends (the JSON encoder closes ] and } with
+    // it). The CBOR writer skips it, since the container header carries the count.
+    const values = [1, [], {}, [1], [1, [2, []]], { a: [1], b: {} }, new Map([[1, 'a']]), undefined, [undefined]]
+    for (const value of values) {
+      it(`encodes ${JSON.stringify(value)} identically with addBreakTokens`, () => {
+        const options = { addBreakTokens: true }
+        assert.strictEqual(toHex(encode(value, options)), toHex(encode(value)))
+        assert.strictEqual(encodedLength(value, options), encode(value).length)
+      })
+    }
   })
 })

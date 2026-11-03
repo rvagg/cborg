@@ -2,7 +2,8 @@
 
 import * as chai from 'chai'
 
-import { decode, encode, encodeInto } from '../cborg.js'
+import { decode, encode, encodeInto, rfc8949EncodeOptions } from '../cborg.js'
+import { encodedLength } from '../lib/length.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
 
 const { assert } = chai
@@ -249,6 +250,72 @@ describe('map', () => {
 
     it('can switch off indefinite length support', () => {
       assert.throws(() => decode(fromHex('bf616f01617402ff'), { allowIndefinite: false }), /indefinite/)
+    })
+  })
+
+  describe('duplicate keys', () => {
+    const dupe = /^CBOR encode error: duplicate map key$/
+    const u8 = (...b) => Uint8Array.from(b)
+    const cases = {
+      'int and BigInt': [[1, 'a'], [1n, 'b']],
+      'negint and BigInt': [[-1, 'a'], [-1n, 'b']],
+      'equal bytes': [[u8(1, 2), 'a'], [u8(1, 2), 'b']]
+    }
+    const optionSets = { default: undefined, rfc8949: rfc8949EncodeOptions }
+
+    for (const [optName, options] of Object.entries(optionSets)) {
+      for (const [name, entries] of Object.entries(cases)) {
+        for (const [order, ents] of [['forward', entries], ['reverse', [...entries].reverse()]]) {
+          it(`throws for ${name} (${order}, ${optName})`, () => {
+            assert.throws(() => encode(new Map(ents), options), dupe)
+            assert.throws(() => encodeInto(new Map(ents), new Uint8Array(64), options), dupe)
+          })
+        }
+      }
+
+      it(`throws for a duplicate among other keys (${optName})`, () => {
+        const m = new Map([[3, 'c'], [1, 'a'], [2, 'b'], [1n, 'z'], [0, 'y']])
+        assert.throws(() => encode(m, options), dupe)
+      })
+
+      it(`throws for a duplicate in a nested map (${optName})`, () => {
+        assert.throws(() => encode([{ m: new Map([[1, 'a'], [1n, 'b']]) }], options), dupe)
+      })
+
+      it(`still encodes unique mixed-type keys (${optName})`, () => {
+        const m = new Map([['a', 1], [1, 2], [-1, 3], [u8(1), 4], [2n, 5]])
+        const hex = toHex(encode(m, options))
+        assert.strictEqual(hex, toHex(encode(new Map([...m].reverse()), options)))
+        assert.strictEqual(decode(fromHex(hex), { useMaps: true }).size, 5)
+      })
+    }
+
+    it('throws from the token path', () => {
+      const m = new Map([[1, 'a'], [1n, 'b']])
+      assert.throws(() => encode(m, { addBreakTokens: true }), dupe)
+      assert.throws(() => encode(m, { typeEncoders: { string: () => null } }), dupe)
+    })
+
+    it('encodedLength does not sort so does not see the duplicate', () => {
+      assert.strictEqual(encodedLength(new Map([[1, 'a'], [1n, 'b']])), 7)
+    })
+
+    it('ignores complex keys whose opening tokens match', () => {
+      const warn = console.warn
+      let warnings = 0
+      console.warn = () => { warnings++ }
+      try {
+        const m = new Map([[[1], 'a'], [[2], 'b'], [[3], 'c']])
+        assert.strictEqual(toHex(encode(m)), 'a3810161618102616281036163')
+        assert.strictEqual(toHex(encode(new Map([[[1], 'a'], [[2], 'b']]))), 'a281016161810261' + '62')
+        assert.isAtMost(warnings, 1)
+      } finally {
+        console.warn = warn
+      }
+    })
+
+    it('does not affect plain objects', () => {
+      assert.strictEqual(toHex(encode({ b: 1, a: 2, 1: 3 })), 'a3613103616102616201')
     })
   })
 

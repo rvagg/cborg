@@ -243,4 +243,44 @@ describe('encodeInto', () => {
       assert.strictEqual(hex2, toHex(encode({ b: 2 })))
     })
   })
+
+  describe('destination validation', () => {
+    const bad = {
+      undefined,
+      null: null,
+      Array: [],
+      ArrayBuffer: new ArrayBuffer(8),
+      DataView: new DataView(new ArrayBuffer(8)),
+      Uint16Array: new Uint16Array(8),
+      Int8Array: new Int8Array(8),
+      string: 'abcdefgh',
+      object: {}
+    }
+
+    for (const [name, dest] of Object.entries(bad)) {
+      it(`throws a TypeError for ${name}`, () => {
+        assert.throws(() => encodeInto(1, dest), TypeError, /destination must be a Uint8Array/)
+        assert.throws(() => encodeInto(1, dest, { addBreakTokens: true }), TypeError, /destination must be a Uint8Array/)
+      })
+    }
+
+    it('leaves a wrongly typed destination untouched', () => {
+      const dest = new Uint16Array(8)
+      assert.throws(() => encodeInto([1, 2], dest), TypeError)
+      assert.deepEqual([...dest], [0, 0, 0, 0, 0, 0, 0, 0])
+    })
+
+    it('accepts a Buffer', function () {
+      if (typeof Buffer === 'undefined') {
+        this.skip()
+      }
+      assert.strictEqual(encodeInto([1, 2], Buffer.alloc(8)).written, 3)
+    })
+
+    it('accepts a subarray view', () => {
+      const view = new Uint8Array(16).subarray(4, 12)
+      assert.strictEqual(encodeInto([1, 2], view).written, 3)
+      assert.strictEqual(toHex(view.subarray(0, 3)), '820102')
+    })
+  })
 })

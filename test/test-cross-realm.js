@@ -60,6 +60,15 @@ describe('cross-realm Uint8Array', () => {
     assert.isFalse(run('new Uint8Array(1)') instanceof Uint8Array)
   })
 
+  it('encodeInto accepts a foreign destination', () => {
+    const typeEncoders = { string: () => null } // forces the token path
+    for (const options of [undefined, { addBreakTokens: true }, { typeEncoders }]) {
+      const dest = run('new Uint8Array(8)')
+      const { written } = encodeInto([1, 'a'], dest, options)
+      assert.strictEqual(toHex(Uint8Array.from(dest).subarray(0, written)), '82016161')
+    }
+  })
+
   it('plain', () => {
     check(run('new Uint8Array([1, 2, 3])'), Uint8Array.of(1, 2, 3), '43010203')
   })

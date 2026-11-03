@@ -42,7 +42,7 @@ describe('encode re-entrancy', () => {
     const out = encode(['aaaa', {
       get a () { return encode([7], { addBreakTokens: true }) }
     }])
-    assert.strictEqual(toHex(out), '82' + '6461616161' + 'a1' + '6161' + '438107f7')
+    assert.strictEqual(toHex(out), '82' + '6461616161' + 'a1' + '6161' + '428107')
   })
 
   it('exception after a nested encode leaves the writer usable', () => {
