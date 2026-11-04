@@ -2,7 +2,7 @@
 
 import * as chai from 'chai'
 
-import { decode, encode, encodeInto } from '../cborg.js'
+import { decode, encode, encodeInto, rfc8949EncodeOptions } from '../cborg.js'
 import { fromHex, toHex } from '../lib/byte-utils.js'
 import { encodedLength } from '../lib/length.js'
 
@@ -18,6 +18,15 @@ const fixtures = [
   { data: '8601f5f4f6f720', expected: [1, true, false, null, undefined, -1], type: 'array of float specials' },
   { data: 'f93800', expected: 0.5, type: 'float16' },
   { data: 'f9b800', expected: -0.5, type: 'float16' },
+  // float16 subnormals are n * 2^-24 for n in 1..1023 (RFC 8949 section 3.3, Appendix A)
+  { data: 'f90001', expected: 5.960464477539063e-8, type: 'float16' }, // 2^-24, smallest subnormal
+  { data: 'f90003', expected: 1.7881393432617188e-7, type: 'float16' }, // 3 * 2^-24
+  { data: 'f90155', expected: 2.0325183868408203e-5, type: 'float16' }, // 341 * 2^-24
+  { data: 'f90200', expected: 3.0517578125e-5, type: 'float16' }, // 512 * 2^-24 = 2^-15
+  { data: 'f903ff', expected: 6.097555160522461e-5, type: 'float16' }, // 1023 * 2^-24, largest subnormal
+  { data: 'f90400', expected: 6.103515625e-5, type: 'float16' }, // 2^-14, smallest normal
+  { data: 'f98003', expected: -1.7881393432617188e-7, type: 'float16' },
+  { data: 'f983ff', expected: -6.097555160522461e-5, type: 'float16' },
   { data: 'fa33c00000', expected: 8.940696716308594e-08, type: 'float32' },
   { data: 'fab3c00000', expected: -8.940696716308594e-08, type: 'float32' },
   { data: 'fb3ff199999999999a', expected: 1.1, type: 'float64' },
@@ -82,6 +91,58 @@ describe('float', () => {
         })
       }
     }
+  })
+
+  describe('float16 subnormals', () => {
+    const r8 = rfc8949EncodeOptions
+
+    it('encodes every float16 subnormal as float16', () => {
+      for (let n = 1; n < 1024; n++) {
+        for (const sign of [1, -1]) {
+          const value = sign * n * 2 ** -24
+          const expected = 'f9' + (((sign < 0 ? 0x8000 : 0) | n).toString(16).padStart(4, '0'))
+          assert.strictEqual(toHex(encode(value)), expected, `n=${n * sign}`)
+          assert.strictEqual(toHex(encode(value, r8)), expected, `rfc8949 n=${n * sign}`)
+          assert.strictEqual(toHex(encode(value, { addBreakTokens: true })), expected, `tokens n=${n * sign}`)
+          assert.strictEqual(toHex(encodeIntoBytes(value, fixedDest)), expected, `encodeInto n=${n * sign}`)
+          assert.strictEqual(encodedLength(value), 3, `encodedLength n=${n * sign}`)
+          assert.strictEqual(decode(fromHex(expected)), value, `decode n=${n * sign}`)
+        }
+      }
+    })
+
+    it('encodes subnormals inside containers and as map keys', () => {
+      const value = 3 * 2 ** -24
+      assert.strictEqual(toHex(encode([value])), '81f90003')
+      assert.strictEqual(toHex(encode({ a: value })), 'a161' + '61f90003')
+      assert.strictEqual(toHex(encode([value], { addBreakTokens: true })), '81f90003')
+    })
+
+    it('keeps float32 for values that are not exactly float16', () => {
+      // 1.5 * 2^-24 and 2^-25 fall between float16 subnormals
+      assert.strictEqual(toHex(encode(1.5 * 2 ** -24)), 'fa33c00000')
+      assert.strictEqual(toHex(encode(2 ** -25)), 'fa33000000')
+      // 2049 * 2^-24 is 2^-13 * (1 + 2^-11), 11 significand bits after the leading one
+      assert.strictEqual(toHex(encode(2049 * 2 ** -24)), 'fa39001000')
+      // one float64 ulp above 3 * 2^-24 needs all 64 bits
+      assert.strictEqual(encode(3 * 2 ** -24 * (1 + Number.EPSILON))[0], 0xfb)
+    })
+
+    it('leaves float64: true at nine bytes (the dag-cbor profile)', () => {
+      for (const n of [1, 3, 341, 1023]) {
+        const bytes = encode(n * 2 ** -24, { float64: true })
+        assert.strictEqual(bytes.length, 9)
+        assert.strictEqual(bytes[0], 0xfb)
+        assert.strictEqual(decode(bytes), n * 2 ** -24)
+      }
+    })
+
+    it('keeps zero and the specials', () => {
+      assert.strictEqual(toHex(encode(0)), '00')
+      assert.strictEqual(toHex(encode(NaN)), 'f97e00')
+      assert.strictEqual(toHex(encode(Infinity)), 'f97c00')
+      assert.strictEqual(toHex(encode(-Infinity)), 'f9fc00')
+    })
   })
 
   describe('roundtrip', () => {
