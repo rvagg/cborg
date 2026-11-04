@@ -432,4 +432,68 @@ Input may either be supplied as an argument or piped via stdin
     assert.strictEqual(stderr, '')
     assert.strictEqual(stdout, `${input}\n`)
   })
+
+  describe('argument and input handling', () => {
+    const fails = async (cmd, stdin) => {
+      try {
+        await execBin(cmd, stdin)
+      } catch (e) {
+        return e
+      }
+      return assert.fail('should have errored')
+    }
+
+    for (const width of ['abc', '10', '19', '1001', '5000000000', '1e9', '-5', '20.5', '']) {
+      it(`rejects --width '${width}'`, async () => {
+        const e = await fails(`hex2diag --width "${width}" 8101`)
+        assert.strictEqual(e.stderr, 'Error: --width must be an integer from 20 to 1000\n')
+        assert.strictEqual(e.stdout, '')
+      })
+    }
+
+    it('rejects --width without a value', async () => {
+      const e = await fails('hex2diag 8101 --width')
+      assert.include(e.stderr, '--width must be an integer')
+    })
+
+    it('accepts --width at both limits', async () => {
+      for (const width of [20, 1000]) {
+        const { stdout } = await execBin(`hex2diag --width ${width} 8101`)
+        assert.match(stdout, /^81 +# array\(1\)\n/)
+      }
+    })
+
+    it('rejects odd-length and non-hex input', async () => {
+      for (const cmd of ['hex2bin', 'hex2diag', 'hex2json']) {
+        assert.include((await fails(`${cmd} abc`)).stderr, 'odd number of hex digits')
+        assert.include((await fails(`${cmd} zz`)).stderr, 'not hexadecimal format')
+      }
+    })
+
+    it('reads large hex from stdin', async () => {
+      // the trailing bytes make decode fail after the whole input was parsed
+      const e = await fails('hex2json', '00'.repeat(8000000))
+      assert.include(e.stderr, 'too many terminals')
+    })
+
+    for (const [hex, what] of [
+      ['1bffffffffffffffff', 'bigint'],
+      ['f7', 'undefined'],
+      ['8201f7', 'undefined'],
+      ['43010203', 'bytes'],
+      ['f97e00', 'NaN'],
+      ['f97c00', 'Infinity']
+    ]) {
+      it(`hex2json rejects ${what} (${hex})`, async () => {
+        const e = await fails(`hex2json ${hex}`)
+        assert.strictEqual(e.stderr, `TypeError: Cannot represent ${what} as JSON\n`)
+        assert.strictEqual(e.stdout, '')
+      })
+    }
+
+    it('prints one-line errors without a stack', async () => {
+      const e = await fails('hex2json 18')
+      assert.strictEqual(e.stderr, 'Error: CBOR decode error: not enough data for type\n')
+    })
+  })
 })
