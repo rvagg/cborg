@@ -138,6 +138,8 @@ A utility method to convert a hex string to binary output (does not involve CBOR
 
 Convert CBOR from a hexadecimal string to a CBOR diagnostic output format which explains the byte contents.
 
+`--width <columns>` sets the output width, from 20 to 1000. The `*2diag` commands accept it.
+
 ```
 $ cborg hex2diag 84616161620164f09f9880
 84                                                # array(4)
@@ -152,7 +154,7 @@ $ cborg hex2diag 84616161620164f09f9880
 
 ### `cborg hex2json [--pretty] [hex string]`
 
-Convert CBOR from a hexadecimal string to JSON format.
+Convert CBOR from a hexadecimal string to JSON format. The `*2json` commands exit with an error on bytes, integers beyond 2^53, `undefined`, `NaN` and `Infinity`, which JSON cannot hold.
 
 ```
 $ cborg hex2json 84616161620164f09f9880

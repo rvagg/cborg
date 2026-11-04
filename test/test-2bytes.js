@@ -205,4 +205,21 @@ describe('bytes', () => {
       })
     })
   }
+
+  describe('fromHex input checks', () => {
+    it('decodes upper and lower case', () => {
+      assert.deepEqual(Array.from(fromHex('00ffAbcD')), [0, 255, 171, 205])
+      assert.deepEqual(Array.from(fromHex('')), [])
+    })
+
+    it('rejects odd length', () => {
+      assert.throws(() => fromHex('abc'), TypeError, 'odd number of hex digits')
+    })
+
+    it('rejects non-hex characters', () => {
+      for (const bad of ['zz', '0x', 'a ', 'ab\n', '--']) {
+        assert.throws(() => fromHex(bad), TypeError, 'not hexadecimal format')
+      }
+    })
+  })
 })
