@@ -8,14 +8,15 @@
     "cborg": "lib/bin.js"
   },
   "scripts": {
-    "lint": "standard *.js lib/*.js test/*.js",
+    "lint": "standard *.js lib/*.js test/*.js bench/compare*.js",
     "build": "npm run build:types",
     "build:types": "tsc --build",
     "prepublishOnly": "npm run build",
     "test:node": "mocha test/test-*.js",
     "test:node-bin": "mocha test/node-test-bin.js",
+    "test:scripts": "node --test '.github/scripts/tests/*.test.mjs'",
     "test:browser": "polendina --cleanup test/test-*.js",
-    "test": "npm run lint && npm run build && npm run test:node && npm run test:node-bin && npm run test:browser",
+    "test": "npm run lint && npm run build && npm run test:node && npm run test:node-bin && npm run test:scripts && npm run test:browser",
     "test:ci": "npm run test"
   },
   "repository": {

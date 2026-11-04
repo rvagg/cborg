@@ -27,45 +27,26 @@ node bench/bench.js --duration=2000
 
 Open `bench/index.html` in a browser. Select mode, suite, and duration, then click "Run Benchmarks".
 
-## Capturing and Comparing Results
-
-### Save a baseline
+## Comparing a Change
 
 ```bash
-# Save results to a file
-node bench/bench.js --json=bench/baselines/before-change.json
-
-# Or with a version/date identifier
-node bench/bench.js --json=bench/baselines/v4.4.0.json
-node bench/bench.js --json=bench/baselines/$(date +%Y%m%d).json
+node bench/compare.js --base-ref=master      # or --base=DIR for another copy
 ```
 
-### Compare against baseline
+Takes about three minutes. Other options: `--rounds`, `--window` (ms),
+`--suite`, `--mode`, `--json=FILE`, `--markdown=FILE`.
 
-```bash
-node bench/bench.js --compare=bench/baselines/before-change.json
-```
+Base, head and a control (base again) each run in a fresh process per round.
+A row is reported as regressed or improved only if its median delta exceeds
+`max(3%, 3 x control noise)` and reproduces in extra rounds. Separate
+processes matter: two copies of the code in one process gave false
+differences of up to 44% on identical code.
 
-This shows percentage differences for each benchmark.
+Pull requests touching `lib/`, `cborg.js` or `bench/` get the same
+comparison as a sticky comment. It is informational and never fails the check.
 
-### Typical workflow
-
-1. Capture baseline before making changes:
-   ```bash
-   node bench/bench.js --json=bench/baselines/before.json
-   ```
-
-2. Make your changes to cborg
-
-3. Compare:
-   ```bash
-   node bench/bench.js --compare=bench/baselines/before.json
-   ```
-
-4. Optionally save the new results:
-   ```bash
-   node bench/bench.js --json=bench/baselines/after.json
-   ```
+`bench.js` prints absolute throughput for one tree. Use `compare.js` for
+before/after.
 
 ## Benchmark Modes
 
@@ -88,7 +69,9 @@ Minimal cborg options for baseline comparison:
 
 ## Files
 
-- `bench.js` - Main benchmark runner (Node.js)
+- `bench.js` - Absolute throughput runner (Node.js and browser)
+- `compare.js` - Base against head comparison in separate processes (Node.js)
+- `compare-*.js` - helpers for `compare.js`
 - `index.html` - Browser benchmark UI
 - `fixtures.js` - Deterministic fixture generators (seeded PRNG)
 - `bench-comparative.js` - Historical cborg vs borc comparison

@@ -1,0 +1,55 @@
+# Benchmark a pull request against its base branch.
+#
+# Trust boundary: this workflow runs the pull request's own code, including
+# code from forks. Its token is contents: read and GitHub withholds secrets
+# from fork runs. It publishes one file of numbers, result.json, as an
+# artifact. The comment is posted by bench-comment.yml, which holds the write
+# token and renders its own text from those numbers.
+
+name: Bench
+
+on:
+  pull_request:
+    branches: [master]
+    paths: ['lib/**', 'cborg.js', 'bench/**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bench-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout base
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+          persist-credentials: false
+      - name: Checkout head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          path: head
+          persist-credentials: false
+      - name: Use Node.js current
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: current
+      - name: Compare
+        run: |
+          set -euo pipefail
+          node head/bench/compare.js --base=base --head=head --json=result.json --markdown=summary.md
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload result
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bench-result
+          path: result.json
+          retention-days: 7
+          if-no-files-found: error

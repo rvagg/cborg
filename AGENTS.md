@@ -99,6 +99,9 @@ Modules:
   and decoders. `lib/extended/` structured-clone-style fidelity.
   `lib/json/` JSON over the same tokens. `lib/length.js` encoded length.
   `lib/diagnostic.js` diagnostic notation. `lib/bin.js` the CLI.
+- `bench/compare.js` compares two trees in separate processes, with
+  `bench/compare-stats.js` and `bench/compare-report.js` as pure helpers.
+  `.github/workflows/bench*.yml` post its result to PRs.
 - `interface.ts` is the hand-written source of public types. `types/` is
   `tsc` output, committed, never hand-edited.
 
@@ -142,15 +145,17 @@ Contracts that are easy to get wrong:
    get a run of `test/test-fuzz.js`.
 3. Run the focused test file, then `npm test` (lint, type build, Node, CLI,
    browser).
-4. For anything under `lib/` on the encode or decode path, benchmark:
+4. For anything under `lib/` on the encode or decode path, benchmark
+   against the base in separate processes:
 
    ```bash
-   node bench/bench.js --json=/tmp/before.json     # on master
-   node bench/bench.js --compare=/tmp/before.json  # on your branch
+   node bench/compare.js --base-ref=master
    ```
 
-   Report the numbers and the runtime in the PR. Small deltas are noise; do
-   not claim them. A change that slows the dag-cbor suites needs a reason.
+   Pull requests get the same comparison as a comment. Report the numbers
+   and the runtime in the PR. Rows are reported only when they reproduce
+   beyond noise; do not claim smaller deltas. A change that slows the
+   dag-cbor suites needs a reason.
 5. Public API or option change: update `interface.ts`, JSDoc, the README
    (a sub-section with a short example), and run `npm run build` to
    regenerate `types/`. Commit the regenerated types with the source.
