@@ -1,0 +1,53 @@
+# Post the result of the Bench workflow as a sticky pull request comment.
+#
+# Trust boundary: this workflow runs from the default branch and holds the
+# write token. It checks out the default branch only, treats the downloaded
+# result.json as untrusted, validates it, and takes numbers and fixed enum
+# values from it. The comment text is rendered here by
+# bench/compare-report.js, and the pull request number comes from the
+# workflow_run event or the GitHub API.
+
+name: Bench comment
+
+on:
+  workflow_run:
+    workflows: [Bench]
+    types: [completed]
+
+permissions:
+  pull-requests: write
+  actions: read
+  contents: read
+
+jobs:
+  comment:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Use Node.js lts
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: lts/*
+      - name: Download result
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: bench-result
+          path: artifact
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          EVENT_PRS: ${{ toJSON(github.event.workflow_run.pull_requests) }}
+          RESULT_PATH: artifact/result.json
+        run: |
+          set -euo pipefail
+          node .github/scripts/bench-comment.mjs

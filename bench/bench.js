@@ -9,7 +9,6 @@
  *   node bench/bench.js --mode=raw                # run with raw cborg (no tags)
  *   node bench/bench.js --suite=bsky              # run only bluesky suite
  *   node bench/bench.js --json=output.json        # write JSON results to file
- *   node bench/bench.js --compare=baseline.json   # compare to baseline
  *   node bench/bench.js --encode-into             # use encodeInto instead of encode
  */
 
@@ -132,7 +131,6 @@ const args = typeof process !== 'undefined' ? process.argv.slice(2) : []
 const opts = {
   json: args.find(a => a.startsWith('--json='))?.split('=')[1] || null,
   suite: args.find(a => a.startsWith('--suite='))?.split('=')[1] || null,
-  compare: args.find(a => a.startsWith('--compare='))?.split('=')[1] || null,
   duration: parseInt(args.find(a => a.startsWith('--duration='))?.split('=')[1] || DEFAULT_DURATION_MS),
   encodeInto: args.includes('--encode-into'),
   // Mode: 'dag-cbor' (default) uses tag 42 + strict options, 'raw' uses plain cborg
@@ -383,52 +381,7 @@ async function main () {
     }
   }
 
-  // Compare to baseline
-  if (opts.compare) {
-    await compareToBaseline(opts.compare, allResults)
-  }
-
   return allResults
-}
-
-/**
- * Compare results to a baseline file
- */
-async function compareToBaseline (baselinePath, currentResults) {
-  let baseline
-  try {
-    if (typeof process !== 'undefined') {
-      const fs = await import('fs')
-      baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8'))
-    } else {
-      const response = await fetch(baselinePath)
-      baseline = await response.json()
-    }
-  } catch (e) {
-    log(`\nCould not load baseline: ${e.message}`)
-    return
-  }
-
-  log('\nComparison to baseline:')
-  log('-'.repeat(50))
-
-  for (const suite of currentResults) {
-    const baselineSuite = baseline.suites.find(s => s.suite === suite.suite)
-    if (!baselineSuite) continue
-
-    log(`\n${suite.suite}:`)
-    for (const result of suite.results) {
-      const baselineResult = baselineSuite.results.find(r => r.name === result.name)
-      if (!baselineResult) continue
-
-      const encDiff = ((result.encode.mbPerSec - baselineResult.encode.mbPerSec) / baselineResult.encode.mbPerSec * 100).toFixed(1)
-      const decDiff = ((result.decode.mbPerSec - baselineResult.decode.mbPerSec) / baselineResult.decode.mbPerSec * 100).toFixed(1)
-      const encSign = encDiff >= 0 ? '+' : ''
-      const decSign = decDiff >= 0 ? '+' : ''
-
-      log(`  ${result.name}: encode ${encSign}${encDiff}%, decode ${decSign}${decDiff}%`)
-    }
-  }
 }
 
 // Run
