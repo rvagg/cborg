@@ -35,7 +35,7 @@ const fixture1DiagnosticString =
     03                                            #     uint(3)
   65                                              #   string(5)
     736d696c65                                    #     "smile"
-  64                                              #   string(2)
+  64                                              #   string(4)
     f09f9880                                      #     "😀"
 `
 const fixture2HexString = 'a4616101616282020363627566440102036165736d696c6564f09f9880'
@@ -55,7 +55,7 @@ const fixture2DiagnosticString =
     01020361                                      #     "\\x01\\x02\\x03a"
   65                                              #   string(5)
     736d696c65                                    #     "smile"
-  64                                              #   string(2)
+  64                                              #   string(4)
     f09f9880                                      #     "😀"
 `
 
@@ -419,7 +419,7 @@ Input may either be supplied as an argument or piped via stdin
     let { stdout, stderr } = await execBin(`hex2diag ${input}`)
     assert.strictEqual(stderr, '')
     assert.strictEqual(stdout,
-`78 64                                             # string(86)
+`78 64                                             # string(100)
   f55ff8f12508b63ef2bfeca7557ae90df6311a5ec1631b  #   "õ_øñ%\\x08¶>ò¿ì§Uzé\\x0dö1\\x1a^Ác\\x1b"
   4a1fa843310bd9c3a710eaace5a1bdd72ad0bfe049771c  #   "J\\x1f¨C1\\x0bÙÃ§\\x10ê¬å¡½×*Ð¿àIw\\x1c"
   11e756338bd93865e645f1adec9b9c99ef407fbd4fc685  #   "\\x11çV3\\x8bÙ8eæEñ\\xadì\\x9b\\x9c\\x99ï@\\x7f½OÆ\\x85"
@@ -490,6 +490,18 @@ Input may either be supplied as an argument or piped via stdin
         assert.strictEqual(e.stdout, '')
       })
     }
+
+    it('hex2diag prints what it read, then fails on truncated input', async () => {
+      const e = await fails('hex2diag a1')
+      assert.match(e.stdout, /^a1 +# map\(1\)\n$/)
+      assert.strictEqual(e.stderr, 'Error: CBOR decode error: not enough data, input ended inside an open item\n')
+    })
+
+    it('hex2diag shows indefinite items', async () => {
+      const { stdout } = await execBin('hex2diag 9f0102ff')
+      assert.deepEqual(stdout.trim().split('\n').map((l) => l.replace(/ +#/, ' #')),
+        ['9f # array(*)', '  01 #   uint(1)', '  02 #   uint(2)', 'ff # break'])
+    })
 
     it('prints one-line errors without a stack', async () => {
       const e = await fails('hex2json 18')
