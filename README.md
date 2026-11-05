@@ -76,7 +76,7 @@ The following commands take either input from the command line, or if no input i
 
 ### `cborg bin2diag [binary input]`
 
-Convert CBOR from binary input to a CBOR diagnostic output format which explains the byte contents.
+Convert CBOR from binary input to a CBOR diagnostic output format which explains the byte contents. Indefinite length arrays and maps show as `array(*)` and `map(*)` with their `break` aligned to them. Input that ends inside an open item exits with an error after printing the items it could read.
 
 ```
 $ cborg hex2bin 84616161620164f09f9880 | cborg bin2diag
@@ -86,7 +86,7 @@ $ cborg hex2bin 84616161620164f09f9880 | cborg bin2diag
   61                                              #   string(1)
     62                                            #     "b"
   01                                              #   uint(1)
-  64 f09f                                         #   string(2)
+  64                                              #   string(4)
     f09f9880                                      #     "😀"
 ```
 
@@ -148,7 +148,7 @@ $ cborg hex2diag 84616161620164f09f9880
   61                                              #   string(1)
     62                                            #     "b"
   01                                              #   uint(1)
-  64 f09f                                         #   string(2)
+  64                                              #   string(4)
     f09f9880                                      #     "😀"
 ```
 
@@ -189,7 +189,7 @@ $ cborg json2diag '["a", "b", 1, "😀"]'
   61                                              #   string(1)
     62                                            #     "b"
   01                                              #   uint(1)
-  64 f09f                                         #   string(2)
+  64                                              #   string(4)
     f09f9880                                      #     "😀"
 ```
 
