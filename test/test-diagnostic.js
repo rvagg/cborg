@@ -182,6 +182,124 @@ describe('diagnostic', () => {
     })
   })
 
+  describe('tags', () => {
+    // collapse the padding between the hex and comment columns
+    const rows = (/** @type {string} */ hex) => diagHex(hex).split('\n').map((l) => l.replace(/ *# /, ' # '))
+    const cidV0 = '001220000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f'
+    const cidIdentity = '000155000568656c6c6f'
+
+    it('names registered tags', () => {
+      assert.deepEqual(rows('d9d9f7a0'), ['d9 d9f7 # tag(55799) self-described CBOR', '  a0 #   map(0)'])
+      assert.deepEqual(rows('d8634100'), ['d8 63 # tag(99)', '  41 #   bytes(1)', '    00 #     "\\x00"'])
+    })
+
+    it('breaks a v1 CID into its parts', () => {
+      assert.deepEqual(rows(`d82a4a${cidIdentity}`), [
+        'd8 2a # tag(42) CID',
+        '  4a #   bytes(10)',
+        '    00 #     multibase prefix',
+        '    01 #     version(1)',
+        '    55 #     codec(raw)',
+        '    00 #     hash(identity)',
+        '    05 #     length(5)',
+        '    68656c6c6f #     digest',
+        ' #     CIDv1(bafkqablimvwgy3y)'
+      ])
+    })
+
+    it('breaks a v0 CID into its parts, wrapping the digest', () => {
+      assert.deepEqual(rows(`d82a5823${cidV0}`), [
+        'd8 2a # tag(42) CID',
+        '  58 23 #   bytes(35)',
+        '    00 #     multibase prefix',
+        '    12 #     hash(sha2-256)',
+        '    20 #     length(32)',
+        '    000102030405060708090a0b0c0d0e0f101112131415 #     digest',
+        '    161718191a1b1c1d1e1f',
+        ' #     CIDv0(QmNLfbof5rLekrACjeuLk9JmGZD2HDBHCU4z16iYKmx5SE)'
+      ])
+    })
+
+    it('indents CIDs inside maps and indefinite arrays', () => {
+      const tail = (/** @type {string} */ margin) => [
+        `${margin}d8 2a # ${margin}tag(42) CID`,
+        `${margin}  4a # ${margin}  bytes(10)`,
+        `${margin}    00 # ${margin}    multibase prefix`,
+        `${margin}    01 # ${margin}    version(1)`,
+        `${margin}    55 # ${margin}    codec(raw)`,
+        `${margin}    00 # ${margin}    hash(identity)`,
+        `${margin}    05 # ${margin}    length(5)`,
+        `${margin}    68656c6c6f # ${margin}    digest`,
+        ` # ${margin}    CIDv1(bafkqablimvwgy3y)`
+      ]
+      assert.deepEqual(rows(`a16161d82a4a${cidIdentity}`), ['a1 # map(1)', '  61 #   string(1)', '    61 #     "a"', ...tail('  ')])
+      assert.deepEqual(rows(`9fd82a4a${cidIdentity}d82a4a${cidIdentity}ff`), ['9f # array(*)', ...tail('  '), ...tail('  '), 'ff # break'])
+    })
+
+    it('notes an invalid CID and shows its content plainly', () => {
+      assert.deepEqual(rows('d82a4401020304'), [
+        'd8 2a # tag(42) CID',
+        '  44 #   bytes(4)',
+        ' #     invalid CID: missing 0x00 multibase prefix',
+        '    01020304 #     "\\x01\\x02\\x03\\x04"'
+      ])
+      assert.deepEqual(rows('d82a45000155122a'), [
+        'd8 2a # tag(42) CID',
+        '  45 #   bytes(5)',
+        ' #     invalid CID: digest length 42 does not match the 0 bytes that follow',
+        '    000155122a #     "\\x00\\x01U\\x12*"'
+      ])
+      assert.deepEqual(rows('d82a820102'), [
+        'd8 2a # tag(42) CID',
+        '  82 #   array(2)',
+        ' #     invalid CID: content is not a byte string',
+        '    01 #     uint(1)',
+        '    02 #     uint(2)'
+      ])
+    })
+
+    it('annotates only the direct content of tag 42', () => {
+      assert.deepEqual(rows(`d82ad8634a${cidIdentity}`).slice(0, 4), [
+        'd8 2a # tag(42) CID',
+        '  d8 63 #   tag(99)',
+        ' #     invalid CID: content is not a byte string',
+        '    4a #     bytes(10)'
+      ])
+      assert.deepEqual(rows(`824a${cidIdentity}01`).slice(0, 2), ['82 # array(2)', '  4a #   bytes(10)'])
+    })
+
+    it('shows epoch dates', () => {
+      assert.deepEqual(rows('c11a514b67b0'), [
+        'c1 # tag(1) epoch date',
+        '  1a 514b67b0 #   uint(1363896240)',
+        ' #     date(2013-03-21T20:04:00.000Z)'
+      ])
+      assert.deepEqual(rows('c1fb41d452d9ec200000').slice(2), [' #     date(2013-03-21T20:04:00.500Z)'])
+      assert.deepEqual(rows('c120').slice(2), [' #     date(1969-12-31T23:59:59.000Z)'])
+      // outside the range of a Date
+      assert.deepEqual(rows('c11b0020000000000000'), ['c1 # tag(1) epoch date', '  1b 0020000000000000 #   uint(9007199254740992)'])
+    })
+
+    it('shows bignum values', () => {
+      assert.deepEqual(rows('c249010000000000000000'), [
+        'c2 # tag(2) unsigned bignum',
+        '  49 #   bytes(9)',
+        '    010000000000000000 #     "\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00"',
+        ' #     bignum(18446744073709551616)'
+      ])
+      assert.deepEqual(rows('c349010000000000000000').slice(3), [' #     bignum(-18446744073709551617)'])
+      assert.deepEqual(rows('c240').slice(2), [' #     bignum(0)'])
+      // only a byte string is a bignum
+      assert.deepEqual(rows('c201'), ['c2 # tag(2) unsigned bignum', '  01 #   uint(1)'])
+    })
+
+    it('round-trips annotated output through fromDiag', () => {
+      for (const hex of [`d82a5823${cidV0}`, `9fd82a4a${cidIdentity}ff`, 'd82a4401020304', 'c11a514b67b0', 'c249010000000000000000']) {
+        assert.strictEqual(toHex(fromDiag(diagHex(hex))), hex)
+      }
+    })
+  })
+
   describe('fromDiag', () => {
     it('parses hex with whitespace and comments', () => {
       assert.strictEqual(toHex(fromDiag('82 # array(2)\n  01 # uint(1)\r\n  02\t# uint(2)\n')), '820102')
