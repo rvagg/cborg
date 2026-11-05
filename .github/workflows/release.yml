@@ -73,4 +73,4 @@ jobs:
       attestations: write
     steps:
       - name: Publish release with Waxseal
-        uses: rvagg/waxseal@fc6feb8413ffb49490b4120616e2ec1cfa12e3fe # v0.2.1
+        uses: rvagg/waxseal@668cf6879f78ac536e9552fa0595f183b794a8be # v0.2.3
