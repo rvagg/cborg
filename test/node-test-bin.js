@@ -414,6 +414,26 @@ Input may either be supplied as an argument or piped via stdin
     })
   })
 
+  it('diag tags and CIDs', async () => {
+    const { stdout, stderr } = await execBin('hex2diag a1646c696e6bd82a58250001711220fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0')
+    assert.strictEqual(stderr, '')
+    assert.strictEqual(stdout,
+`a1                                                # map(1)
+  64                                              #   string(4)
+    6c696e6b                                      #     "link"
+  d8 2a                                           #   tag(42) CID
+    58 25                                         #     bytes(37)
+      00                                          #       multibase prefix
+      01                                          #       version(1)
+      71                                          #       codec(dag-cbor)
+      12                                          #       hash(sha2-256)
+      20                                          #       length(32)
+      fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedeceb  #       digest
+      eae9e8e7e6e5e4e3e2e1e0
+                                                  #       CIDv1(bafyreih77367z6727h4pp5xv6tz7f4pq57xo33hl5lu6rz7g4xsohyxb4a)
+`)
+  })
+
   it('diag non-utf8 and non-printable ascii', async () => {
     const input = '7864f55ff8f12508b63ef2bfeca7557ae90df6311a5ec1631b4a1fa843310bd9c3a710eaace5a1bdd72ad0bfe049771c11e756338bd93865e645f1adec9b9c99ef407fbd4fc6859e7904c5ad7dc9bd10a5cc16973d5b28ec1a6dd43d9f82f9f18c3d03418e35'
     let { stdout, stderr } = await execBin(`hex2diag ${input}`)

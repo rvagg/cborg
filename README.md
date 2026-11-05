@@ -152,6 +152,25 @@ $ cborg hex2diag 84616161620164f09f9880
     f09f9880                                      #     "😀"
 ```
 
+Tags are named when they are in the [IANA registry](https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml) and their content is interpreted for a few: epoch dates (tag 1), bignums (tags 2 and 3) and CIDs (tag 42). A CID is broken into its parts and printed in its usual string form, `CIDv1(bafy...)` in base32 and `CIDv0(Qm...)` in base58btc. A tag 42 whose content is not a valid CID is noted and shown as plain bytes.
+
+```
+$ cborg hex2diag a1646c696e6bd82a58250001711220fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0
+a1                                                # map(1)
+  64                                              #   string(4)
+    6c696e6b                                      #     "link"
+  d8 2a                                           #   tag(42) CID
+    58 25                                         #     bytes(37)
+      00                                          #       multibase prefix
+      01                                          #       version(1)
+      71                                          #       codec(dag-cbor)
+      12                                          #       hash(sha2-256)
+      20                                          #       length(32)
+      fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedeceb  #       digest
+      eae9e8e7e6e5e4e3e2e1e0
+                                                  #       CIDv1(bafyreih77367z6727h4pp5xv6tz7f4pq57xo33hl5lu6rz7g4xsohyxb4a)
+```
+
 ### `cborg hex2json [--pretty] [hex string]`
 
 Convert CBOR from a hexadecimal string to JSON format. The `*2json` commands exit with an error on bytes, integers beyond 2^53, `undefined`, `NaN` and `Infinity`, which JSON cannot hold.
