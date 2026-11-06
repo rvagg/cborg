@@ -152,7 +152,7 @@ $ cborg hex2diag 84616161620164f09f9880
     f09f9880                                      #     "😀"
 ```
 
-Tags are named when they are in the [IANA registry](https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml) and their content is interpreted for a few: epoch dates (tag 1), bignums (tags 2 and 3) and CIDs (tag 42). A CID is broken into its parts and printed in its usual string form, `CIDv1(bafy...)` in base32 and `CIDv0(Qm...)` in base58btc. A tag 42 whose content is not a valid CID is noted and shown as plain bytes.
+Tags are named when they are in the [IANA registry](https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml) and their content is interpreted for a few: epoch dates (tag 1), bignums (tags 2 and 3), embedded CBOR (tag 24) and CIDs (tag 42). Embedded CBOR is printed as a nested item, up to 16 levels deep. A CID is broken into its parts and printed in its usual string form, `CIDv1(bafy...)` in base32 and `CIDv0(Qm...)` in base58btc. Content that is not a valid CID or a single CBOR item is noted and shown as plain bytes.
 
 ```
 $ cborg hex2diag a1646c696e6bd82a58250001711220fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0
