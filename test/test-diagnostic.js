@@ -293,8 +293,108 @@ describe('diagnostic', () => {
       assert.deepEqual(rows('c201'), ['c2 # tag(2) unsigned bignum', '  01 #   uint(1)'])
     })
 
+    describe('embedded CBOR', () => {
+      // wrap encoded hex in tag 24
+      const embed = (/** @type {string} */ hex) => {
+        const length = hex.length / 2
+        const head = length < 24
+          ? (0x40 + length).toString(16)
+          : length < 256 ? `58${length.toString(16).padStart(2, '0')}` : `59${length.toString(16).padStart(4, '0')}`
+        return `d818${head}${hex}`
+      }
+
+      it('expands its content as a nested item', () => {
+        assert.deepEqual(rows(embed('820102')), [
+          'd8 18 # tag(24) embedded CBOR',
+          '  43 #   bytes(3)',
+          '    82 #     array(2)',
+          '      01 #       uint(1)',
+          '      02 #       uint(2)'
+        ])
+      })
+
+      it('annotates tags inside embedded content', () => {
+        assert.deepEqual(rows(`a16161${embed(`d82a4a${cidIdentity}`)}`), [
+          'a1 # map(1)',
+          '  61 #   string(1)',
+          '    61 #     "a"',
+          '  d8 18 #   tag(24) embedded CBOR',
+          '    4d #     bytes(13)',
+          '      d8 2a #       tag(42) CID',
+          '        4a #         bytes(10)',
+          '          00 #           multibase prefix',
+          '          01 #           version(1)',
+          '          55 #           codec(raw)',
+          '          00 #           hash(identity)',
+          '          05 #           length(5)',
+          '          68656c6c6f #           digest',
+          ' #           CIDv1(bafkqablimvwgy3y)'
+        ])
+      })
+
+      it('expands embedded content within embedded content', () => {
+        assert.deepEqual(rows(`9f${embed(embed('01'))}ff`), [
+          '9f # array(*)',
+          '  d8 18 #   tag(24) embedded CBOR',
+          '    44 #     bytes(4)',
+          '      d8 18 #       tag(24) embedded CBOR',
+          '        41 #         bytes(1)',
+          '          01 #           uint(1)',
+          'ff # break'
+        ])
+      })
+
+      it('stops expanding at 16 levels', () => {
+        let hex = '01'
+        for (let i = 0; i < 18; i++) {
+          hex = embed(hex)
+        }
+        const out = diagHex(hex)
+        assert.strictEqual(out.match(/tag\(24\)/g)?.length, 17)
+        assert.strictEqual(out.match(/embedded CBOR nested deeper than 16 levels is not expanded/g)?.length, 1)
+        assert.strictEqual(toHex(fromDiag(out)), hex)
+      })
+
+      it('notes invalid content and shows it plainly', () => {
+        assert.deepEqual(rows('d818420102'), [
+          'd8 18 # tag(24) embedded CBOR',
+          '  42 #   bytes(2)',
+          ' #     invalid embedded CBOR: more than one data item',
+          '    0102 #     "\\x01\\x02"'
+        ])
+        assert.deepEqual(rows('d81840'), [
+          'd8 18 # tag(24) embedded CBOR',
+          '  40 #   bytes(0)',
+          ' #     invalid embedded CBOR: no data item'
+        ])
+        assert.deepEqual(rows('d818428201').slice(2), [
+          ' #     invalid embedded CBOR: not enough data, input ended inside an open item',
+          '    8201 #     "\\x82\\x01"'
+        ])
+        assert.deepEqual(rows('d81841ff').slice(2), [
+          ' #     invalid embedded CBOR: unexpected break outside an indefinite length item',
+          '    ff #     "\u00ff"'
+        ])
+        assert.deepEqual(rows('d8186161').slice(1, 3), [
+          '  61 #   string(1)',
+          ' #     invalid embedded CBOR: content is not a byte string'
+        ])
+      })
+
+      it('reports an invalid level and keeps the levels around it', () => {
+        assert.deepEqual(rows(embed(embed('8201'))), [
+          'd8 18 # tag(24) embedded CBOR',
+          '  45 #   bytes(5)',
+          '    d8 18 #     tag(24) embedded CBOR',
+          '      42 #       bytes(2)',
+          ' #         invalid embedded CBOR: not enough data, input ended inside an open item',
+          '        8201 #         "\\x82\\x01"'
+        ])
+      })
+    })
+
     it('round-trips annotated output through fromDiag', () => {
-      for (const hex of [`d82a5823${cidV0}`, `9fd82a4a${cidIdentity}ff`, 'd82a4401020304', 'c11a514b67b0', 'c249010000000000000000']) {
+      for (const hex of [`d82a5823${cidV0}`, `9fd82a4a${cidIdentity}ff`, 'd82a4401020304', 'c11a514b67b0', 'c249010000000000000000', 'd81843820102', 'd818420102']) {
         assert.strictEqual(toHex(fromDiag(diagHex(hex))), hex)
       }
     })

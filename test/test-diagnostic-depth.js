@@ -54,6 +54,21 @@ describe('diagnostic depth', () => {
     assert.strictEqual(printed, text)
   })
 
+  it('terminates on deeply nested embedded CBOR', () => {
+    let hex = '01'
+    for (let i = 0; i < 1000; i++) {
+      const length = hex.length / 2
+      const head = length < 24
+        ? (0x40 + length).toString(16)
+        : length < 256 ? `58${length.toString(16).padStart(2, '0')}` : `59${length.toString(16).padStart(4, '0')}`
+      hex = `d818${head}${hex}`
+    }
+    const bytes = fromHex(hex)
+    const out = lines(bytes, undefined, 1000)
+    assert.strictEqual(toHex(fromDiag(out.join('\n'))), hex)
+    assert.isBelow(out.reduce((p, l) => p + l.length + 1, 0), bytes.length * 150)
+  })
+
   it('output is linear in input size', () => {
     const depth = 5000
     const bytes = nested(depth, '80')
