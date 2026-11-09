@@ -1,4 +1,7 @@
 /**
+ * Annotated hex for CBOR, one line per item. Throws the decode error, if any,
+ * after the lines for what was read before it.
+ *
  * @param {Uint8Array} inp
  * @param {number} [width]
  */

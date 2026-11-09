@@ -98,8 +98,10 @@ Modules:
 - `lib/tagged.js` one-off tag wrapper. `lib/taglib.js` reusable tag encoders
   and decoders. `lib/extended/` structured-clone-style fidelity.
   `lib/json/` JSON over the same tokens. `lib/length.js` encoded length.
-  `lib/diagnostic.js` diagnostic notation, with `lib/diagnostic-tags.js`
-  naming tags and decoding CIDs for display. `lib/bin.js` the CLI.
+  `lib/diagnose.js` describes CBOR as a tree of items with byte ranges and
+  tag interpretations, from a per-tag table using `lib/diagnostic-tags.js`
+  (tag names, CIDs). `lib/diagnostic.js` prints that tree as annotated hex.
+  `lib/bin.js` the CLI.
 - `bench/compare.js` compares two trees in separate processes, with
   `bench/compare-stats.js` and `bench/compare-report.js` as pure helpers.
   `.github/workflows/bench*.yml` post its result to PRs.
