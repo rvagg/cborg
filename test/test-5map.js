@@ -325,6 +325,16 @@ describe('map', () => {
       assert.strictEqual(toHex(encode(new Map([[2, 1], [1, 2]]))), 'a201020201')
     })
 
+    it('sorts string map keys by UTF-8 bytes', () => {
+      // U+FF71 is ef bd b1 and U+1F600 is f0 9f 98 80
+      const expected = 'a263efbdb10264f09f988001'
+      for (const options of [undefined, rfc8949EncodeOptions]) {
+        assert.strictEqual(toHex(encode(Object.fromEntries([['\u{1f600}', 1], ['\uff71', 2]]), options)), expected)
+        assert.strictEqual(toHex(encode(Object.fromEntries([['\uff71', 2], ['\u{1f600}', 1]]), options)), expected)
+        assert.strictEqual(toHex(encode(new Map([['\u{1f600}', 1], ['\uff71', 2]]), options)), expected)
+      }
+    })
+
     it('sorts negint map keys', () => {
       assert.strictEqual(toHex(encode(new Map([[-1, 1], [-2, 2]]))), 'a220012102')
       assert.strictEqual(toHex(encode(new Map([[-2, 1], [-1, 2]]))), 'a220022101')

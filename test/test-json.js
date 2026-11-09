@@ -5,6 +5,13 @@ import { decode, decodeFirst, encode } from 'cborg/json'
 
 const toBytes = (str) => new TextEncoder().encode(str)
 
+function utf8Compare (b1, b2) {
+  for (let i = 0; i < Math.min(b1.length, b2.length); i++) {
+    if (b1[i] !== b2[i]) return b1[i] - b2[i]
+  }
+  return b1.length - b2.length
+}
+
 function verifyRoundTrip (obj, sorting) {
   const encoded = new TextDecoder().decode(encode(obj, sorting === false ? { mapSorter: null } : undefined))
   const json = JSON.stringify(obj)
@@ -141,6 +148,35 @@ describe('json basics', () => {
     assert.strictEqual(
       new TextDecoder().decode(encode(unsorted)),
       '{"bool":true,"four":4,"one":1,"str":"string","three":3.1,"two":2}')
+  })
+
+  it('sorts map keys by UTF-8 bytes', () => {
+    // U+FF71 is ef bd b1 and U+1F600 is f0 9f 98 80, but in UTF-16 the surrogate pair d83d sorts below ff71
+    const expected = '{"\uff71":2,"\u{1f600}":1}'
+    const a = Object.fromEntries([['\u{1f600}', 1], ['\uff71', 2]])
+    const b = Object.fromEntries([['\uff71', 2], ['\u{1f600}', 1]])
+    assert.strictEqual(new TextDecoder().decode(encode(a)), expected)
+    assert.strictEqual(new TextDecoder().decode(encode(b)), expected)
+    // same code unit prefix, then BMP versus supplementary
+    assert.strictEqual(
+      new TextDecoder().decode(encode(Object.fromEntries([['a\u{10000}', 1], ['a\ue000', 2], ['a\uffff', 3], ['a', 4], ['a\u007f', 5], ['a\u07ff', 6], ['a\u0800', 7]]))),
+      '{"a":4,"a\u007f":5,"a\u07ff":6,"a\u0800":7,"a\ue000":2,"a\uffff":3,"a\u{10000}":1}')
+  })
+
+  it('sorts random map keys like their UTF-8 bytes', () => {
+    const pool = ['a', '\u007f', '\u0800', '\ud7ff', '\ue000', '\uffff', '\u{10000}', '\u{1f600}', '\u{10ffff}']
+    let seed = 1
+    const rnd = (n) => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed % n }
+    for (let i = 0; i < 200; i++) {
+      const obj = {}
+      for (let j = 0; j < 8; j++) {
+        let key = ''
+        for (let k = 1 + rnd(3); k > 0; k--) key += pool[rnd(pool.length)]
+        obj[key] = j
+      }
+      const expected = Object.keys(obj).sort((x, y) => utf8Compare(toBytes(x), toBytes(y)))
+      assert.deepStrictEqual(Object.keys(JSON.parse(new TextDecoder().decode(encode(obj)))), expected)
+    }
   })
 
   it('can handle novel cases', () => {
