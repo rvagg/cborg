@@ -5,6 +5,7 @@ import * as chai from 'chai'
 import { decode, Tokenizer } from '../cborg.js'
 import { fromHex } from '../lib/byte-utils.js'
 import { mapDecoder } from '../lib/taglib.js'
+import { decode as extendedDecode } from '../lib/extended/extended.js'
 
 const { assert } = chai
 
@@ -89,6 +90,67 @@ describe('decode errors', () => {
     assert.deepStrictEqual(decode(fromHex('a3636261720363666f6f0163666f6f02')), { foo: 2, bar: 3 })
     assert.throws(() => decode(fromHex('a3636261720363666f6f0163666f6f02'), { rejectDuplicateMapKeys: true }), /CBOR decode error: found repeat map key "foo"/)
     assert.throws(() => decode(fromHex('a3636261720363666f6f0163666f6f02'), { useMaps: true, rejectDuplicateMapKeys: true }), /CBOR decode error: found repeat map key "foo"/)
+  })
+
+  it('rejectDuplicateMapKeys applies to tagged map entries', () => {
+    for (const [body, key, values] of [
+      ['616101616102', 'a', [1, 2]],
+      ['616102616101', 'a', [2, 1]],
+      ['016161016162', 1, ['a', 'b']],
+      ['016162016161', 1, ['b', 'a']]
+    ]) {
+      for (const [start, end] of [['a2', ''], ['bf', 'ff']]) {
+        const data = fromHex(`d90103${start}${body}${end}`)
+        for (const useMaps of [false, true]) {
+          for (const tagDecoder of [mapDecoder, decode => decode.entries()]) {
+            const options = { tags: { 259: tagDecoder }, useMaps }
+            const permissive = tagDecoder === mapDecoder ? new Map([[key, values[1]]]) : values.map(value => [key, value])
+            assert.deepStrictEqual(decode(data, options), permissive)
+            assert.deepStrictEqual(decode(data, { ...options, rejectDuplicateMapKeys: false }), permissive)
+            assert.throws(() => decode(data, { ...options, rejectDuplicateMapKeys: true }), /^CBOR decode error: found repeat map key/)
+          }
+          assert.throws(() => extendedDecode(data, { useMaps, rejectDuplicateMapKeys: true }), /^CBOR decode error: found repeat map key/)
+        }
+      }
+    }
+  })
+
+  it('strict tagged maps reject duplicate keys before decoding their values', () => {
+    let calls = 0
+    const options = {
+      rejectDuplicateMapKeys: true,
+      tags: {
+        100: decode => decode.entries(),
+        101: decode => { calls++; return decode() }
+      }
+    }
+    for (const hex of [
+      'd864a26161016161d86502',
+      'd864bf6161016161d86502ff',
+      'd864a26161016161',
+      'd864a2f97e0001f97e0002',
+      'd864a20001f9800002'
+    ]) {
+      assert.throws(() => decode(fromHex(hex), options), /^CBOR decode error: found repeat map key/)
+    }
+    assert.strictEqual(calls, 0)
+    const signedZero = decode(fromHex('d864a1f9800001'), options)
+    assert.ok(Object.is(signedZero[0][0], -0))
+    assert.deepStrictEqual(decode(fromHex('d864a280018002'), options), [[[], 1], [[], 2]])
+  })
+
+  it('strict tagged maps preserve distinct key types and map scope', () => {
+    for (const useMaps of [false, true]) {
+      const options = { tags: { 259: mapDecoder }, useMaps, rejectDuplicateMapKeys: true }
+      for (const hex of ['d90103a201616161316162', 'd90103bf01616161316162ff']) {
+        assert.deepStrictEqual(decode(fromHex(hex), options), new Map([[1, 'a'], ['1', 'b']]))
+        assert.deepStrictEqual(extendedDecode(fromHex(hex), options), new Map([[1, 'a'], ['1', 'b']]))
+      }
+      const nested = useMaps ? new Map([['b', 1]]) : { b: 1 }
+      assert.deepStrictEqual(decode(fromHex('d90103a16161a1616201'), options), new Map([['a', nested]]))
+      assert.deepStrictEqual(decode(fromHex('d90103a0'), options), new Map())
+      assert.deepStrictEqual(decode(fromHex('82d90103a1616101d90103a1616102'), options), [new Map([['a', 1]]), new Map([['a', 2]])])
+    }
   })
 
   it('__proto__ map key decodes as an own property without polluting the prototype', () => {
