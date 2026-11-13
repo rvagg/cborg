@@ -627,6 +627,8 @@ There are a number of forms where an object will not round-trip precisely, if th
 
 Use `import { encode, decode, decodeFirst } from 'cborg/json'` to access the JSON handling encoder and decoder.
 
+JSON numbers follow the grammar in [RFC 8259 section 6](https://www.rfc-editor.org/rfc/rfc8259.html#section-6). A decimal point or exponent must be followed by digits: `1.`, `1e` and `1e+` throw. Zero can have an exponent (`0e1`), and decoding preserves negative zero (`-0`).
+
 Many of the same encode and decode options available for CBOR can be used to manage JSON handling. These include strictness requirements for decode and custom tag encoders for encode. Tag encoders can't create new tags as there are no tags in JSON, but they can replace JavaScript object forms with custom JSON forms (e.g. convert a `Uint8Array` to a valid JSON form rather than having the encoder throw an error). The inverse is also possible, turning specific JSON forms into JavaScript forms, by using a custom tokeniser on decode.
 
 Special notes on options specific to the JSON:

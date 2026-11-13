@@ -392,3 +392,31 @@ describe('json rejectInvalidUtf8', () => {
     }
   })
 })
+
+describe('json number grammar', () => {
+  it('accepts zero exponents and preserves negative zero', () => {
+    for (const literal of ['0e1', '0E+1', '0e-1', '-0', '-0e1', '-0E+1', '-0.0', '-0.0e-1']) {
+      assert.isTrue(Object.is(decode(toBytes(literal)), JSON.parse(literal)), literal)
+      assert.deepStrictEqual(decode(toBytes(`[${literal}]`)), [JSON.parse(literal)], literal)
+      const [value, rest] = decodeFirst(toBytes(literal + 'null'))
+      assert.isTrue(Object.is(value, JSON.parse(literal)), literal)
+      assert.strictEqual(new TextDecoder().decode(rest), 'null')
+    }
+  })
+
+  it('rejects incomplete fractions and exponents', () => {
+    for (const literal of ['0.', '-0.', '1.', '-1.', '0e', '0e+', '0e-', '1e', '1E+', '-1e-', '1.e2', '0.e2']) {
+      for (const input of [literal, `[${literal}]`, `{"n":${literal}}`]) {
+        assert.throws(() => decode(toBytes(input)), /CBOR decode error:/, input)
+        assert.throws(() => decodeFirst(toBytes(input)), /CBOR decode error:/, input)
+      }
+    }
+  })
+
+  it('rejects leading zeros in whole documents', () => {
+    for (const literal of ['00', '01', '-01', '00.1', '01e2']) {
+      assert.throws(() => decode(toBytes(literal)), /CBOR decode error:/, literal)
+      assert.throws(() => decode(toBytes(`[${literal}]`)), /CBOR decode error:/, literal)
+    }
+  })
+})
