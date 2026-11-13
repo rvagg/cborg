@@ -4,6 +4,56 @@
 
 * add agent context docs ([#205](https://github.com/rvagg/cborg/issues/205)) ([02bf530](https://github.com/rvagg/cborg/commit/02bf5305271420fa2324a66fd79b5a4e28242f29))
 
+## [7.0.0](https://github.com/rvagg/cborg/compare/v6.2.1...v7.0.0) (2026-11-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* **json:** validate numeric fractions and exponents
+* **json:** cborg/json sorts map keys by UTF-8 bytes, not UTF-16 code units.
+* **encode:** encoded float16 subnormals that are not powers of two (multiples of 2^-24 below 2^-14) are now a 3 byte f9 item, not 5 bytes. Anyone hashing or comparing those bytes sees different output.
+* **encode:** anyone encoding boxed Number, String, Boolean or BigInt objects now gets the primitive's bytes. Before, they got an empty map or an index-keyed map (new String('a') gave {"0":"a"}).
+* **decode:** the decode option strictUtf8 is removed. Callers still passing it get replacement-character decoding instead of an error. Rename it to rejectInvalidUtf8.
+* **encode:** encode() of a Map whose keys encode to equal bytes, and encodeInto() with a destination that is not a Uint8Array, now throw. Both produced malformed or corrupt output before. Output from
+* **encode:** type-level only. ByteWriter in cborg/interface drops chunks and requires pushArr(number[]) and pushBytes(Uint8Array). TypeScript code implementing ByteWriter or reading writer.chunks will not compile. No runtime export or encoded output changed.
+
+### Features
+
+* **bench:** compare base and head in separate processes and comment on PRs ([#237](https://github.com/rvagg/cborg/issues/237)) ([bc02bfd](https://github.com/rvagg/cborg/commit/bc02bfde4569bd1639ef5263e176b5215acff614))
+* **cli:** annotate tags and decode CIDs in diagnostic output ([1db60bc](https://github.com/rvagg/cborg/commit/1db60bca45f78f8c951d897fea12b86c332d57cb))
+* **cli:** expand tag 24 embedded CBOR in diagnostic output ([2a66a4d](https://github.com/rvagg/cborg/commit/2a66a4d3e8dfa711384b1270a6f51cf3483c4dd5))
+
+
+### Bug Fixes
+
+* **cli:** make diagnostic output consistent and reject malformed input ([#240](https://github.com/rvagg/cborg/issues/240)) ([e0b5a0d](https://github.com/rvagg/cborg/commit/e0b5a0de53c1e9b4f8d6048983c7edfe1ce40bc7))
+* **cli:** validate --width, reject lossy JSON output, drop stack traces ([#238](https://github.com/rvagg/cborg/issues/238)) ([60f70da](https://github.com/rvagg/cborg/commit/60f70da2a5afc4b80e9f70691c6bbfa14e791908))
+* **decode:** reject duplicate tagged-Map keys before values ([cc8d7cb](https://github.com/rvagg/cborg/commit/cc8d7cb76f76aa27ee9c5bf793c85bd8f87f8d75))
+* **decode:** rename strictUtf8 to rejectInvalidUtf8 ([#234](https://github.com/rvagg/cborg/issues/234)) ([fa82030](https://github.com/rvagg/cborg/commit/fa82030d5cabef6a730ad3e6f2c4a1273a8002f2))
+* **encode:** encode all float16 subnormals as float16 ([#236](https://github.com/rvagg/cborg/issues/236)) ([3b0ad88](https://github.com/rvagg/cborg/commit/3b0ad88f028ebc8686273755524194ae101543c6))
+* **encode:** reject duplicate map keys and invalid encode inputs ([#233](https://github.com/rvagg/cborg/issues/233)) ([1ca3eb7](https://github.com/rvagg/cborg/commit/1ca3eb73c933f59c7d2a60853024159abaee8695))
+* **encode:** unbox Number, String, Boolean and BigInt objects ([#235](https://github.com/rvagg/cborg/issues/235)) ([05d4420](https://github.com/rvagg/cborg/commit/05d442043325763c0dc10f051d49209c109e2296))
+* **json:** sort map keys by UTF-8 bytes ([24eb632](https://github.com/rvagg/cborg/commit/24eb632dfe5399a59c5802007d3314e9e3817acb))
+* **json:** validate numeric fractions and exponents ([3d175a0](https://github.com/rvagg/cborg/commit/3d175a091019ebf9796e0b02f52712d829eef028))
+
+
+### Performance Improvements
+
+* **encode:** sort short ASCII object keys without tokens ([#231](https://github.com/rvagg/cborg/issues/231)) ([716b14f](https://github.com/rvagg/cborg/commit/716b14f21b6a39fbf3ea92dc4936c00a885b6d15))
+* **encode:** use a flat byte writer, remove the chunk-list Bl ([#229](https://github.com/rvagg/cborg/issues/229)) ([3d3fbed](https://github.com/rvagg/cborg/commit/3d3fbedd27e120a1f4a1439827717011f85291c2))
+
+
+### Code Refactoring
+
+* **cli:** build diagnostic output from a diagnose() model ([970b67f](https://github.com/rvagg/cborg/commit/970b67f9f5241b6c4582288d63823e3aeafb9d8b))
+
+
+### Trivial Changes
+
+* add security docs ([#232](https://github.com/rvagg/cborg/issues/232)) ([3b51ae7](https://github.com/rvagg/cborg/commit/3b51ae72a5188f8191c2454f16d14f9b80114ed0))
+* **deps:** bump rvagg/waxseal from 0.2.0 to 0.2.1 ([#239](https://github.com/rvagg/cborg/issues/239)) ([14393d2](https://github.com/rvagg/cborg/commit/14393d2c22af8fdc904dd80856efb8f9e19e61bb))
+* **deps:** bump rvagg/waxseal from 0.2.1 to 0.2.3 ([#241](https://github.com/rvagg/cborg/issues/241)) ([784f96e](https://github.com/rvagg/cborg/commit/784f96e27b39d85e5dcf51b6db2ee157ef974be3))
+
 ## [6.2.1](https://github.com/rvagg/cborg/compare/v6.2.0...v6.2.1) (2026-10-30)
 
 
